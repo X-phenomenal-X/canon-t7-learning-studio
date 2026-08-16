@@ -1,5 +1,5 @@
 (()=>{
-  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+  const $=s=>document.querySelector(s);
   const home=$('#home');if(!home)return;
   const hour=new Date().getHours();
   const hello=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
@@ -59,8 +59,9 @@
     else if(c>=4&&p<2){title='Practice exposure visually';href='#simulator'}
     else if(c>=4&&p>=2&&done<3){title='Try a real practice challenge';href='#practice'}
     else if(c>=4&&p>=2&&done>=3){title='Shoot and review a real photo';href='#shoot'}
-    $('#homePct').textContent=Math.min(100,total)+'%';$('#homeRing').style.setProperty('--pct',Math.min(100,total));$('#homeNextTitle').textContent=title;$('#homeContinueSecondary').href=href;$('#homeContinue').href=href;
-    $('#homeControls').textContent=`${c} / 8 explored`;$('#homeSimulator').textContent=`${p} / 3 tried`;$('#homePractice').textContent=`${done} / ${practiceTotal} complete`;
+    const pct=$('#homePct'),ring=$('#homeRing'),next=$('#homeNextTitle'),secondary=$('#homeContinueSecondary'),primary=$('#homeContinue');
+    if(pct)pct.textContent=Math.min(100,total)+'%';if(ring)ring.style.setProperty('--pct',Math.min(100,total));if(next)next.textContent=title;if(secondary)secondary.href=href;if(primary)primary.href=href;
+    const hc=$('#homeControls'),hs=$('#homeSimulator'),hp=$('#homePractice');if(hc)hc.textContent=`${c} / 8 explored`;if(hs)hs.textContent=`${p} / 3 tried`;if(hp)hp.textContent=`${done} / ${practiceTotal} complete`;
 
     const recent=readJson('canonRecentPhoto',null),box=$('.native-latest .recent-photo-empty');
     if(recent&&box){
@@ -69,34 +70,9 @@
       box.innerHTML=`${recent.thumb?`<img src="${recent.thumb}" alt="Latest reviewed photo">`:''}<div class="recent-photo-meta"><b>${(recent.goal||'Photo').replace(/^./,x=>x.toUpperCase())}</b><small>${recent.settings||'Canon T7 review'}</small><small>${date}</small></div><div class="recent-score">${recent.score||'—'}</div>`;
     }
   }
+
+  window.T7Home={refresh:restoreHomeState};
   restoreHomeState();
-
-  const routeMap={
-    home:{title:'T7 Studio',tab:'home'},shoot:{title:'Guided Shoot',tab:'shoot'},review:{title:'Photo Review',tab:'review'},learn:{title:'Learn',tab:'learn'},edit:{title:'Editor',tab:'edit'},conditions:{title:'Photo Conditions',tab:'shoot'},camera:{title:'Camera Controls',tab:'learn'},simulator:{title:'Exposure Simulator',tab:'learn'},visuals:{title:'Visual Guides',tab:'learn'},practice:{title:'Practice',tab:'learn'}
-  };
-  function route(){
-    const key=(location.hash||'#home').slice(1)||'home';
-    const cfg=routeMap[key]||routeMap.home;
-    const sections=$$('main > section.section, main > section.dashboard-home');
-    sections.forEach(el=>{el.classList.add('app-screen-hidden');el.classList.remove('app-screen-active')});
-    $('.advanced-section')?.classList.add('app-screen-hidden');
-    let target=key==='review'?$('#edit'):document.getElementById(key);
-    if(!target)target=home;
-    target.classList.remove('app-screen-hidden');target.classList.add('app-screen-active');
-    document.body.dataset.route=key;
-
-    const brandTitle=$('.brand b');if(brandTitle)brandTitle.textContent=cfg.title;
-    const brandSub=$('.brand small');if(brandSub)brandSub.textContent=key==='home'?'Photography companion':'EOS Rebel T7';
-    $$('.mobile-dock a,.desktop-nav a').forEach(a=>a.classList.remove('active'));
-    $$('.mobile-dock a,.desktop-nav a').forEach(a=>{const k=(a.getAttribute('href')||'').replace('#','');if(k===cfg.tab)a.classList.add('active')});
-    requestAnimationFrame(()=>{
-      if(key==='review'){$('#review')?.scrollIntoView({block:'start'});}
-      else window.scrollTo({top:0,left:0,behavior:'instant'});
-    });
-  }
-  window.addEventListener('hashchange',route);
-  const mo=new MutationObserver(()=>{const key=(location.hash||'#home').slice(1);if(['review','learn'].includes(key))route()});
-  mo.observe($('main'),{childList:true,subtree:true});
   window.addEventListener('storage',restoreHomeState);
-  route();
+  window.addEventListener('t7-history-updated',restoreHomeState);
 })();
