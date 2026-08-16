@@ -16,6 +16,7 @@
   simplifyNavigation();
   style('./router.css');style('./shoot-flow.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./history.css');style('./native-ui.css');style('./shoot-v2.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./camera-steps.css');style('./polish-v2.css');
   script('./store.js')
+    .then(()=>script('./photo-session.js'))
     .then(()=>script('./t7-engine.js'))
     .then(()=>script('./review-engine.js'))
     .then(()=>script('./core.js'))
