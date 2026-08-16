@@ -20,7 +20,11 @@
     .then(()=>script('./shoot-flow.js'))
     .then(()=>script('./learn.js'))
     .then(()=>script('./review-flow.js'))
-    .then(()=>{const review=document.querySelector('.review-flow');if(review)review.id='review';return script('./reshoot.js')})
+    .then(()=>{
+      const review=document.querySelector('.review-flow'),edit=document.getElementById('edit');
+      if(review&&edit?.parentNode){review.id='review';review.classList.add('section');edit.parentNode.insertBefore(review,edit)}
+      return script('./reshoot.js');
+    })
     .then(()=>script('./smart-coach.js'))
     .then(()=>script('./history.js'))
     .then(()=>script('./native-ui.js'))
