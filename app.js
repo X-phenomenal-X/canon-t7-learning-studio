@@ -10,11 +10,11 @@
     const dock=document.querySelector('.mobile-dock');
     if(dock)dock.innerHTML='<a href="#home">Home</a><a class="shoot-dock" href="#shoot">Shoot</a><a href="#review">Review</a><a href="#learn">Learn</a><a href="#edit">Edit</a>';
   }
-  function showLoadError(err){console.error(err);const banner=document.createElement('div');banner.style.cssText='position:fixed;left:12px;right:12px;top:12px;z-index:9999;padding:12px 14px;border-radius:12px;background:#3a171c;color:#ffd4d8;border:1px solid #6c2b34;font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';banner.textContent='Some photography tools did not load. Refresh the app to try again.';document.body.appendChild(banner)}
-  function showUpdate(reg){if(document.getElementById('appUpdateBanner'))return;const bar=document.createElement('div');bar.id='appUpdateBanner';bar.style.cssText='position:fixed;left:12px;right:12px;bottom:82px;z-index:9998;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;background:#172131;color:#fff;border:1px solid #35465e;box-shadow:0 12px 30px rgba(0,0,0,.35);font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';bar.innerHTML='<span>New Canon T7 Studio update available.</span><button style="border:0;border-radius:9px;padding:8px 10px;background:#ff5965;color:#fff;font-weight:800">Refresh</button>';bar.querySelector('button').onclick=()=>{reg.waiting?.postMessage({type:'SKIP_WAITING'});setTimeout(()=>location.reload(),300)};document.body.appendChild(bar)}
+  function showLoadError(err){console.error(err);const banner=document.createElement('div');banner.style.cssText='position:fixed;left:12px;right:12px;top:12px;z-index:9999;padding:12px 14px;border-radius:12px;background:#2a171b;color:#ffd8dc;border:1px solid #58303a;font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';banner.textContent='Some photography tools did not load. Refresh the app to try again.';document.body.appendChild(banner)}
+  function showUpdate(reg){if(document.getElementById('appUpdateBanner'))return;const bar=document.createElement('div');bar.id='appUpdateBanner';bar.style.cssText='position:fixed;left:12px;right:12px;bottom:72px;z-index:9998;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;background:#151c25;color:#fff;border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 30px rgba(0,0,0,.35);font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';bar.innerHTML='<span>New T7 Studio version available.</span><button style="border:0;border-radius:9px;padding:8px 10px;background:#eef3f7;color:#0b0e12;font-weight:800">Refresh</button>';bar.querySelector('button').onclick=()=>{reg.waiting?.postMessage({type:'SKIP_WAITING'});setTimeout(()=>location.reload(),300)};document.body.appendChild(bar)}
 
   simplifyNavigation();
-  style('./dashboard-v2.css');style('./shoot-flow.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./history.css');
+  style('./dashboard-v2.css');style('./shoot-flow.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./history.css');style('./native-ui.css');
   script('./dashboard-v2.js')
     .then(()=>script('./t7-engine.js'))
     .then(()=>script('./core.js'))
@@ -24,6 +24,7 @@
     .then(()=>{const review=document.querySelector('.review-flow');if(review)review.id='review';return script('./reshoot.js')})
     .then(()=>script('./smart-coach.js'))
     .then(()=>script('./history.js'))
+    .then(()=>script('./native-ui.js'))
     .then(()=>simplifyNavigation())
     .catch(showLoadError);
 
