@@ -20,8 +20,8 @@
     const cfg=routeMap[requested]||routeMap.home;
     const key=routeMap[requested]?requested:'home';
     const home=$('#home');
-    const sections=$$('main > section.section, main > section.dashboard-home');
-    sections.forEach(el=>{el.classList.add('app-screen-hidden');el.classList.remove('app-screen-active')});
+    const screens=$$('main > .section, main > .dashboard-home');
+    screens.forEach(el=>{el.classList.add('app-screen-hidden');el.classList.remove('app-screen-active')});
     $('.advanced-section')?.classList.add('app-screen-hidden');
 
     let target=document.getElementById(cfg.target);
