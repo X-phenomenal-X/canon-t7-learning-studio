@@ -1,0 +1,45 @@
+/* Canon T7 Studio — final consistency / app polish layer */
+:root{--polish-ease:cubic-bezier(.2,.8,.2,1);--polish-fast:160ms;--polish-med:240ms}
+*{-webkit-tap-highlight-color:transparent}button,a,input,select{font:inherit}button,a{touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #8bc8ff!important;outline-offset:2px}button:disabled{opacity:.48;cursor:default}
+body{font-synthesis:none;text-rendering:optimizeLegibility}footer{display:none!important}.button,.ev2-tool-btn,.rv2-upload,.rv2-primary,.rv2-secondary,.cv2-actions a,.lv2-challenge a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}.button,.ev2-tool-btn,.rv2-upload,.rv2-primary,.rv2-secondary,.native-action,.subject-card,.learn-list button,.cv2-goal,.ev2-tab,.ev2-preset,.ev2-crop{transition:transform var(--polish-fast) var(--polish-ease),background-color var(--polish-fast) ease,border-color var(--polish-fast) ease,opacity var(--polish-fast) ease}.polish-pressed{transform:scale(.975)!important}
+
+/* Cleaner app chrome */
+.topbar{min-height:58px;height:auto!important;display:flex;align-items:center;gap:8px}.polish-back{display:none;width:34px;height:34px;flex:0 0 34px;border:1px solid var(--ui-line);border-radius:11px;background:#121820;color:#e6edf4;align-items:center;justify-content:center;padding:0}.polish-back svg{width:17px;height:17px}.mobile-dock{gap:2px!important}.mobile-dock a{position:relative;flex-direction:column!important;gap:3px!important;min-height:54px!important;padding:5px 2px!important;background:transparent!important}.mobile-dock a svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform var(--polish-fast) var(--polish-ease)}.mobile-dock a span{font-size:9px;line-height:1;font-weight:800}.mobile-dock a.active{background:transparent!important;color:#f6f8fa!important}.mobile-dock a.active:after{content:'';position:absolute;bottom:2px;width:20px;height:2px;border-radius:999px;background:#eaf1f6}.mobile-dock a.active svg{transform:translateY(-1px)}.mobile-dock .shoot-dock,.mobile-dock .shoot-dock.active{background:transparent!important;color:inherit!important}.mobile-dock .shoot-dock.active{color:#f6f8fa!important}.desktop-nav a{min-height:34px;display:inline-flex;align-items:center;padding:0 10px;border-radius:10px}
+
+/* Route isolation: upgraded screens should not leak old modules into each other */
+body[data-route="conditions"] #conditions>.section-head{display:none!important}body[data-route="learn"] #learn>.section-head{display:none!important}body[data-route="review"] #edit>.section-head,body[data-route="review"] #edit>.editor-v2-toolbar,body[data-route="review"] #edit>.editor-layout,body[data-route="review"] #edit>.two-grid,body[data-route="review"] #edit>.exif-panel{display:none!important}body[data-route="edit"] #review{display:none!important}body[data-route="edit"] #edit>.exif-panel{display:none!important}
+
+/* Unified screen rhythm */
+.app-screen-active{animation:polishScreenIn var(--polish-med) var(--polish-ease) both}.section.app-screen-active{padding-bottom:18px}.section-head{padding-top:2px}.section-head h2,.review-head h3,.shoot-flow .shoot-head h2,.learn-v2-head h1,.cv2-intro h1{font-weight:780!important}.section-head p,.review-head p,.shoot-flow .shoot-head p,.learn-v2-head p,.cv2-intro p{line-height:1.5}.card,.native-action,.subject-card,.rv2-setup,.ev2-preset,.ev2-auto-card,.cv2-setup,.lv2-card{border-color:rgba(255,255,255,.075)!important}
+@keyframes polishScreenIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* Inputs / selects */
+input[type="text"],select{min-height:44px!important;border:1px solid var(--ui-line)!important;background:#11171f!important;color:#eef3f7!important;border-radius:14px!important;padding:0 12px!important}input[type="text"]::placeholder{color:#697583}input[type="range"]{min-height:32px}
+
+/* Home refinements */
+.native-greeting{padding-top:2px}.native-shoot-card{transition:transform var(--polish-med) var(--polish-ease),border-color var(--polish-fast) ease}.native-shoot-card:active{transform:scale(.992)}.native-action{box-shadow:inset 0 1px 0 rgba(255,255,255,.018)}.native-action:active{transform:scale(.985)}.native-latest .recent-photo-card-live{overflow:hidden}.native-latest .recent-score{font-size:14px;font-weight:900;padding-right:5px}
+
+/* Guided Shoot consistency */
+.shoot-step{transition:color var(--polish-fast) ease,border-color var(--polish-fast) ease}.subject-card:active{transform:scale(.985)}.setup-grid,.review-metrics,.rv2-setting-row,.cv2-settings{font-variant-numeric:tabular-nums}.shoot-bottom .button{min-width:92px}.capture-ready,.setup-primary,.frame-preview{overflow:hidden}
+
+/* Conditions loading state */
+.conditions-v2{position:relative}.conditions-v2.is-loading .cv2-search{opacity:.72}.conditions-v2.is-loading .cv2-check,.conditions-v2.is-loading .cv2-locate{pointer-events:none}.conditions-v2.is-loading:after{content:'';position:absolute;left:0;right:0;top:128px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,#82c8ff,transparent);background-size:45% 100%;animation:polishLoad 1s linear infinite}.cv2-status{min-height:22px}.cv2-status .pill,.cv2-status #photoWeatherStatus{transition:color var(--polish-fast) ease}.cv2-goal:active{transform:scale(.97)}
+@keyframes polishLoad{from{background-position:-70% 0}to{background-position:170% 0}}
+
+/* Review processing feedback */
+.review-flow{position:relative}.polish-processing{display:none;align-items:center;gap:9px;padding:10px 12px;border:1px solid var(--ui-line);border-radius:14px;background:#111820;color:#cbd5df;font-size:11px;font-weight:800;margin:10px 0}.polish-processing.show{display:flex}.polish-spinner{width:15px;height:15px;border-radius:50%;border:2px solid #33404e;border-top-color:#e8eff5;animation:polishSpin .7s linear infinite}@keyframes polishSpin{to{transform:rotate(360deg)}}.review-flow.is-processing .rv2-empty{opacity:.62}.review-flow.is-processing .rv2-upload{pointer-events:none}.rv2-details{scroll-margin-bottom:90px}
+
+/* Editor loading + tool polish */
+.editor-v2-layout>.canvas-wrap{isolation:isolate}.polish-canvas-loading{position:absolute;inset:0;z-index:45;display:none;place-items:center;background:rgba(4,5,7,.68);backdrop-filter:blur(4px)}.polish-canvas-loading.show{display:grid}.polish-canvas-loading>div{display:flex;align-items:center;gap:10px;border:1px solid var(--ui-line);background:#10161d;border-radius:999px;padding:10px 13px;color:#dbe3eb;font-size:11px;font-weight:850}.ev2-tab:active,.ev2-preset:active,.ev2-crop:active,.ev2-tool-btn:active{transform:scale(.97)}.editor-v2-toolbar{overscroll-behavior-x:contain}.ev2-tabs{overscroll-behavior-x:contain}
+
+/* Learn polish */
+.learn-list{scroll-snap-type:x proximity;overscroll-behavior-x:contain}.learn-list button{scroll-snap-align:start}.learn-list button:active{transform:scale(.98)}.lv2-challenge a:active{transform:scale(.98)}.lesson-actions{gap:7px}.lesson-actions>.button{min-height:44px}.lv2-card{overflow:hidden}
+
+/* Small-screen native feel */
+@media(max-width:760px){
+ .polish-back{display:flex}.topbar{padding-top:max(8px,env(safe-area-inset-top))!important}.brand{min-width:0}.brand>span:last-child{min-width:0}.brand b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}.mobile-dock{padding-top:6px!important}.section.app-screen-active{padding-top:11px}.learn-v2-head,.cv2-intro{padding-top:4px}.native-greeting{padding-top:4px}.rv2-empty,.native-shoot-card,.lv2-card,.cv2-hero,.editor-v2-layout>.canvas-wrap{box-shadow:0 16px 44px rgba(0,0,0,.12)}
+}
+@media(max-width:430px){
+ .mobile-dock a{min-height:50px!important}.mobile-dock a svg{width:19px;height:19px}.mobile-dock a span{font-size:8px}.brand b{max-width:155px}.native-section-title h2,.native-latest-head h2{font-size:14px}.rv2-upload{width:100%}.cv2-actions{grid-template-columns:1fr!important}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.app-screen-active{animation:none!important}}
