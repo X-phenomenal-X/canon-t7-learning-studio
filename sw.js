@@ -1,5 +1,5 @@
-const CACHE='canon-t7-studio-v13';
-const CORE=['./','./index.html','./styles.css','./dashboard.css','./app.js','./core.js','./t7-engine.js','./conditions.js','./editor.js','./shoot-flow.css','./shoot-flow.js','./learn.css','./learn.js','./review-flow.css','./review-flow.js','./reshoot.css','./reshoot.js','./ai-coach.css','./ai-coach.js','./coach-config.json','./manifest.webmanifest'];
+const CACHE='canon-t7-studio-v14';
+const CORE=['./','./index.html','./styles.css','./dashboard.css','./app.js','./core.js','./t7-engine.js','./conditions.js','./editor.js','./shoot-flow.css','./shoot-flow.js','./learn.css','./learn.js','./review-flow.css','./review-flow.js','./reshoot.css','./reshoot.js','./smart-coach.css','./smart-coach.js','./manifest.webmanifest'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
