@@ -8,43 +8,109 @@
   let context={light:'normal',motion:'still',support:'handheld'};
   try{selected=localStorage.getItem('canonT7LastShootSubject')||null}catch{}
 
+  const shortLabels={portrait:'Portrait',product:'Product',landscape:'Landscape',action:'Action',indoor:'Indoor',night:'Night'};
+
   shoot.innerHTML=`
-    <div class="shoot-flow">
-      <div class="shoot-head">
-        <div><div class="shoot-kicker">GUIDED SHOOT</div><h2>Let’s set up your shot</h2><p>Choose the photo, set your T7, frame it, then capture and review.</p></div>
-        <span class="pill session-badge" id="shootSessionBadge">No session started</span>
+    <div class="shoot-flow shoot-flow-v2">
+      <header class="shoot-v2-head">
+        <div>
+          <span class="shoot-v2-eyebrow">GUIDED SHOOT</span>
+          <h2>What do you want to photograph?</h2>
+          <p>Pick the shot. T7 Studio will give you one practical starting setup.</p>
+        </div>
+        <span class="shoot-v2-session" id="shootSessionBadge">New session</span>
+      </header>
+
+      <div class="shoot-v2-progress" aria-label="Shoot progress">
+        <button class="shoot-v2-step active" data-step-indicator="1"><i>1</i><span>Subject</span></button>
+        <button class="shoot-v2-step" data-step-indicator="2"><i>2</i><span>Setup</span></button>
+        <button class="shoot-v2-step" data-step-indicator="3"><i>3</i><span>Frame</span></button>
+        <button class="shoot-v2-step" data-step-indicator="4"><i>4</i><span>Capture</span></button>
       </div>
-      <div class="shoot-steps" aria-label="Shoot steps">
-        <div class="shoot-step active" data-step-indicator="1"><i>1</i><span>Subject</span></div>
-        <div class="shoot-step" data-step-indicator="2"><i>2</i><span>Setup</span></div>
-        <div class="shoot-step" data-step-indicator="3"><i>3</i><span>Frame</span></div>
-        <div class="shoot-step" data-step-indicator="4"><i>4</i><span>Capture</span></div>
-      </div>
-      <div class="shoot-panel">
+
+      <div class="shoot-v2-stage">
         <section class="shoot-screen active" data-screen="1">
-          <div class="shoot-kicker">STEP 1 OF 4</div><h3>What are you shooting?</h3><p>Pick the closest match. The recommendation engine will build a T7-specific starting setup.</p>
-          <div class="subject-grid">${Object.entries(profiles).map(([key,p])=>`<button class="subject-card" data-subject="${key}"><strong>${p.name}</strong><span>${p.sub}</span></button>`).join('')}</div>
-          <div class="shoot-bottom"><span class="pill">Canon EOS Rebel T7 • 18–55mm</span><button class="button primary" id="shootNext1" disabled>Use this subject →</button></div>
-        </section>
-        <section class="shoot-screen" data-screen="2">
-          <div class="shoot-kicker">STEP 2 OF 4</div><h3 id="setupHeading">Set your camera</h3><p id="setupIntro">Use these as your starting settings. The advice is built around the T7’s 9-point AF system, kit lens, and shooting modes.</p>
-          <div class="setup-hero">
-            <div class="setup-primary"><span class="setting-label">START HERE</span><div class="big-setting" id="setupMode">Av</div><span class="setting-label" id="setupModeLabel">Aperture priority</span><div class="shoot-session-summary" id="setupSummary"></div></div>
-            <div class="setup-grid"><div class="setting-tile"><small>Lens</small><b id="setupLens">55mm</b></div><div class="setting-tile"><small>Exposure</small><b id="setupExposure">f/5.6</b></div><div class="setting-tile"><small>ISO</small><b id="setupIso">100–400</b></div><div class="setting-tile"><small>Autofocus</small><b id="setupFocus">One-Shot AF</b></div></div>
+          <div class="shoot-v2-screen-title">
+            <span>01</span>
+            <div><h3>Choose your subject</h3><p>Use the closest match. You can refine later.</p></div>
           </div>
-          <div class="condition-strip"><div><b id="conditionTitle">Optional: use live conditions</b><p id="conditionHint">Check Photo Conditions first and this setup can adapt its ISO/light guidance.</p></div><button class="button" id="applyConditions">Use live conditions</button></div>
-          <div class="tip" id="setupTip"></div>
-          <div class="shoot-bottom"><button class="button" data-back="1">← Subject</button><button class="button primary" data-next="3">Camera is set →</button></div>
+          <div class="subject-grid subject-grid-v2">
+            ${Object.entries(profiles).map(([key,p],i)=>`<button class="subject-card subject-card-v2 subject-${key}" data-subject="${key}"><span class="subject-index">0${i+1}</span><div class="subject-copy"><strong>${shortLabels[key]||p.name}</strong><span>${p.sub}</span></div><span class="subject-arrow">›</span></button>`).join('')}
+          </div>
+          <div class="shoot-v2-bottom"><span id="subjectHint">Select one to continue</span><button class="button primary" id="shootNext1" disabled>Continue</button></div>
         </section>
+
+        <section class="shoot-screen" data-screen="2">
+          <div class="shoot-v2-screen-title">
+            <span>02</span>
+            <div><h3 id="setupHeading">Your T7 setup</h3><p>Start here. Don’t overthink every setting.</p></div>
+          </div>
+
+          <div class="setup-v2-hero">
+            <div class="setup-v2-mode">
+              <small>MODE</small>
+              <strong id="setupMode">Av</strong>
+              <span id="setupModeLabel">Aperture priority</span>
+            </div>
+            <div class="setup-v2-main">
+              <div><small>LENS</small><strong id="setupLens">50–55mm</strong></div>
+              <div><small>STARTING EXPOSURE</small><strong id="setupExposure">f/5.6</strong></div>
+            </div>
+          </div>
+
+          <div class="setup-v2-strip">
+            <div><small>ISO</small><b id="setupIso">100–400</b></div>
+            <div><small>AUTOFOCUS</small><b id="setupFocus">One-Shot AF</b></div>
+            <div><small>DRIVE</small><b id="setupDrive">Single</b></div>
+          </div>
+
+          <div class="setup-v2-tip" id="setupTip"></div>
+          <div id="setupSummary" hidden></div>
+
+          <div class="condition-strip condition-strip-v2">
+            <div><small>LIVE LIGHT</small><b id="conditionTitle">Use current conditions</b><p id="conditionHint">Optional — apply weather/light guidance if you checked Conditions.</p></div>
+            <button class="button" id="applyConditions">Apply</button>
+          </div>
+
+          <div class="shoot-v2-bottom"><button class="button" data-back="1">Back</button><button class="button primary" data-next="3">Set camera</button></div>
+        </section>
+
         <section class="shoot-screen" data-screen="3">
-          <div class="shoot-kicker">STEP 3 OF 4</div><h3>Frame the shot</h3><p>Before you press the shutter, make the composition deliberate.</p>
-          <div class="frame-layout"><div class="frame-preview"><div class="frame-grid-v"></div><div class="frame-grid-h1"></div><div class="frame-grid-h2"></div><div class="frame-subject"></div><div class="frame-focus"></div><div class="frame-label" id="frameLabel">Portrait</div></div><div class="frame-guides" id="frameGuides"></div></div>
-          <div class="shoot-bottom"><button class="button" data-back="2">← Settings</button><button class="button primary" data-next="4">Ready to capture →</button></div>
+          <div class="shoot-v2-screen-title">
+            <span>03</span>
+            <div><h3>Frame it before you shoot</h3><p>Composition usually matters more than another tiny setting change.</p></div>
+          </div>
+
+          <div class="frame-layout frame-layout-v2">
+            <div class="frame-preview frame-preview-v2" id="framePreview">
+              <div class="frame-grid-v"></div><div class="frame-grid-h1"></div><div class="frame-grid-h2"></div>
+              <div class="frame-subject"></div><div class="frame-focus"></div>
+              <div class="frame-label" id="frameLabel">Portrait</div>
+            </div>
+            <div class="frame-guides frame-guides-v2" id="frameGuides"></div>
+          </div>
+
+          <div class="shoot-v2-bottom"><button class="button" data-back="2">Back</button><button class="button primary" data-next="4">Looks good</button></div>
         </section>
+
         <section class="shoot-screen" data-screen="4">
-          <div class="shoot-kicker">STEP 4 OF 4</div><h3>Take the photo</h3><p>Run the final check, take a few variations, then bring the best one back for review.</p>
-          <div class="capture-card"><div class="capture-checks" id="captureChecks"></div><div class="capture-ready"><div class="camera-button">T7</div><h4>Take 3 versions</h4><p>Keep the core settings, but slightly change distance, timing, or angle between shots.</p><button class="button primary" id="reviewShot">I took the photo — review it</button><button class="button" id="restartShoot" style="margin-top:8px">Start another setup</button></div></div>
-          <div class="shoot-bottom"><button class="button" data-back="3">← Framing</button><span class="pill">Pick the sharpest version to review</span></div>
+          <div class="shoot-v2-screen-title">
+            <span>04</span>
+            <div><h3>Ready to capture</h3><p>Do one last check, then take a few variations.</p></div>
+          </div>
+
+          <div class="capture-v2">
+            <div class="capture-ready-v2">
+              <div class="capture-shutter" aria-hidden="true"><span></span></div>
+              <small>YOUR T7 IS READY</small>
+              <h4>Take 3 versions.</h4>
+              <p>Keep the setup. Change only distance, timing, or angle.</p>
+            </div>
+            <div class="capture-checks capture-checks-v2" id="captureChecks"></div>
+          </div>
+
+          <div class="capture-v2-actions"><button class="button primary" id="reviewShot">Review my photo</button><button class="button" id="restartShoot">New setup</button></div>
+          <div class="shoot-v2-bottom"><button class="button" data-back="3">Back</button><span>Choose the sharpest frame to review.</span></div>
         </section>
       </div>
     </div>`;
@@ -52,31 +118,59 @@
   const qs=s=>shoot.querySelector(s),qsa=s=>[...shoot.querySelectorAll(s)];
   function profile(){
     if(!selected)return null;
-    const defaults={
-      action:{motion:'fast'},night:{light:'night',support:'tripod'},indoor:{light:'indoor'},portrait:{motion:'still'},product:{motion:'still'},landscape:{motion:'still'}
-    };
+    const defaults={action:{motion:'fast'},night:{light:'night',support:'tripod'},indoor:{light:'indoor'},portrait:{motion:'still'},product:{motion:'still'},landscape:{motion:'still'}};
     return engine.recommend(selected,{...context,...(defaults[selected]||{})});
   }
-  function goStep(n){step=n;qsa('.shoot-screen').forEach(x=>x.classList.toggle('active',Number(x.dataset.screen)===n));qsa('.shoot-step').forEach(x=>{const v=Number(x.dataset.stepIndicator);x.classList.toggle('active',v===n);x.classList.toggle('done',v<n)});shoot.scrollIntoView({behavior:'smooth',block:'start'});}
-  function paintSubject(){qsa('.subject-card').forEach(x=>x.classList.toggle('selected',x.dataset.subject===selected));qs('#shootNext1').disabled=!selected;if(selected)qs('#shootSessionBadge').textContent=profiles[selected].name+' session';}
-  function renderSetup(){const p=profile();if(!p)return;qs('#setupHeading').textContent=p.name+' setup';qs('#setupMode').textContent=p.mode;qs('#setupModeLabel').textContent=engine.modeLabel(p.mode);qs('#setupLens').textContent=p.lens;qs('#setupExposure').textContent=p.exposure;qs('#setupIso').textContent=p.iso;qs('#setupFocus').textContent=p.afMode;qs('#setupSummary').innerHTML=`<span>${p.lens}</span><span>${p.exposure}</span><span>${p.iso}</span><span>${p.drive}</span>`;qs('#setupTip').innerHTML=`<b>Best improvement:</b> ${p.tip}<br><br><b>T7 focus setup:</b> ${p.focusPoint} • ${p.drive}`;qs('#frameLabel').textContent=p.name+' • '+p.focus;qs('#frameGuides').innerHTML=p.frame.map((x,i)=>`<div class="guide-row"><i>${i+1}</i><div><b>${x}</b><span>${i===0?'Set your position before changing tiny settings.':i===1?'Guide the viewer directly to the subject.':'Scan the edges once before pressing the shutter.'}</span></div></div>`).join('');qs('#captureChecks').innerHTML=[...p.check,`AF: ${p.afMode}`,`Drive: ${p.drive}`].map(x=>`<label class="capture-check"><input type="checkbox"><span>${x}</span></label>`).join('');}
 
-  qsa('.subject-card').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.subject;try{localStorage.setItem('canonT7LastShootSubject',selected);localStorage.setItem('canonReviewGoal',selected)}catch{}paintSubject();renderSetup();}));
+  function goStep(n){
+    step=n;
+    qsa('.shoot-screen').forEach(x=>x.classList.toggle('active',Number(x.dataset.screen)===n));
+    qsa('.shoot-v2-step').forEach(x=>{const v=Number(x.dataset.stepIndicator);x.classList.toggle('active',v===n);x.classList.toggle('done',v<n)});
+    shoot.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function paintSubject(){
+    qsa('.subject-card').forEach(x=>x.classList.toggle('selected',x.dataset.subject===selected));
+    qs('#shootNext1').disabled=!selected;
+    qs('#subjectHint').textContent=selected?`${profiles[selected].name} selected`:'Select one to continue';
+    if(selected)qs('#shootSessionBadge').textContent=profiles[selected].name;
+  }
+
+  function renderSetup(){
+    const p=profile();if(!p)return;
+    qs('#setupHeading').textContent=`${p.name} setup`;
+    qs('#setupMode').textContent=p.mode;
+    qs('#setupModeLabel').textContent=engine.modeLabel(p.mode);
+    qs('#setupLens').textContent=p.lens;
+    qs('#setupExposure').textContent=p.exposure;
+    qs('#setupIso').textContent=p.iso;
+    qs('#setupFocus').textContent=p.afMode;
+    qs('#setupDrive').textContent=p.drive;
+    qs('#setupSummary').innerHTML=`<span>${p.lens}</span><span>${p.exposure}</span><span>${p.iso}</span><span>${p.drive}</span>`;
+    qs('#setupTip').innerHTML=`<small>ONE THING TO REMEMBER</small><b>${p.tip}</b><span>${p.focusPoint} • ${p.drive}</span>`;
+    qs('#frameLabel').textContent=p.name;
+    qs('#framePreview').dataset.subject=selected;
+    qs('#frameGuides').innerHTML=p.frame.map((x,i)=>`<div class="guide-row guide-row-v2"><i>${i+1}</i><div><b>${x}</b>${i===0?'<span>Set your position first.</span>':i===1?'<span>Lead the eye to the subject.</span>':'<span>Scan the edges once.</span>'}</div></div>`).join('');
+    qs('#captureChecks').innerHTML=[...p.check,`AF: ${p.afMode}`,`Drive: ${p.drive}`].slice(0,4).map(x=>`<label class="capture-check capture-check-v2"><input type="checkbox"><span>${x}</span></label>`).join('');
+  }
+
+  qsa('.subject-card').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.subject;try{localStorage.setItem('canonT7LastShootSubject',selected);localStorage.setItem('canonReviewGoal',selected)}catch{}paintSubject();renderSetup()}));
   qs('#shootNext1').addEventListener('click',()=>{renderSetup();goStep(2)});
   qsa('[data-next]').forEach(btn=>btn.addEventListener('click',()=>goStep(Number(btn.dataset.next))));
   qsa('[data-back]').forEach(btn=>btn.addEventListener('click',()=>goStep(Number(btn.dataset.back))));
+  qsa('.shoot-v2-step').forEach(btn=>btn.addEventListener('click',()=>{const n=Number(btn.dataset.stepIndicator);if(n===1||selected)goStep(n)}));
 
   qs('#applyConditions').addEventListener('click',()=>{
     const results=document.getElementById('weatherResults');
-    if(!results||results.hidden){qs('#conditionTitle').textContent='No live conditions loaded yet';qs('#conditionHint').textContent='Open Conditions, search your city or use your location, then return here.';location.hash='conditions';return;}
+    if(!results||results.hidden){qs('#conditionTitle').textContent='No conditions loaded';qs('#conditionHint').textContent='Open Conditions, check your location, then come back.';location.hash='conditions';return;}
     const cloud=parseInt(document.getElementById('wcCloud')?.textContent||'50',10),wind=document.getElementById('wcWind')?.textContent||'—',rain=document.getElementById('wcRain')?.textContent||'—';
     context.light=cloud<25?'bright':'normal';
-    qs('#conditionTitle').textContent='Live conditions applied';qs('#conditionHint').textContent=`Cloud ${cloud}% • Wind ${wind} • Rain ${rain}. The T7 setup above has been refreshed for the available light.`;renderSetup();
+    qs('#conditionTitle').textContent='Current light applied';qs('#conditionHint').textContent=`Cloud ${cloud}% • Wind ${wind} • Rain ${rain}`;renderSetup();
   });
 
-  window.addEventListener('t7-conditions-updated',e=>{const cloud=Number(e.detail?.current?.cloud_cover||50);context.light=cloud<25?'bright':'normal';if(step===2&&selected)renderSetup();});
+  window.addEventListener('t7-conditions-updated',e=>{const cloud=Number(e.detail?.current?.cloud_cover||50);context.light=cloud<25?'bright':'normal';if(step===2&&selected)renderSetup()});
   qs('#reviewShot').addEventListener('click',()=>{try{if(selected)localStorage.setItem('canonReviewGoal',selected)}catch{}location.hash='edit';const file=document.getElementById('fileInput');setTimeout(()=>{try{file?.click()}catch{}},220)});
   qs('#restartShoot').addEventListener('click',()=>{selected=null;paintSubject();goStep(1)});
 
-  if(selected&&profiles[selected]){paintSubject();renderSetup();}
+  if(selected&&profiles[selected]){paintSubject();renderSetup()}
 })();
