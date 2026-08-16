@@ -1,5 +1,5 @@
-const CACHE='canon-t7-studio-v8';
-const CORE=['./','./index.html','./styles.css','./dashboard.css','./app.js','./conditions.js','./editor.js','./shoot-flow.css','./shoot-flow.js','./learn.css','./learn.js','./manifest.webmanifest'];
+const CACHE='canon-t7-studio-v9';
+const CORE=['./','./index.html','./styles.css','./dashboard.css','./app.js','./conditions.js','./editor.js','./shoot-flow.css','./shoot-flow.js','./learn.css','./learn.js','./review-flow.css','./review-flow.js','./manifest.webmanifest'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
 self.addEventListener('fetch',event=>{
