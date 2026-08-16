@@ -1,4 +1,4 @@
-const CACHE='canon-t7-studio-v21';
+const CACHE='canon-t7-studio-v22';
 const CORE=['./','./index.html','./styles.css','./dashboard.css','./dashboard-v2.css','./dashboard-v2.js','./native-ui.css','./native-ui.js','./app.js','./core.js','./t7-engine.js','./conditions.js','./editor.js','./shoot-flow.css','./shoot-v2.css','./shoot-flow.js','./learn.css','./learn.js','./review-flow.css','./review-v2.css','./review-flow.js','./review-v2.js','./reshoot.css','./reshoot.js','./smart-coach.css','./smart-coach.js','./history.css','./history.js','./manifest.webmanifest'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
