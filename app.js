@@ -15,7 +15,8 @@
 
   simplifyNavigation();
   style('./router.css');style('./shoot-flow.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./history.css');style('./native-ui.css');style('./shoot-v2.css');style('./review-v2.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./polish-v2.css');
-  script('./t7-engine.js')
+  script('./store.js')
+    .then(()=>script('./t7-engine.js'))
     .then(()=>script('./core.js'))
     .then(()=>script('./shoot-flow.js'))
     .then(()=>script('./learn.js'))
