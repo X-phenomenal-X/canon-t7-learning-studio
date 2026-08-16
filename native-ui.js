@@ -47,6 +47,30 @@
       <div class="recent-photo-empty"><div><b>No reviewed photo yet</b><p>Upload a Canon JPEG and your latest result will stay here.</p></div><a class="button" href="#review">Upload</a></div>
     </section>`;
 
+  function readJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch{return fallback}}
+  function restoreHomeState(){
+    const controls=readJson('canonSeenControls',{}),presets=readJson('canonSeenPresets',{}),practice=readJson('canonPracticeV5',[]),learned=readJson('canonLearnDone',{});
+    const c=Object.keys(controls).length,p=Object.keys(presets).length,done=practice.filter(Boolean).length,learnCount=Object.values(learned).filter(Boolean).length;
+    const practiceTotal=Math.max(7,practice.length||0);
+    const total=Math.round((Math.min(c,8)/8)*30+(Math.min(p,3)/3)*15+(done/practiceTotal)*25+(learnCount/6)*30);
+    let title='Learn the camera basics',href='#learn';
+    if(learnCount>0&&learnCount<6){title=`Continue ${6-learnCount} core lessons`;href='#learn'}
+    else if(learnCount>=6&&c<4){title='Explore the physical controls';href='#camera'}
+    else if(c>=4&&p<2){title='Practice exposure visually';href='#simulator'}
+    else if(c>=4&&p>=2&&done<3){title='Try a real practice challenge';href='#practice'}
+    else if(c>=4&&p>=2&&done>=3){title='Shoot and review a real photo';href='#shoot'}
+    $('#homePct').textContent=Math.min(100,total)+'%';$('#homeRing').style.setProperty('--pct',Math.min(100,total));$('#homeNextTitle').textContent=title;$('#homeContinueSecondary').href=href;$('#homeContinue').href=href;
+    $('#homeControls').textContent=`${c} / 8 explored`;$('#homeSimulator').textContent=`${p} / 3 tried`;$('#homePractice').textContent=`${done} / ${practiceTotal} complete`;
+
+    const recent=readJson('canonRecentPhoto',null),box=$('.native-latest .recent-photo-empty');
+    if(recent&&box){
+      const date=new Date(recent.time||Date.now()).toLocaleDateString([], {month:'short',day:'numeric'});
+      box.className='recent-photo-card-live';
+      box.innerHTML=`${recent.thumb?`<img src="${recent.thumb}" alt="Latest reviewed photo">`:''}<div class="recent-photo-meta"><b>${(recent.goal||'Photo').replace(/^./,x=>x.toUpperCase())}</b><small>${recent.settings||'Canon T7 review'}</small><small>${date}</small></div><div class="recent-score">${recent.score||'—'}</div>`;
+    }
+  }
+  restoreHomeState();
+
   const routeMap={
     home:{title:'T7 Studio',tab:'home'},shoot:{title:'Guided Shoot',tab:'shoot'},review:{title:'Photo Review',tab:'review'},learn:{title:'Learn',tab:'learn'},edit:{title:'Editor',tab:'edit'},conditions:{title:'Photo Conditions',tab:'shoot'},camera:{title:'Camera Controls',tab:'learn'},simulator:{title:'Exposure Simulator',tab:'learn'},visuals:{title:'Visual Guides',tab:'learn'},practice:{title:'Practice',tab:'learn'}
   };
@@ -73,5 +97,6 @@
   window.addEventListener('hashchange',route);
   const mo=new MutationObserver(()=>{const key=(location.hash||'#home').slice(1);if(['review','learn'].includes(key))route()});
   mo.observe($('main'),{childList:true,subtree:true});
+  window.addEventListener('storage',restoreHomeState);
   route();
 })();
