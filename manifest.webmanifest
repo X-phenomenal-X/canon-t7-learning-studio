@@ -1,0 +1,9 @@
+{
+  "name": "Canon T7 Learning Studio",
+  "short_name": "T7 Studio",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#090d13",
+  "theme_color": "#090d13",
+  "description": "Interactive Canon EOS Rebel T7 photography learning studio."
+}
