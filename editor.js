@@ -5,6 +5,7 @@
   const fileInput=$('#fileInput'), placeholder=$('#placeholder'), compareTag=$('#compareTag');
   let originalImage=null, originalCanvas=document.createElement('canvas'), rotation=0, splitMode=false, splitPct=50;
   const ids=['exposure','highlights','shadows','contrast','warmth','saturation','sharpness'];
+  let coachFile=null,lastExif=null,coachEndpoint='';
 
   const controls=$('#editorControls');
   controls.innerHTML=ids.map(id=>`<div class="editor-control"><label><span>${id[0].toUpperCase()+id.slice(1)}</span><b id="v-${id}">0</b></label><input id="${id}" type="range" min="${id==='sharpness'?0:-100}" max="100" value="0"></div>`).join('');
@@ -70,6 +71,7 @@
 
   fileInput.onchange=e=>{
     const file=e.target.files?.[0]; if(!file)return;
+    coachFile=file;
     const reader=new FileReader();
     reader.onload=ev=>{
       const img=new Image();
@@ -220,13 +222,13 @@
     }
     if(x.exposure){
       if(x.exposure<1/60)tips.push(`${shutterLabel(x.exposure)} is fairly slow handheld; camera shake or subject movement can blur the photo.`);
-      else if(x.exposure>=1/500)tips.push(`${shutterLabel(x.exposure)} is fast enough to freeze a lot of everyday action.`);
-      else tips.push(`${shutterLabel(x.exposure)} is a useful handheld shutter speed for relatively still subjects.`);
+      else if(x.exposure>=1/500)tips.push(`${shutterLabel(x.exposure)} is fast enough to freeze a lot of everyday movement.`);
+      else tips.push(`${shutterLabel(x.exposure)} is a practical handheld shutter speed for many still or gently moving subjects.`);
     }
     if(x.iso){
-      if(x.iso<=400)tips.push(`ISO ${x.iso} should keep image noise relatively low.`);
-      else if(x.iso>=1600)tips.push(`ISO ${x.iso} helps in low light, but expect more visible grain/noise — often preferable to motion blur.`);
-      else tips.push(`ISO ${x.iso} is a reasonable compromise between brightness and image noise.`);
+      if(x.iso<=400)tips.push(`ISO ${x.iso} should keep image noise relatively low in good light.`);
+      else if(x.iso>=3200)tips.push(`ISO ${x.iso} helps in low light but can show more grain and reduce fine detail.`);
+      else tips.push(`ISO ${x.iso} is a reasonable compromise when you need more light without slowing the shutter too much.`);
     }
     return tips.length?tips:['The file contains limited EXIF data, so there is not enough information for a detailed settings explanation.'];
   }
@@ -234,9 +236,10 @@
   fileInput.addEventListener('change',async e=>{
     const file=e.target.files?.[0];if(!file)return;
     const empty=$('#exifEmpty'),results=$('#exifResults');
-    if(empty){empty.hidden=false;empty.innerHTML='<b>Reading settings…</b> Metadata stays on this device.';}
+    if(empty)empty.innerHTML='<b>Reading settings…</b> Metadata stays on this device.';
     try{
       const exif=parseExif(await file.arrayBuffer());
+      lastExif=exif;
       const has=exif.model||exif.exposure||exif.aperture||exif.iso||exif.focal;
       if(!has){
         if(results)results.hidden=true;
@@ -256,4 +259,155 @@
       if(empty){empty.hidden=false;empty.innerHTML='<b>Could not read EXIF metadata.</b> The editor can still open the photo.';}
     }
   });
+
+  // AI Photo Coach. The frontend never contains the OpenAI API key.
+  // It calls a small Supabase Edge Function configured in coach-config.json.
+  if(editSection && editorLayout){
+    const aiStyle=document.createElement('style');
+    aiStyle.textContent=`
+      .coach-panel{margin-bottom:12px;background:linear-gradient(135deg,#141d2a,#101722)}
+      .coach-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+      .coach-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+      .coach-score{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:10px}
+      .coach-score small{display:block;color:var(--muted);font-size:11px}.coach-score b{display:block;font-size:22px;margin-top:3px}
+      .coach-actions{display:grid;grid-template-columns:1fr 180px auto;gap:8px;margin-top:10px}
+      .coach-actions select,.coach-actions input{width:100%;background:var(--panel2);color:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
+      .coach-status{margin-top:9px}
+      .coach-result{margin-top:10px;display:grid;gap:9px}
+      .coach-result-box{background:#151d29;border:1px solid var(--line);border-radius:14px;padding:12px}
+      .coach-result-box h4{margin:0 0 6px}.coach-result-box ul{margin:5px 0 0;padding-left:20px;color:var(--muted)}.coach-result-box li{margin:5px 0}
+      .coach-next{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+      .coach-next div{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px}.coach-next small{display:block;color:var(--muted);font-size:11px}
+      @media(max-width:800px){.coach-grid,.coach-next{grid-template-columns:repeat(2,1fr)}.coach-actions{grid-template-columns:1fr}}
+    `;
+    document.head.appendChild(aiStyle);
+
+    const coach=document.createElement('div');
+    coach.className='card coach-panel';
+    coach.innerHTML=`
+      <div class="coach-head">
+        <div><span class="tag">AI PHOTO COACH</span><h3 style="margin-top:8px">Get feedback on your real photo</h3><p>Upload the photo below, choose what you were trying to shoot, then get practical Canon T7 feedback.</p></div>
+        <span class="privacy-badge">OPENAI • SECURE BACKEND</span>
+      </div>
+      <div class="coach-actions">
+        <select id="coachGoal">
+          <option value="general">General photography</option>
+          <option value="portrait">Portrait</option>
+          <option value="product">Product / tech</option>
+          <option value="landscape">Landscape / architecture</option>
+          <option value="action">Action / moving subject</option>
+          <option value="night">Night / low light</option>
+        </select>
+        <input id="coachPin" type="password" inputmode="numeric" autocomplete="off" placeholder="Private coach PIN">
+        <button id="coachAnalyze" class="button primary">Analyze photo</button>
+      </div>
+      <div id="coachStatus" class="tip coach-status"><b>Setup pending:</b> the secure AI backend has not been connected yet.</div>
+      <div id="coachResults" class="coach-result" hidden>
+        <div class="coach-grid">
+          <div class="coach-score"><small>Focus / sharpness</small><b id="coachFocus">—</b></div>
+          <div class="coach-score"><small>Exposure</small><b id="coachExposure">—</b></div>
+          <div class="coach-score"><small>Composition</small><b id="coachComposition">—</b></div>
+          <div class="coach-score"><small>Lighting</small><b id="coachLighting">—</b></div>
+        </div>
+        <div class="coach-result-box"><h4 id="coachSummary">Coach summary</h4><p id="coachSummaryText"></p></div>
+        <div class="coach-result-box"><h4>What worked</h4><ul id="coachStrengths"></ul></div>
+        <div class="coach-result-box"><h4>Improve on the next attempt</h4><ul id="coachImprove"></ul></div>
+        <div class="coach-result-box"><h4>Try these T7 settings next</h4>
+          <div class="coach-next">
+            <div><small>Mode</small><b id="coachMode">—</b></div>
+            <div><small>Lens</small><b id="coachLens">—</b></div>
+            <div><small>Exposure</small><b id="coachSettings">—</b></div>
+            <div><small>ISO</small><b id="coachIso">—</b></div>
+          </div>
+          <p id="coachNextTip"></p>
+        </div>
+      </div>
+    `;
+    editorLayout.before(coach);
+
+    try{
+      const savedPin=localStorage.getItem('canonCoachPin')||'';
+      if(savedPin)$('#coachPin').value=savedPin;
+    }catch{}
+
+    fetch('./coach-config.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(cfg=>{
+      coachEndpoint=cfg.endpoint||'';
+      const st=$('#coachStatus');
+      if(coachEndpoint){
+        st.innerHTML='<b>Ready.</b> Upload a photo, choose the goal, and tap Analyze photo.';
+      }
+    }).catch(()=>{});
+
+    function fileToCoachImage(file){
+      return new Promise((resolve,reject)=>{
+        const reader=new FileReader();
+        reader.onerror=reject;
+        reader.onload=e=>{
+          const img=new Image();
+          img.onerror=reject;
+          img.onload=()=>{
+            const max=1400,scale=Math.min(1,max/Math.max(img.width,img.height));
+            const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
+            const c=document.createElement('canvas');c.width=w;c.height=h;
+            c.getContext('2d').drawImage(img,0,0,w,h);
+            resolve(c.toDataURL('image/jpeg',.82));
+          };
+          img.src=e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function score(v){const n=Number(v);return Number.isFinite(n)?Math.max(1,Math.min(10,Math.round(n)))+'/10':'—'}
+    function list(el,items){el.innerHTML=(Array.isArray(items)?items:[]).map(x=>`<li>${String(x)}</li>`).join('')}
+    function renderCoach(data){
+      $('#coachResults').hidden=false;
+      $('#coachFocus').textContent=score(data.scores?.focus);
+      $('#coachExposure').textContent=score(data.scores?.exposure);
+      $('#coachComposition').textContent=score(data.scores?.composition);
+      $('#coachLighting').textContent=score(data.scores?.lighting);
+      $('#coachSummary').textContent=data.title||'Coach summary';
+      $('#coachSummaryText').textContent=data.summary||'';
+      list($('#coachStrengths'),data.strengths);
+      list($('#coachImprove'),data.improvements);
+      const next=data.next_shot||{};
+      $('#coachMode').textContent=next.mode||'—';
+      $('#coachLens').textContent=next.lens||'—';
+      $('#coachSettings').textContent=next.exposure||'—';
+      $('#coachIso').textContent=next.iso||'—';
+      $('#coachNextTip').textContent=next.tip||'';
+    }
+
+    $('#coachAnalyze').onclick=async()=>{
+      const st=$('#coachStatus'),pin=$('#coachPin').value.trim();
+      if(!coachEndpoint){st.innerHTML='<b>AI backend is not connected yet.</b> The frontend is installed, but the secure server function still needs deployment.';return}
+      if(!coachFile){st.innerHTML='<b>Upload a photo first.</b> Use the Upload photo control directly below this panel.';return}
+      if(!pin){st.innerHTML='<b>Enter your private coach PIN.</b> This protects your API credits on the public website.';return}
+      try{localStorage.setItem('canonCoachPin',pin)}catch{}
+      const btn=$('#coachAnalyze');btn.disabled=true;btn.textContent='Analyzing…';
+      st.innerHTML='<b>Looking at your photo…</b> Checking visible sharpness, exposure, composition, lighting, and your camera settings.';
+      try{
+        const image=await fileToCoachImage(coachFile);
+        const payload={
+          image,
+          goal:$('#coachGoal').value,
+          exif:lastExif||{},
+          filename:coachFile.name
+        };
+        const res=await fetch(coachEndpoint,{
+          method:'POST',
+          headers:{'Content-Type':'application/json','x-coach-pin':pin},
+          body:JSON.stringify(payload)
+        });
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok)throw new Error(data.error||'Coach request failed');
+        renderCoach(data);
+        st.innerHTML='<b>Analysis complete.</b> Use the next-shot settings as a starting point, not an absolute rule.';
+      }catch(err){
+        st.innerHTML='<b>Could not analyze the photo.</b> '+(err?.message||'Try again.');
+      }finally{
+        btn.disabled=false;btn.textContent='Analyze photo';
+      }
+    };
+  }
 })();
