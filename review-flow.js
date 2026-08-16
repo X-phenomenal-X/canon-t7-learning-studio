@@ -40,7 +40,8 @@
   }
 
   function publish(a,n){
-    const detail={...a,goal,nextSetup:n,thumb:lastThumb,time:Date.now()};
+    const normalizedSetup={...n,exposure:n.exposure||n.settings};
+    const detail={...a,goal,nextSetup:normalizedSetup,thumb:lastThumb,time:Date.now()};
     window.T7ReviewAnalysis=detail;
     const prior=window.T7Store?.getSession('photo')||{};
     window.T7Store?.setSession('photo',{...prior,file:currentFile,thumb:lastThumb,analysis:detail});
