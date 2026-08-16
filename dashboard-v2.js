@@ -22,7 +22,7 @@
       </div>
     </section>
 
-    <a class="v2-progress home-dashboard-card" id="homeContinueSecondary" href="#learn">
+    <a class="v2-progress" id="homeContinueSecondary" href="#learn">
       <div class="v2-progress-ring" id="homeRing" style="--pct:0"><b id="homePct">0%</b></div>
       <div class="v2-progress-copy">
         <small>Next step</small>
@@ -52,16 +52,12 @@
     </section>`;
 
   function route(){
-    const raw=(location.hash||'#home').slice(1);
-    const route=raw||'home';
+    const route=(location.hash||'#home').slice(1)||'home';
     const top=[...document.querySelectorAll('main > section.section, main > section.dashboard-home')];
     top.forEach(el=>{el.classList.add('app-screen-hidden');el.classList.remove('app-screen-active')});
-    const advanced=document.querySelector('.advanced-section');if(advanced)advanced.classList.add('app-screen-hidden');
-    let target=null;
-    if(route==='home')target=document.querySelector('#home');
-    else if(route==='review')target=document.querySelector('#edit');
-    else target=document.getElementById(route);
-    if(!target){target=document.querySelector('#home')}
+    document.querySelector('.advanced-section')?.classList.add('app-screen-hidden');
+    let target=route==='review'?document.querySelector('#edit'):document.getElementById(route);
+    if(!target)target=document.querySelector('#home');
     target.classList.remove('app-screen-hidden');target.classList.add('app-screen-active');
     document.body.dataset.route=route;
     requestAnimationFrame(()=>{
