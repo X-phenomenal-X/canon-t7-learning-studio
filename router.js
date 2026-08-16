@@ -3,7 +3,7 @@
   const routeMap={
     home:{title:'T7 Studio',tab:'home',target:'home'},
     shoot:{title:'Guided Shoot',tab:'shoot',target:'shoot'},
-    review:{title:'Photo Review',tab:'review',target:'edit',anchor:'review'},
+    review:{title:'Photo Review',tab:'review',target:'review'},
     learn:{title:'Learn',tab:'learn',target:'learn'},
     edit:{title:'Editor',tab:'edit',target:'edit'},
     conditions:{title:'Photo Conditions',tab:'shoot',target:'conditions'},
@@ -35,10 +35,7 @@
     $$('.mobile-dock a,.desktop-nav a').forEach(a=>a.classList.remove('active'));
     $$('.mobile-dock a,.desktop-nav a').forEach(a=>{const tab=(a.getAttribute('href')||'').replace('#','');if(tab===cfg.tab)a.classList.add('active')});
 
-    requestAnimationFrame(()=>{
-      if(cfg.anchor){document.getElementById(cfg.anchor)?.scrollIntoView({block:'start'});}
-      else window.scrollTo({top:0,left:0,behavior:'instant'});
-    });
+    requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));
     window.dispatchEvent(new CustomEvent('t7-route-changed',{detail:{route:key,config:cfg}}));
   }
 
