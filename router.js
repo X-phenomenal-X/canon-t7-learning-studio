@@ -42,6 +42,15 @@
     window.dispatchEvent(new CustomEvent('t7-route-changed',{detail:{route:key,config:cfg}}));
   }
 
+  // Transitional workflow bridge: Capture should enter Review, not Editor.
+  document.addEventListener('click',e=>{
+    const reviewButton=e.target.closest?.('#reviewShot');
+    if(!reviewButton)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    location.hash='review';
+    setTimeout(()=>{try{$('#fileInput')?.click()}catch{}},220);
+  },true);
+
   window.T7Router={route,current:currentKey,routes:routeMap};
   window.addEventListener('hashchange',route);
   route();
