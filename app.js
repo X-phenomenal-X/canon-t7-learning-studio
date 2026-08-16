@@ -14,8 +14,9 @@
   function showUpdate(reg){if(document.getElementById('appUpdateBanner'))return;const bar=document.createElement('div');bar.id='appUpdateBanner';bar.style.cssText='position:fixed;left:12px;right:12px;bottom:82px;z-index:9998;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;background:#172131;color:#fff;border:1px solid #35465e;box-shadow:0 12px 30px rgba(0,0,0,.35);font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';bar.innerHTML='<span>New Canon T7 Studio update available.</span><button style="border:0;border-radius:9px;padding:8px 10px;background:#ff5965;color:#fff;font-weight:800">Refresh</button>';bar.querySelector('button').onclick=()=>{reg.waiting?.postMessage({type:'SKIP_WAITING'});setTimeout(()=>location.reload(),300)};document.body.appendChild(bar)}
 
   simplifyNavigation();
-  style('./shoot-flow.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./history.css');
-  script('./t7-engine.js')
+  style('./dashboard-v2.css');style('./shoot-flow.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./history.css');
+  script('./dashboard-v2.js')
+    .then(()=>script('./t7-engine.js'))
     .then(()=>script('./core.js'))
     .then(()=>script('./shoot-flow.js'))
     .then(()=>script('./learn.js'))
