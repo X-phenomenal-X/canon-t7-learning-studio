@@ -20,11 +20,11 @@
     </div>`;
   editorLayout.before(review);
 
-  let lastAnalysis=null,lastThumb='',currentFile=null,goal='general';
+  let lastAnalysis=null,lastSession=null,goal='general';
   const goalEl=$('#reviewGoal');
   try{goal=window.T7Store?.get('reviewGoal',null)||localStorage.getItem('canonReviewGoal')||'general'}catch{}
   goalEl.value=goal;
-  goalEl.onchange=()=>{goal=goalEl.value;window.T7Store?.set('reviewGoal',goal);if(lastAnalysis)render(lastAnalysis)};
+  goalEl.onchange=()=>{goal=goalEl.value;window.T7Store?.set('reviewGoal',goal);if(lastAnalysis)render(lastAnalysis,lastSession)};
 
   function nextSetup(a){
     const m=a.raw,s=a.metrics,detailProblem=s.detail<58&&s.detailConfidence>=55;
@@ -39,18 +39,17 @@
     return{exposure:m.mean<108?12:m.mean>150?-10:0,highlights:m.brightPct>2?-18:-5,shadows:m.darkPct>3?16:6,contrast:s.contrast<60?12:4,warmth:0,saturation:m.sat<.18?8:2,sharpness:confidentSoft?14:6};
   }
 
-  function publish(a,n){
+  function publish(a,n,session){
     const normalizedSetup={...n,exposure:n.exposure||n.settings};
-    const detail={...a,goal,nextSetup:normalizedSetup,thumb:lastThumb,time:Date.now()};
+    const detail={...a,goal,nextSetup:normalizedSetup,thumb:session?.thumb||'',time:session?.createdAt||Date.now()};
     window.T7ReviewAnalysis=detail;
-    const prior=window.T7Store?.getSession('photo')||{};
-    window.T7Store?.setSession('photo',{...prior,file:currentFile,thumb:lastThumb,analysis:detail});
+    window.T7PhotoSession?.patch({analysis:detail});
+    if(!window.T7PhotoSession){const prior=window.T7Store?.getSession('photo')||{};window.T7Store?.setSession('photo',{...prior,analysis:detail})}
     window.dispatchEvent(new CustomEvent('t7-review-updated',{detail}));
   }
 
-  function render(a){
-    lastAnalysis=a;const s=a.metrics,d=a.diagnosis,l=a.labels,r=a.messages,n=nextSetup(a),edit=editSuggestion(a);
-    a.edit=edit;
+  function render(a,session=lastSession){
+    lastAnalysis=a;lastSession=session||lastSession;const s=a.metrics,d=a.diagnosis,l=a.labels,r=a.messages,n=nextSetup(a),edit=editSuggestion(a);a.edit=edit;
     $('#reviewResults').hidden=false;$('#reviewEmpty').hidden=true;
     $('#reviewRing').style.setProperty('--score',s.overall);$('#reviewScore').textContent=s.overall;
     $('#reviewTitle').textContent=d.title;$('#reviewText').textContent=d.summary;$('#reviewConfidence').textContent=`${d.confidenceLabel} • technical signals only`;
@@ -61,12 +60,12 @@
     $('#reviewGood').innerHTML=r.good.map(x=>`<li>${x}</li>`).join('');
     const improve=[...r.improve];if(n.tip&&goal!=='general')improve.push('T7 next step: '+n.tip);$('#reviewImprove').innerHTML=improve.map(x=>`<li>${x}</li>`).join('');
     $('#reviewMode').textContent=n.mode;$('#reviewLens').textContent=n.lens;$('#reviewSettings').textContent=n.settings;$('#reviewIso').textContent=n.iso;
-    saveRecent(a,n);publish(a,n);
+    saveRecent(a,n,session);publish(a,n,session);
   }
 
-  function saveRecent(a,n){
-    if(!lastThumb)return;
-    const payload={thumb:lastThumb,score:a.metrics.overall,status:a.diagnosis.short,diagnosis:a.diagnosis.title,confidence:a.diagnosis.confidenceLabel,goal,settings:`${n.mode} • ${n.lens} • ${n.settings}`,time:Date.now()};
+  function saveRecent(a,n,session){
+    const thumb=session?.thumb||'';if(!thumb)return;
+    const payload={thumb,score:a.metrics.overall,status:a.diagnosis.short,diagnosis:a.diagnosis.title,confidence:a.diagnosis.confidenceLabel,goal,settings:`${n.mode} • ${n.lens} • ${n.settings}`,time:session?.createdAt||Date.now()};
     window.T7Store?.set('recentPhoto',payload);if(!window.T7Store)try{localStorage.setItem('canonRecentPhoto',JSON.stringify(payload))}catch{}
     renderRecent(payload);
   }
@@ -76,17 +75,12 @@
   }
   try{const recent=window.T7Store?.get('recentPhoto',null)||JSON.parse(localStorage.getItem('canonRecentPhoto')||'null');if(recent)renderRecent(recent)}catch{}
 
-  function makeThumb(img){const c=document.createElement('canvas'),max=320,scale=Math.min(1,max/img.width);c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);try{return c.toDataURL('image/jpeg',.62)}catch{return''}}
-
-  file.addEventListener('change',e=>{
-    const f=e.target.files?.[0];if(!f)return;currentFile=f;
-    const reader=new FileReader();reader.onload=ev=>{const img=new Image();img.onload=()=>{
-      lastThumb=makeThumb(img);
-      const max=520,scale=Math.min(1,max/img.width,max/img.height),w=Math.max(40,Math.round(img.width*scale)),h=Math.max(40,Math.round(img.height*scale)),c=document.createElement('canvas');
-      c.width=w;c.height=h;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0,w,h);
-      const analysis=reviewEngine.analyze(cx.getImageData(0,0,w,h),w,h);render(analysis);
-    };img.src=ev.target.result};reader.readAsDataURL(f);
-  });
+  function analyzeSession(session){
+    if(!session?.analysisFrame)return;lastSession=session;
+    const frame=session.analysisFrame(520),analysis=reviewEngine.analyze(frame.imageData,frame.width,frame.height);render(analysis,session);
+  }
+  window.addEventListener('t7-photo-ready',e=>analyzeSession(e.detail));
+  const existing=window.T7PhotoSession?.current?.();if(existing)setTimeout(()=>analyzeSession(existing),0);
 
   $('#applyReviewEdit').onclick=()=>{if(!lastAnalysis?.edit)return;Object.entries(lastAnalysis.edit).forEach(([id,v])=>{const el=$('#'+id);if(el){el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))}});location.hash='edit';setTimeout(()=>$('#canvas')?.scrollIntoView({behavior:'smooth',block:'center'}),150)};
 })();
