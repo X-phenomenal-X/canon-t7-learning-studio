@@ -83,8 +83,8 @@
 
   const observer=new MutationObserver(()=>setTimeout(refresh,60));
   observer.observe(score,{childList:true,characterData:true,subtree:true});
-  const reviewNode=review;
-  observer.observe(reviewNode,{childList:true,subtree:true,characterData:true});
+  ['#smartTitle','#smartWhy','#smartMode','#smartLens','#smartExposure','#smartIso'].forEach(sel=>{const el=$(sel);if(el)observer.observe(el,{childList:true,characterData:true,subtree:true})});
+  $('#reviewGoal')?.addEventListener('change',()=>setTimeout(refresh,80));
   file.addEventListener('change',()=>setTimeout(refresh,800));
   setTimeout(refresh,220);
 })();
