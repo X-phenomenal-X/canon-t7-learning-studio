@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090d13">
+  <meta name="description" content="Interactive Canon EOS Rebel T7 photography learning studio with camera controls, exposure simulator, live photo conditions, shooting guides, practice tracking, and photo editing.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Canon T7 Learning Studio</title>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="Canon T7 Studio home">
+        <span class="brand-icon">📷</span>
+        <span><b>Canon T7 Studio</b><small>Interactive photography trainer</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#camera">Camera</a>
+        <a href="#simulator">Simulator</a>
+        <a href="#visuals">Visuals</a>
+        <a href="#conditions">Conditions</a>
+        <a href="#shoot">Shoot</a>
+        <a href="#practice">Practice</a>
+        <a href="#edit">Edit</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <span class="eyebrow">CANON EOS REBEL T7 + 18–55MM</span>
+        <h1>Learn the camera by using it.</h1>
+        <p>Explore the physical controls, experiment with exposure, check live shooting conditions, follow a simple recipe, practice the skill, and edit your best photo.</p>
+        <div class="path-grid">
+          <a href="#camera"><span>1</span><b>Camera</b><small>Learn the controls</small></a>
+          <a href="#simulator"><span>2</span><b>Simulator</b><small>Try exposure</small></a>
+          <a href="#conditions"><span>3</span><b>Conditions</b><small>Check the light</small></a>
+          <a href="#shoot"><span>4</span><b>Shoot</b><small>Use a recipe</small></a>
+          <a href="#practice"><span>5</span><b>Practice</b><small>Build the skill</small></a>
+          <a href="#edit"><span>6</span><b>Edit</b><small>Finish the photo</small></a>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Learning dashboard">
+        <div class="section-head"><div><h2>Your learning dashboard</h2><p>The app remembers your progress on this device.</p></div></div>
+        <div class="dashboard-grid">
+          <div class="card continue-card">
+            <div class="continue-top">
+              <div>
+                <span class="tag">CONTINUE LEARNING</span>
+                <h3 id="homeNextTitle">Explore the camera</h3>
+                <p id="homeNextDesc">Start with the physical controls you will touch most often.</p>
+              </div>
+              <div class="progress-ring" id="homeRing" style="--pct:0"><strong id="homePct">0%</strong></div>
+            </div>
+            <div class="button-row"><a class="button primary" id="homeContinue" href="#camera">Continue →</a><span class="pill">Saved locally</span></div>
+            <div class="skill-grid">
+              <div><small>Camera controls</small><b id="homeControls">0 / 8 explored</b></div>
+              <div><small>Simulator examples</small><b id="homeSimulator">0 / 3 tried</b></div>
+              <div><small>Practice</small><b id="homePractice">0 / 7 complete</b></div>
+              <div><small>Recommended path</small><b>Camera → Simulator → Shoot → Edit</b></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>30-second cheat sheet</h3>
+            <div class="cheat-grid">
+              <div><small>Portrait</small><b>55mm • Av • f/5.6</b></div>
+              <div><small>Landscape</small><b>18mm • Av • f/8</b></div>
+              <div><small>Action</small><b>Tv • 1/500+</b></div>
+              <div><small>Indoor</small><b>Wide aperture • ISO 800+</b></div>
+            </div>
+            <div class="tip"><b>Beginner rule:</b> learn one variable at a time. You do not need Manual mode yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="camera">
+        <div class="section-head"><div><h2>Interactive camera explorer</h2><p>Drag the camera left or right, or tap a numbered hotspot.</p></div></div>
+        <div class="camera-layout">
+          <div class="camera-stage" id="cameraStage">
+            <div class="camera-3d" id="camera3d">
+              <div class="camera-face camera-front">
+                <div class="camera-grip"></div><div class="camera-flash"></div><div class="camera-lens"><div class="camera-glass"></div></div><div class="camera-af">AF / MF</div>
+                <button class="hotspot hf1" data-control="grip">1</button><button class="hotspot hf2" data-control="lens">2</button><button class="hotspot hf3" data-control="afmf">3</button><button class="hotspot hf4" data-control="flash">4</button>
+              </div>
+              <div class="camera-face camera-back"><div class="camera-lcd"></div><div class="camera-viewfinder"></div><button class="hotspot hb1" data-control="viewfinder">5</button><button class="hotspot hb2" data-control="lcd">6</button></div>
+              <div class="camera-face camera-top"><div class="camera-mode"></div><div class="camera-shutter"></div><button class="hotspot ht1" data-control="modeDial">7</button><button class="hotspot ht2" data-control="shutter">8</button></div>
+              <div class="camera-face camera-left"></div><div class="camera-face camera-right"></div>
+            </div>
+            <div class="stage-hint">↔ Drag to rotate</div>
+          </div>
+          <div class="stack">
+            <div class="button-row"><button class="button view-btn" data-angle="-20">3D</button><button class="button view-btn" data-angle="0">Front</button><button class="button view-btn" data-angle="180">Back</button><button class="button view-btn" data-angle="-90">Side</button></div>
+            <div class="range-row"><span>Rotate</span><input id="rotateSlider" type="range" min="-180" max="180" value="-20"><b id="rotateValue">-20°</b></div>
+            <div class="card inner-card"><span class="tag" id="controlTag">START HERE</span><h3 id="controlTitle">Tap a camera control</h3><p id="controlDesc">The explanation for that physical control will appear here.</p><div class="tip"><b>When to use it:</b><p id="controlWhen">Start with the mode dial, shutter button, and AF/MF switch.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="simulator">
+        <div class="section-head"><div><h2>Exposure simulator</h2><p>Move aperture, shutter speed, and ISO and watch the trade-offs.</p></div></div>
+        <div class="sim-layout">
+          <div class="scene" id="simScene">
+            <div class="sky"></div><div class="mountains" id="simBg"></div><div class="ground"></div>
+            <div class="person ghost" id="motionGhost"><div class="head"></div><div class="body-shape"></div><div class="leg l"></div><div class="leg r"></div></div>
+            <div class="person"><div class="head"></div><div class="body-shape"></div><div class="leg l"></div><div class="leg r"></div></div>
+            <div class="noise" id="noise"></div>
+            <div class="hud"><div><b id="simReadout">f/5.6 • 1/125 • ISO 400</b></div><div>Exposure <b id="meter" class="good">0.0 EV</b></div></div>
+          </div>
+          <div class="stack">
+            <div class="control-box"><label>Aperture <b id="apVal">f/5.6</b></label><input id="apSlider" type="range" min="0" max="5" value="2" step="1"><p>Lower f-number = more light + more background blur.</p></div>
+            <div class="control-box"><label>Shutter <b id="shVal">1/125</b></label><input id="shSlider" type="range" min="0" max="5" value="2" step="1"><p>Faster shutter = less motion blur + less light.</p></div>
+            <div class="control-box"><label>ISO <b id="isoVal">ISO 400</b></label><input id="isoSlider" type="range" min="0" max="6" value="2" step="1"><p>Higher ISO = brighter image + more noise.</p></div>
+            <div class="card inner-card" id="simExplain"><b>Balanced starting point.</b><p>Change one control at a time and watch what happens.</p></div>
+            <div class="button-row"><button class="button sim-preset" data-preset="portrait">Portrait</button><button class="button sim-preset" data-preset="action">Action</button><button class="button sim-preset" data-preset="lowlight">Low light</button><button class="button sim-preset" data-preset="reset">Reset</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="visuals">
+        <div class="section-head"><div><h2>Visual learning lab</h2><p>See focal length and camera-angle changes before trying them in real life.</p></div></div>
+        <div class="visual-grid">
+          <div class="card">
+            <h3>18–55mm visualizer</h3>
+            <svg class="visual-svg" viewBox="0 0 620 300" aria-label="Focal length visualizer"><rect x="20" y="20" width="580" height="255" rx="18" fill="#0b1119" stroke="#334158"/><rect x="55" y="115" width="58" height="42" rx="7" fill="#27364a"/><circle cx="68" cy="136" r="7" fill="#0b1119"/><polygon id="fovCone" points="113,136 555,40 555,270" fill="rgba(113,185,255,.10)" stroke="#71b9ff" stroke-width="3"/><circle cx="455" cy="110" r="24" fill="#ff5965"/><rect x="438" y="134" width="34" height="70" rx="14" fill="#ff5965"/><text id="focalLabelSvg" x="310" y="48" fill="#fff" text-anchor="middle" font-size="22" font-weight="800">35mm</text><text id="focalDescSvg" x="310" y="260" fill="#a9b3c3" text-anchor="middle" font-size="13">Natural everyday framing</text></svg>
+            <div class="readout"><span>Focal length</span><strong id="focalReadout">35mm</strong></div><input class="full-range" id="focalSlider" type="range" min="18" max="55" value="35">
+            <div class="pill-row"><span class="pill">18–24: wide</span><span class="pill">30–40: everyday</span><span class="pill">50–55: portraits/products</span></div>
+          </div>
+          <div class="card">
+            <h3>Camera angle trainer</h3>
+            <svg class="visual-svg" viewBox="0 0 620 300"><rect x="20" y="20" width="580" height="255" rx="18" fill="#0b1119" stroke="#334158"/><circle cx="390" cy="112" r="28" fill="#ff956a"/><rect x="367" y="140" width="46" height="86" rx="18" fill="#ff956a"/><g id="angleCamera" transform="translate(95,120)"><rect width="62" height="40" rx="8" fill="#29384d"/><circle cx="14" cy="20" r="8" fill="#0b1119"/></g><line id="angleLine" x1="157" y1="140" x2="356" y2="128" stroke="#71b9ff" stroke-width="5" stroke-dasharray="9 8"/><text id="angleTitleSvg" x="310" y="50" fill="#fff" text-anchor="middle" font-size="22" font-weight="800">Eye Level</text><text id="angleDescSvg" x="310" y="260" fill="#a9b3c3" text-anchor="middle" font-size="13">Neutral, natural, and easy to use</text></svg>
+            <div class="button-row"><button class="button angle-btn active" data-angle-type="eye">Eye level</button><button class="button angle-btn" data-angle-type="high">High</button><button class="button angle-btn" data-angle-type="low">Low</button><button class="button angle-btn" data-angle-type="overhead">Overhead</button></div>
+            <div class="tip" id="angleNote"><b>Eye level:</b> the safest starting angle for people.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="conditions">
+        <div class="section-head"><div><h2>Photo conditions</h2><p>Live weather + sunlight guidance using Open‑Meteo.</p></div><span class="live-badge">LIVE API</span></div>
+        <div class="card">
+          <div class="search-row"><input id="photoLocation" type="text" placeholder="Search a city, e.g. Toronto"><button class="button primary" id="searchPhotoWeather">Check conditions</button></div>
+          <div class="button-row"><button class="button" id="usePhotoLocation">📍 Use my location</button><span class="pill" id="photoWeatherStatus">Choose a location.</span></div>
+          <div id="weatherResults" hidden>
+            <div class="weather-grid"><div><small>Temperature</small><b id="wcTemp">—</b></div><div><small>Cloud cover</small><b id="wcCloud">—</b></div><div><small>Wind</small><b id="wcWind">—</b></div><div><small>Rain chance</small><b id="wcRain">—</b></div><div><small>Sunrise</small><b id="wcRise">—</b></div><div><small>Sunset</small><b id="wcSet">—</b></div></div>
+            <div class="golden-grid"><div><small>Morning golden hour</small><b id="goldenAM">—</b><p>Approx. first hour after sunrise.</p></div><div><small>Evening golden hour</small><b id="goldenPM">—</b><p>Approx. last hour before sunset.</p></div></div>
+            <div class="advice"><h3 id="photoAdviceTitle">Photography outlook</h3><p id="photoAdviceText">—</p><div class="pill-row" id="photoSettingsPills"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="shoot">
+        <div class="section-head"><div><h2>Shooting recipes</h2><p>Choose the subject and start with a simple setup.</p></div></div>
+        <div class="choice-grid">
+          <button class="choice shot-choice" data-shot="portrait">🙂<b>Portrait</b><small>People + blur</small></button><button class="choice shot-choice" data-shot="product">⌚<b>Product</b><small>Tech + detail</small></button><button class="choice shot-choice" data-shot="landscape">🏞️<b>Landscape</b><small>Wide scenes</small></button><button class="choice shot-choice" data-shot="action">🏃<b>Action</b><small>Movement</small></button><button class="choice shot-choice" data-shot="indoor">🏠<b>Indoor</b><small>Lower light</small></button><button class="choice shot-choice" data-shot="night">🌙<b>Night</b><small>Tripod work</small></button>
+        </div>
+        <div class="two-grid"><div class="card"><h3 id="shotTitle">Portrait guide</h3><div id="shotSummary"></div></div><div class="card"><h3>Do this</h3><div id="shotSettings"></div><div class="tip" id="shotTip"></div></div></div>
+        <div class="card setup-finder"><h3>Quick setup finder</h3><div class="finder-grid"><label>Subject<select id="finderSubject"><option value="portrait">Person / portrait</option><option value="product">Product / object</option><option value="landscape">Landscape / building</option><option value="action">Moving subject</option></select></label><label>Light<select id="finderLight"><option value="bright">Bright / outdoor</option><option value="normal">Normal daylight</option><option value="indoor">Indoor / dim</option><option value="night">Night</option></select></label><label>Movement<select id="finderMotion"><option value="still">Still</option><option value="slow">Walking / slow</option><option value="fast">Fast</option></select></label></div><div class="result-grid"><div><small>Mode</small><b id="findMode">Av</b></div><div><small>Lens</small><b id="findLens">55mm</b></div><div><small>Exposure</small><b id="findExposure">f/5.6</b></div><div><small>ISO</small><b id="findIso">100–400</b></div></div><p id="findTip">Focus on the nearest eye and keep the background clean.</p></div>
+      </section>
+
+      <section class="section" id="practice">
+        <div class="section-head"><div><h2>7-day practice</h2><p>Short exercises that make the settings obvious.</p></div><b id="progText">0% complete</b></div>
+        <div class="progress-cards"><div><small>Practice</small><b id="practicePct">0%</b></div><div><small>Controls</small><b id="controlsSeen">0/8</b></div><div><small>Simulator</small><b id="simSeen">0/3</b></div><div><small>Next</small><b id="nextStep">Explore camera</b></div></div>
+        <div class="two-grid practice-grid"><div class="card"><div class="progress-track"><div id="prog"></div></div><label class="task"><input type="checkbox"> <span><b>Day 1 — 18mm vs 55mm</b><small>Shoot the same subject at both ends.</small></span></label><label class="task"><input type="checkbox"> <span><b>Day 2 — Aperture</b><small>Compare wide open with f/11.</small></span></label><label class="task"><input type="checkbox"> <span><b>Day 3 — Movement</b><small>Compare 1/30, 1/250, 1/1000.</small></span></label><label class="task"><input type="checkbox"> <span><b>Day 4 — Angle</b><small>Eye, high, and low.</small></span></label><label class="task"><input type="checkbox"> <span><b>Day 5 — Light</b><small>Front light vs side light.</small></span></label><label class="task"><input type="checkbox"> <span><b>Day 6 — Best shot</b><small>Create one image worth sharing.</small></span></label><label class="task"><input type="checkbox"> <span><b>Day 7 — Edit</b><small>Finish your best photo.</small></span></label></div><div class="card"><h3>Review every photo</h3><div class="pill-row"><span class="pill">Is the subject sharp?</span><span class="pill">Is the background clean?</span><span class="pill">Is the angle helping?</span><span class="pill">Is the light flattering?</span></div></div></div>
+      </section>
+
+      <section class="section" id="edit">
+        <div class="section-head"><div><h2>Photo editor</h2><p>Upload a JPEG or PNG. Your original stays unchanged.</p></div></div>
+        <div class="editor-layout card">
+          <div class="stack">
+            <label class="upload"><input id="fileInput" type="file" accept="image/*"><b>📁 Upload photo</b><small>JPEG or PNG</small></label>
+            <div id="editorControls"></div>
+            <div class="button-row"><button class="button" id="rotateLeft">↺ Rotate</button><button class="button" id="rotateRight">↻ Rotate</button><button class="button" id="resetBtn">Reset</button></div>
+            <div class="button-row"><button class="button" id="compareBtn">Hold to compare</button><button class="button primary" id="downloadBtn">Export JPEG</button></div>
+            <button class="button" id="splitBtn">Split before / after</button><div class="split-control" id="splitControl" hidden><span>Before</span><input id="splitSlider" type="range" min="10" max="90" value="50"><span>After</span></div>
+          </div>
+          <div class="canvas-wrap"><div id="compareTag" class="compare-tag">ORIGINAL</div><div class="placeholder" id="placeholder"><div>🖼️</div><h3>No photo loaded</h3><p>Upload one to begin.</p></div><canvas id="canvas"></canvas></div>
+        </div>
+        <div class="two-grid"><div class="card"><h3>Quick recipes</h3><div class="recipe-grid"><button class="recipe" data-recipe="portrait"><b>Portrait Clean</b><small>Warm + gentle</small></button><button class="recipe" data-recipe="product"><b>Product Crisp</b><small>Contrast + detail</small></button><button class="recipe" data-recipe="landscape"><b>Landscape Pop</b><small>Colour + clarity</small></button><button class="recipe" data-recipe="night"><b>Night Clean</b><small>Lift dark areas</small></button></div></div><div class="card"><h3>Editing order</h3><div class="pill-row"><span class="pill">1. Exposure</span><span class="pill">2. Highlights</span><span class="pill">3. Shadows</span><span class="pill">4. Contrast</span><span class="pill">5. Colour</span><span class="pill">6. Sharpness</span></div></div></div>
+      </section>
+    </main>
+
+    <footer>Canon T7 Learning Studio V5 • live photo conditions • mobile-first • GitHub Pages ready</footer>
+  </div>
+
+  <nav class="mobile-dock" aria-label="Mobile navigation"><a href="#home"><span>🏠</span>Home</a><a href="#camera"><span>📷</span>Camera</a><a href="#simulator"><span>🧪</span>Sim</a><a href="#conditions"><span>☀️</span>Light</a><a href="#shoot"><span>📸</span>Shoot</a><a href="#edit"><span>✨</span>Edit</a></nav>
+
+  <script src="./app.js" defer></script>
+  <script src="./conditions.js" defer></script>
+  <script src="./editor.js" defer></script>
+</body>
+</html>
