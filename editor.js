@@ -2,8 +2,9 @@
   const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
   const canvas=$('#canvas');if(!canvas)return;
   const ctx=canvas.getContext('2d',{willReadFrequently:true}),placeholder=$('#placeholder'),compareTag=$('#compareTag');
-  let originalImage=null,originalCanvas=document.createElement('canvas'),rotation=0,splitMode=false,splitPct=50,lastSession=null;
+  let sourceCanvas=document.createElement('canvas'),previewBase=document.createElement('canvas'),rotation=0,splitMode=false,splitPct=50,lastSession=null,renderQueued=false,showOriginal=false;
   const ids=['exposure','highlights','shadows','contrast','warmth','saturation','sharpness'];
+  const PREVIEW_MAX=900;
 
   const controls=$('#editorControls');
   controls.innerHTML=ids.map(id=>`<div class="editor-control"><label><span>${id[0].toUpperCase()+id.slice(1)}</span><b id="v-${id}">0</b></label><input id="${id}" type="range" min="${id==='sharpness'?0:-100}" max="100" value="0"></div>`).join('');
@@ -24,22 +25,33 @@
     return data;
   }
   function sharpen(data,amt){if(amt<=0)return data;const w=data.width,h=data.height,src=new Uint8ClampedArray(data.data),out=data.data,a=amt/100*.5;for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const idx=(y*w+x)*4;for(let c=0;c<3;c++){const center=src[idx+c],neighbors=src[idx-4+c]+src[idx+4+c]+src[idx-w*4+c]+src[idx+w*4+c];out[idx+c]=Math.max(0,Math.min(255,center*(1+4*a)-neighbors*a))}}return data}
-  function drawBase(){const swap=Math.abs(rotation)%180===90;canvas.width=swap?originalCanvas.height:originalCanvas.width;canvas.height=swap?originalCanvas.width:originalCanvas.height;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(rotation*Math.PI/180);ctx.drawImage(originalCanvas,-originalCanvas.width/2,-originalCanvas.height/2);ctx.restore()}
-  function editedCopy(){drawBase();let d=ctx.getImageData(0,0,canvas.width,canvas.height),v=vals();d=adjust(d,v);d=sharpen(d,v.sharpness);ctx.putImageData(d,0,0);const c=document.createElement('canvas');c.width=canvas.width;c.height=canvas.height;c.getContext('2d').drawImage(canvas,0,0);return c}
-  function render(original=false){if(!originalImage)return;if(original){drawBase();compareTag.style.display='block';return}compareTag.style.display='none';if(splitMode){const edited=editedCopy();drawBase();const cut=Math.round(canvas.width*splitPct/100);ctx.save();ctx.beginPath();ctx.rect(cut,0,canvas.width-cut,canvas.height);ctx.clip();ctx.drawImage(edited,0,0);ctx.restore();ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillRect(cut-1,0,2,canvas.height);return}editedCopy()}
-  function reset(){ids.forEach(id=>$('#'+id).value=0);labels();rotation=0;render(false)}
-  ids.forEach(id=>$('#'+id).oninput=()=>{labels();render(false)});
 
-  $('#rotateLeft').onclick=()=>{if(originalImage){rotation=(rotation-90)%360;render(false)}};
-  $('#rotateRight').onclick=()=>{if(originalImage){rotation=(rotation+90)%360;render(false)}};
+  function scaledCopy(src,max=PREVIEW_MAX){const scale=Math.min(1,max/Math.max(src.width,src.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(src.width*scale));c.height=Math.max(1,Math.round(src.height*scale));c.getContext('2d').drawImage(src,0,0,c.width,c.height);return c}
+  function drawRotated(src,target,angle){const swap=Math.abs(angle)%180===90;target.width=swap?src.height:src.width;target.height=swap?src.width:src.height;const c=target.getContext('2d',{willReadFrequently:true});c.clearRect(0,0,target.width,target.height);c.save();c.translate(target.width/2,target.height/2);c.rotate(angle*Math.PI/180);c.drawImage(src,-src.width/2,-src.height/2);c.restore();return c}
+  function process(src,target,v,angle){const c=drawRotated(src,target,angle),d=c.getImageData(0,0,target.width,target.height);adjust(d,v);sharpen(d,v.sharpness);c.putImageData(d,0,0);return target}
+  function drawPreview(){
+    if(!previewBase.width)return;
+    compareTag.style.display=showOriginal?'block':'none';
+    if(showOriginal){drawRotated(previewBase,canvas,rotation);return}
+    const edited=document.createElement('canvas');process(previewBase,edited,vals(),rotation);
+    if(splitMode){drawRotated(previewBase,canvas,rotation);const cut=Math.round(canvas.width*splitPct/100);ctx.save();ctx.beginPath();ctx.rect(cut,0,canvas.width-cut,canvas.height);ctx.clip();ctx.drawImage(edited,0,0);ctx.restore();ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillRect(cut-1,0,2,canvas.height);return}
+    canvas.width=edited.width;canvas.height=edited.height;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(edited,0,0);
+  }
+  function scheduleRender(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;drawPreview()})}
+  function render(original=false){showOriginal=original;scheduleRender()}
+  function reset(){ids.forEach(id=>$('#'+id).value=0);labels();rotation=0;showOriginal=false;scheduleRender()}
+  ids.forEach(id=>$('#'+id).oninput=()=>{labels();showOriginal=false;scheduleRender()});
+
+  $('#rotateLeft').onclick=()=>{if(sourceCanvas.width){rotation=(rotation-90)%360;scheduleRender()}};
+  $('#rotateRight').onclick=()=>{if(sourceCanvas.width){rotation=(rotation+90)%360;scheduleRender()}};
   $('#resetBtn').onclick=reset;
   const cmp=$('#compareBtn');cmp.addEventListener('pointerdown',()=>render(true));['pointerup','pointerleave','pointercancel'].forEach(ev=>cmp.addEventListener(ev,()=>render(false)));
-  $('#downloadBtn').onclick=()=>{if(!originalImage)return;const prev=splitMode;splitMode=false;render(false);const a=document.createElement('a');a.download='canon-t7-edited.jpg';a.href=canvas.toDataURL('image/jpeg',.94);a.click();splitMode=prev;render(false)};
-  $('#splitBtn').onclick=()=>{splitMode=!splitMode;$('#splitControl').hidden=!splitMode;$('#splitBtn').textContent=splitMode?'Exit split compare':'Split before / after';render(false)};
-  $('#splitSlider').oninput=e=>{splitPct=Number(e.target.value);render(false)};
+  $('#downloadBtn').onclick=()=>{if(!sourceCanvas.width)return;const out=renderExportCanvas(),a=document.createElement('a');a.download='canon-t7-edited.jpg';a.href=out.toDataURL('image/jpeg',.94);a.click()};
+  $('#splitBtn').onclick=()=>{splitMode=!splitMode;$('#splitControl').hidden=!splitMode;$('#splitBtn').textContent=splitMode?'Exit split compare':'Split before / after';scheduleRender()};
+  $('#splitSlider').oninput=e=>{splitPct=Number(e.target.value);scheduleRender()};
 
   const recipes={portrait:{exposure:10,highlights:-5,shadows:8,contrast:4,warmth:6,saturation:5,sharpness:8},product:{exposure:6,highlights:-3,shadows:4,contrast:12,warmth:0,saturation:6,sharpness:20},landscape:{exposure:0,highlights:-5,shadows:10,contrast:15,warmth:2,saturation:12,sharpness:15},night:{exposure:8,highlights:-10,shadows:12,contrast:5,warmth:0,saturation:0,sharpness:10}};
-  $$('.recipe').forEach(b=>b.onclick=()=>{const r=recipes[b.dataset.recipe];Object.entries(r).forEach(([k,v])=>$('#'+k).value=v);labels();render(false)});labels();
+  $$('.recipe').forEach(b=>b.onclick=()=>{const r=recipes[b.dataset.recipe];Object.entries(r).forEach(([k,v])=>$('#'+k).value=v);labels();scheduleRender()});labels();
 
   const editSection=$('#edit'),editorLayout=editSection?.querySelector('.editor-layout');
   if(editorLayout){
@@ -51,9 +63,10 @@
   function photoAdvice(x){const tips=[];if(x.focal){if(x.focal>=50)tips.push(`${Math.round(x.focal)}mm gives a tighter, more flattering perspective — useful for portraits and product detail.`);else if(x.focal<=24)tips.push(`${Math.round(x.focal)}mm is wide, so it captures more environment but can exaggerate subjects near the edges.`);else tips.push(`${Math.round(x.focal)}mm is a natural general-purpose focal length for everyday scenes.`)}if(x.aperture){if(x.aperture<=4)tips.push(`f/${Number(x.aperture).toFixed(1)} lets in plenty of light and helps separate the subject from the background.`);else if(x.aperture>=8)tips.push(`f/${Number(x.aperture).toFixed(1)} gives more depth of field, which suits landscapes and scenes where more should stay sharp.`);else tips.push(`f/${Number(x.aperture).toFixed(1)} is a balanced aperture for general shooting.`)}if(x.exposure){if(x.exposure<1/60)tips.push(`${shutterLabel(x.exposure)} is fairly slow handheld; camera shake or subject movement can blur the photo.`);else if(x.exposure>=1/500)tips.push(`${shutterLabel(x.exposure)} is fast enough to freeze a lot of everyday movement.`);else tips.push(`${shutterLabel(x.exposure)} is a practical handheld shutter speed for many still or gently moving subjects.`)}if(x.iso){if(x.iso<=400)tips.push(`ISO ${x.iso} should keep image noise relatively low in good light.`);else if(x.iso>=3200)tips.push(`ISO ${x.iso} helps in low light but can show more grain and reduce fine detail.`);else tips.push(`ISO ${x.iso} is a reasonable compromise when you need more light without slowing the shutter too much.`)}return tips.length?tips:['The file contains limited EXIF data, so there is not enough information for a detailed settings explanation.']}
   function renderExif(exif={}){const empty=$('#exifEmpty'),results=$('#exifResults'),has=exif.model||exif.exposure||exif.aperture||exif.iso||exif.focal;if(!has){if(results)results.hidden=true;if(empty){empty.hidden=false;empty.innerHTML='<b>No camera EXIF found.</b> Try an original JPEG straight from the Canon. Screenshots, social-media downloads, PNGs, and some edited exports often remove metadata.'}return}if(empty)empty.hidden=true;if(results)results.hidden=false;$('#exifCamera').textContent=[exif.make,exif.model].filter(Boolean).join(' ')||'Camera data found';$('#exifFocal').textContent=(exif.lens?exif.lens+' • ':'')+(exif.focal?`${Math.round(exif.focal*10)/10}mm`:'—');$('#exifAperture').textContent=exif.aperture?`f/${Math.round(exif.aperture*10)/10}`:'—';$('#exifShutter').textContent=shutterLabel(exif.exposure);$('#exifIso').textContent=exif.iso?`ISO ${exif.iso}`:'—';$('#exifDate').textContent=exif.date||'—';$('#exifAdvice').innerHTML=photoAdvice(exif).map(t=>`<li>${t}</li>`).join('')}
 
-  function loadSession(session){if(!session?.workingCanvas)return;lastSession=session;originalImage=session.image||session.workingCanvas;rotation=0;originalCanvas.width=session.workingCanvas.width;originalCanvas.height=session.workingCanvas.height;originalCanvas.getContext('2d').drawImage(session.workingCanvas,0,0);ids.forEach(id=>$('#'+id).value=0);labels();if(placeholder)placeholder.hidden=true;renderExif(session.exif||{});render(false);window.dispatchEvent(new CustomEvent('t7-editor-photo-ready',{detail:session}))}
+  function renderExportCanvas(){if(!sourceCanvas.width)return document.createElement('canvas');const out=document.createElement('canvas');return process(sourceCanvas,out,vals(),rotation)}
+  function loadSession(session){if(!session?.workingCanvas)return;lastSession=session;rotation=0;sourceCanvas.width=session.workingCanvas.width;sourceCanvas.height=session.workingCanvas.height;sourceCanvas.getContext('2d').drawImage(session.workingCanvas,0,0);previewBase=scaledCopy(sourceCanvas);ids.forEach(id=>$('#'+id).value=0);labels();if(placeholder)placeholder.hidden=true;renderExif(session.exif||{});showOriginal=false;scheduleRender();window.dispatchEvent(new CustomEvent('t7-editor-photo-ready',{detail:session}))}
   window.addEventListener('t7-photo-ready',e=>loadSession(e.detail));
   window.addEventListener('t7-photo-error',()=>{const empty=$('#exifEmpty');if(empty){empty.hidden=false;empty.innerHTML='<b>Could not open this photo.</b> Try another JPEG.'}});
   const existing=window.T7PhotoSession?.current?.();if(existing)setTimeout(()=>loadSession(existing),0);
-  window.T7EditorCore={loadSession,render,reset,current:()=>lastSession};
+  window.T7EditorCore={loadSession,render,reset,current:()=>lastSession,renderExportCanvas,rotation:()=>rotation,version:'2.0.0'};
 })();
