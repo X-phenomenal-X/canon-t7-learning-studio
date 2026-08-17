@@ -1,6 +1,6 @@
 (()=>{
   const fileInput=document.getElementById('fileInput');
-  let current=null,loadToken=0,objectUrl='';
+  let current=null,loadToken=0;
 
   function textAt(view,start,count){let s='';for(let i=0;i<count;i++){const c=view.getUint8(start+i);if(c===0)break;s+=String.fromCharCode(c)}return s.trim()}
   function parseExif(buffer){
@@ -32,24 +32,24 @@
   function patch(values){if(!current)return null;Object.assign(current,values||{});window.T7Store?.setSession('photo',current);window.dispatchEvent(new CustomEvent('t7-photo-session-updated',{detail:current}));return current}
 
   async function loadFile(file){
-    if(!file)return null;const token=++loadToken;
+    if(!file)return null;const token=++loadToken;let url='';
     window.dispatchEvent(new CustomEvent('t7-photo-loading',{detail:{file}}));
     try{
-      const nextUrl=URL.createObjectURL(file),img=await decode(nextUrl);if(token!==loadToken){URL.revokeObjectURL(nextUrl);return null}
+      url=URL.createObjectURL(file);const img=await decode(url);if(token!==loadToken){URL.revokeObjectURL(url);return null}
+      const width=img.naturalWidth||img.width,height=img.naturalHeight||img.height,workingCanvas=makeCanvas(img,1600,1200),thumb=makeThumb(img);
       let exif={};try{exif=parseExif(await file.arrayBuffer())}catch{}
-      if(token!==loadToken){URL.revokeObjectURL(nextUrl);return null}
-      if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=nextUrl;
-      const workingCanvas=makeCanvas(img,1600,1200);
-      current={id:`${Date.now()}-${file.size}-${file.lastModified||0}`,file,name:file.name,type:file.type,size:file.size,lastModified:file.lastModified||0,image:img,width:img.naturalWidth||img.width,height:img.naturalHeight||img.height,workingCanvas,thumb:makeThumb(img),exif,analysis:null,createdAt:Date.now()};
-      current.analysisFrame=max=>analysisFrame(current,max);
+      if(token!==loadToken){URL.revokeObjectURL(url);return null}
+      URL.revokeObjectURL(url);url='';
+      const session={id:`${Date.now()}-${file.size}-${file.lastModified||0}`,file,name:file.name,type:file.type,size:file.size,lastModified:file.lastModified||0,width,height,workingCanvas,thumb,exif,analysis:null,createdAt:Date.now()};
+      session.analysisFrame=max=>analysisFrame(session,max);current=session;
       window.T7Store?.setSession('photo',current);
       window.dispatchEvent(new CustomEvent('t7-photo-ready',{detail:current}));
       return current;
-    }catch(error){window.dispatchEvent(new CustomEvent('t7-photo-error',{detail:{file,error}}));throw error}
+    }catch(error){if(url)URL.revokeObjectURL(url);window.dispatchEvent(new CustomEvent('t7-photo-error',{detail:{file,error}}));throw error}
   }
-  function clear(){loadToken++;if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=''}current=null;window.T7Store?.setSession('photo',null);window.dispatchEvent(new CustomEvent('t7-photo-cleared'))}
+  function clear(){loadToken++;current=null;window.T7Store?.setSession('photo',null);window.dispatchEvent(new CustomEvent('t7-photo-cleared'))}
 
-  window.T7PhotoSession={loadFile,current:()=>current,patch,clear,parseExif,version:'1.0.0'};
+  window.T7PhotoSession={loadFile,current:()=>current,patch,clear,parseExif,version:'1.1.0'};
   if(fileInput)fileInput.addEventListener('change',e=>{const file=e.target.files?.[0];if(file)loadFile(file).catch(console.warn)});
   window.dispatchEvent(new CustomEvent('t7-photo-session-ready',{detail:window.T7PhotoSession}));
 })();
