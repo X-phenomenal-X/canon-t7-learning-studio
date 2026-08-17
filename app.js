@@ -39,6 +39,7 @@
     .then(()=>script('./shoot-finish.js'))
     .then(()=>script('./learn.js'))
     .then(()=>script('./review-flow.js'))
+    .then(()=>script('./review-scene-sync.js'))
     .then(()=>{
       const review=document.querySelector('.review-flow'),edit=document.getElementById('edit');
       if(review&&edit?.parentNode){review.id='review';review.classList.add('section');edit.parentNode.insertBefore(review,edit)}
