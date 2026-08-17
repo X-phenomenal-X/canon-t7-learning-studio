@@ -3,25 +3,30 @@
   const section=$('#conditions'),legacyCard=section?.querySelector(':scope > .card'),input=$('#photoLocation'),searchBtn=$('#searchPhotoWeather'),locateBtn=$('#usePhotoLocation'),status=$('#photoWeatherStatus'),weatherResults=$('#weatherResults');
   if(!section||!legacyCard||!input||!searchBtn||!locateBtn||!status||!weatherResults||section.querySelector('.conditions-v2'))return;
 
-  let selected='portrait',latest=null;
+  let selected='portrait',latest=null,latestThumb='';
   try{const saved=localStorage.getItem('canonConditionsGoal')||localStorage.getItem('canonT7LastShootSubject');if(['portrait','product','landscape','action'].includes(saved))selected=saved}catch{}
 
   const shell=document.createElement('div');shell.className='conditions-v2';
   shell.innerHTML=`
-    <div class="cv2-intro"><div><small>PHOTO CONDITIONS</small><h1>Should you shoot right now?</h1><p>Check the light, choose what you want to photograph, and get a practical Canon T7 starting setup.</p></div><span class="cv2-live">LIVE • FREE</span></div>
+    <div class="cv2-intro"><div><small>PHOTO CONDITIONS</small><h1>Read the light before you shoot.</h1><p>See where you are in the day, choose the subject, and get a practical Canon T7 starting setup.</p></div><span class="cv2-live">LIVE • FREE</span></div>
     <div class="cv2-search" id="cv2Search"></div>
     <div class="cv2-status" id="cv2Status"></div>
     <div class="cv2-goals" aria-label="Shooting goal">
-      <button class="cv2-goal" data-cv2-goal="portrait">Portrait</button>
-      <button class="cv2-goal" data-cv2-goal="product">Product / car</button>
-      <button class="cv2-goal" data-cv2-goal="landscape">Landscape</button>
-      <button class="cv2-goal" data-cv2-goal="action">Action</button>
+      <button class="cv2-goal" data-cv2-goal="portrait"><i></i><span>Portrait</span></button>
+      <button class="cv2-goal" data-cv2-goal="product"><i></i><span>Product / car</span></button>
+      <button class="cv2-goal" data-cv2-goal="landscape"><i></i><span>Landscape</span></button>
+      <button class="cv2-goal" data-cv2-goal="action"><i></i><span>Action</span></button>
     </div>
-    <div class="cv2-empty" id="cv2Empty"><div><div class="cv2-empty-mark"></div><h2>Check the light before you head out.</h2><p>Search a city or use your location. T7 Studio will translate the weather into a shooting decision instead of dumping weather data on you.</p></div></div>
+    <div class="cv2-empty" id="cv2Empty"><div><div class="cv2-empty-mark"></div><h2>Check the light before you head out.</h2><p>Search a city or use your location. T7 Studio turns weather and daylight into a photography decision instead of a weather report.</p></div></div>
     <div class="cv2-result" id="cv2Result" hidden>
-      <div class="cv2-hero">
+      <div class="cv2-hero" id="cv2Hero">
         <div class="cv2-verdict"><span class="cv2-verdict-badge" id="cv2Badge">GOOD TO SHOOT</span><h2 id="cv2Title">Good light right now</h2><p id="cv2Reason">—</p></div>
         <div class="cv2-score" id="cv2ScoreRing" style="--cv2-score:0"><b id="cv2Score">—</b><small>LIGHT</small></div>
+      </div>
+      <div class="cv2-light-timeline">
+        <div class="cv2-light-head"><div><small>DAYLIGHT</small><b id="cv2LightLabel">Where you are in the light</b></div><span id="cv2LightPhase">—</span></div>
+        <div class="cv2-light-track"><div class="cv2-golden-start"></div><div class="cv2-golden-end"></div><i id="cv2NowMarker"></i></div>
+        <div class="cv2-light-times"><span><small>SUNRISE</small><b id="cv2Sunrise">—</b></span><span class="now"><small>NOW</small><b id="cv2NowTime">—</b></span><span><small>SUNSET</small><b id="cv2Sunset">—</b></span></div>
       </div>
       <div class="cv2-window"><div class="cv2-window-main"><small>BEST WINDOW</small><h3 id="cv2Window">—</h3><p id="cv2WindowWhy">—</p></div><div class="cv2-watch"><small>WATCH OUT FOR</small><b id="cv2Watch">—</b><p id="cv2WatchWhy">—</p></div></div>
       <div class="cv2-setup"><div class="cv2-setup-head"><b>Your T7 starting setup</b><span id="cv2GoalLabel">Portrait</span></div><div class="cv2-settings"><div class="cv2-setting"><small>MODE</small><b id="cv2Mode">—</b></div><div class="cv2-setting"><small>LENS</small><b id="cv2Lens">—</b></div><div class="cv2-setting"><small>EXPOSURE</small><b id="cv2Exposure">—</b></div><div class="cv2-setting"><small>ISO</small><b id="cv2Iso">—</b></div></div><div class="cv2-setup-tip"><i>1</i><p id="cv2Tip">—</p></div><div class="cv2-actions"><a class="primary" href="#shoot" id="cv2Shoot">Start guided shoot</a><a class="secondary" href="#learn">Learn the setting</a></div></div>
@@ -29,17 +34,21 @@
     </div>`;
   legacyCard.before(shell);
 
-  const searchHost=$('#cv2Search'),legacySearch=legacyCard.querySelector('.search-row'),legacyButtons=legacyCard.querySelector('.button-row');
+  const searchHost=$('#cv2Search');
   input.placeholder='Search city';searchBtn.textContent='Check';locateBtn.textContent='Use my location';searchBtn.classList.add('cv2-check');locateBtn.classList.add('cv2-locate');
   searchHost.append(input,searchBtn,locateBtn);
-  $('#cv2Status').append(status);
-  $('#cv2LegacyWeather').append(weatherResults);
-  legacyCard.style.display='none';
+  $('#cv2Status').append(status);$('#cv2LegacyWeather').append(weatherResults);legacyCard.style.display='none';
 
   function fmt(iso){if(!iso)return'—';const d=new Date(iso);return isNaN(d)?String(iso).split('T')[1]||iso:d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}
   function shiftDate(iso,min){if(!iso)return null;const d=new Date(iso);if(isNaN(d))return null;d.setMinutes(d.getMinutes()+min);return d}
   function timeRange(a,b){if(!a||!b)return'Golden hour';return `${a.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})} – ${b.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`}
   function goalName(){return selected==='product'?'Product / car':selected[0].toUpperCase()+selected.slice(1)}
+  function clamp(v,a=0,b=100){return Math.max(a,Math.min(b,v))}
+
+  async function loadVisualPhoto(){
+    try{const items=await window.T7History?.all?.()||[];latestThumb=items.find(x=>x?.thumb)?.thumb||'';const hero=$('#cv2Hero');if(hero){hero.classList.toggle('has-photo',!!latestThumb);if(latestThumb)hero.style.setProperty('--cv2-photo',`url("${latestThumb}")`)}}
+    catch{}
+  }
 
   function grade(cur,daily){
     const cloud=Number(cur.cloud_cover||0),wind=Number(cur.wind_speed_10m||0),rain=Number((daily.precipitation_probability_max||[0])[0]||0),code=Number(cur.weather_code||0);
@@ -51,13 +60,9 @@
     }else if(selected==='action'){
       if(cloud<70){score+=6;reasons.push('there should be enough light for a fast shutter')}else{score-=7;reasons.push('you may need more ISO to keep a fast shutter')}
     }
-    if(rain>=60){score-=22;reasons.push('rain is likely')}
-    else if(rain>=30){score-=7;reasons.push('there is some rain risk')}
-    if(wind>=35){score-=17;reasons.push('wind is strong')}
-    else if(wind>=22){score-=7;reasons.push('wind may move hair, leaves, or clothing')}
-    if(code>=95)score-=30;
-    score=Math.max(20,Math.min(98,Math.round(score)));
-    return{score,cloud,wind,rain,reasons,code};
+    if(rain>=60){score-=22;reasons.push('rain is likely')}else if(rain>=30){score-=7;reasons.push('there is some rain risk')}
+    if(wind>=35){score-=17;reasons.push('wind is strong')}else if(wind>=22){score-=7;reasons.push('wind may move hair, leaves, or clothing')}
+    if(code>=95)score-=30;score=clamp(Math.round(score),20,98);return{score,cloud,wind,rain,reasons,code};
   }
 
   function timeAdvice(daily,g){
@@ -67,6 +72,14 @@
     if(pmStart&&now<pmStart)return g.score>=82?{label:'Now, or '+timeRange(pmStart,setD),why:'Conditions are already good. Golden hour later should give you warmer, lower-angle light.'}:{label:timeRange(pmStart,setD),why:'The evening golden-hour window should be easier than the current light.'};
     if(g.score>=75)return{label:'Now — next 45–60 min',why:'The current light is usable. Concentrate on subject position and background instead of waiting for perfect weather.'};
     return{label:'Next golden-hour window',why:'Current conditions are usable with care, but lower-angle light will make the scene easier to control.'};
+  }
+
+  function lightTimeline(daily){
+    const rise=(daily.sunrise||[])[0],set=(daily.sunset||[])[0],r=rise?new Date(rise):null,s=set?new Date(set):null,n=new Date();
+    $('#cv2Sunrise').textContent=fmt(rise);$('#cv2Sunset').textContent=fmt(set);$('#cv2NowTime').textContent=n.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+    let pct=50,phase='Daylight';
+    if(r&&!isNaN(r)&&s&&!isNaN(s)&&s>r){pct=clamp(((n-r)/(s-r))*100);const fromRise=(n-r)/60000,toSet=(s-n)/60000;if(n<r)phase='Before sunrise';else if(n>s)phase='After sunset';else if(fromRise<=60)phase='Morning golden hour';else if(toSet<=60)phase='Evening golden hour';else if(pct>38&&pct<62)phase='Higher sun';else phase='Directional daylight'}
+    $('#cv2NowMarker').style.left=`${pct}%`;$('#cv2LightPhase').textContent=phase;$('#cv2LightLabel').textContent=phase.includes('golden')?'Excellent angle and warmth':'See how close you are to golden hour';
   }
 
   function watch(g){
@@ -85,15 +98,14 @@
     if(selected==='portrait'&&g.cloud<20){rec.iso='100';rec.tip='Use open shade if possible. Keep one AF point on the nearest eye and protect bright skin highlights.'}
     if(selected==='product'&&g.cloud<20){rec.iso='100';rec.tip='Avoid direct overhead sun on glossy surfaces. Use shade or soft side light to control reflections.'}
     if(selected==='landscape'&&g.cloud<20){rec.iso='100';rec.exposure='f/8';rec.tip='Keep ISO low, watch the bright sky, and consider a small negative exposure compensation if highlights are clipping.'}
-    if(selected==='action'){rec.mode='Tv';rec.exposure='1/1000';if(g.cloud>=70)rec.iso='Auto / 800–3200';}
+    if(selected==='action'){rec.mode='Tv';rec.exposure='1/1000';if(g.cloud>=70)rec.iso='Auto / 800–3200'}
     return rec;
   }
 
   function paint(detail){
     latest=detail;const cur=detail.current||{},daily=detail.daily||{},g=grade(cur,daily),t=timeAdvice(daily,g),w=watch(g),rec=recommendation(g);
-    $('#cv2Empty').hidden=true;$('#cv2Result').hidden=false;
-    const badge=$('#cv2Badge');badge.className='cv2-verdict-badge';
-    let title,badgeText;
+    $('#cv2Empty').hidden=true;$('#cv2Result').hidden=false;lightTimeline(daily);
+    const badge=$('#cv2Badge');badge.className='cv2-verdict-badge';let title,badgeText;
     if(g.score>=82){title=selected==='portrait'&&g.cloud>=45?'Excellent soft light':'Good conditions right now';badgeText='GO SHOOT'}
     else if(g.score>=62){title='Shootable with one adjustment';badgeText='GOOD WITH CARE';badge.classList.add('caution')}
     else{title='Better light is worth waiting for';badgeText='WAIT IF YOU CAN';badge.classList.add('wait')}
@@ -106,5 +118,5 @@
   }
 
   $$('.cv2-goal').forEach(b=>{b.classList.toggle('active',b.dataset.cv2Goal===selected);b.onclick=()=>{selected=b.dataset.cv2Goal;$$('.cv2-goal').forEach(x=>x.classList.toggle('active',x===b));try{localStorage.setItem('canonConditionsGoal',selected)}catch{}if(latest)paint(latest)}});
-  window.addEventListener('t7-conditions-updated',e=>paint(e.detail||{}));
+  window.addEventListener('t7-conditions-updated',e=>paint(e.detail||{}));window.addEventListener('t7-history-updated',loadVisualPhoto);window.addEventListener('t7-route-changed',e=>{if(e.detail?.route==='conditions')loadVisualPhoto()});setTimeout(loadVisualPhoto,180);
 })();
