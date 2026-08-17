@@ -1,9 +1,19 @@
 {
-  "name": "Canon T7 Learning Studio",
+  "name": "T7 Studio — Canon Rebel T7 Companion",
   "short_name": "T7 Studio",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#090d13",
-  "theme_color": "#090d13",
-  "description": "Interactive Canon EOS Rebel T7 photography trainer with live photo conditions, exposure simulation, shooting guides, practice tracking, and photo editing."
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#07090d",
+  "theme_color": "#07090d",
+  "description": "A private, local-first Canon EOS Rebel T7 photography companion for guided shooting, visual learning, photo review, reshoots, conditions, progress tracking, and editing.",
+  "icons": [
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
