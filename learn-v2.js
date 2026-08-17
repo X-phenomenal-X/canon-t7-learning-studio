@@ -1,7 +1,8 @@
 (()=>{
-  const $=s=>document.querySelector(s);
+  const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const learn=$('#learn'),titleEl=$('#lessonTitle'),stage=$('#lessonStage');
   if(!learn||!titleEl||!stage||learn.querySelector('.learn-v2-head'))return;
+  let latestThumb='';
 
   const configs={
     'Aperture':{
@@ -48,6 +49,21 @@
     }
   };
 
+  const photoModes={
+    'Aperture':[['photo-ap-wide','f/5.6','Background separation'],['photo-ap-deep','f/11','More depth']],
+    'Shutter Speed':[['photo-motion-slow','1/30','Motion blur risk'],['photo-motion-fast','1/1000','Freeze movement']],
+    'ISO':[['photo-iso-low','ISO 100','Cleaner signal'],['photo-iso-high','ISO 3200','More noise']],
+    '18–55mm Lens':[['photo-focal-wide','18mm','More environment'],['photo-focal-tight','55mm','Tighter framing']],
+    'Focus':[['photo-focus-bad','Missed','Soft important detail'],['photo-focus-good','Single point','Choose what is sharp']],
+    'Composition':[['photo-thirds','Thirds','Intentional placement'],['photo-clean','Clean frame','Remove distractions']]
+  };
+
+  function photoDemo(title,fallback){
+    if(!latestThumb||!photoModes[title])return fallback;
+    const pairs=photoModes[title];
+    return `<div class="lv2-demo-grid lv2-photo-demo">${pairs.map((p,i)=>`<div class="lv2-shot lv2-photo-shot ${p[0]}"><img src="${esc(latestThumb)}" alt="Your reviewed photo used for a ${esc(title)} visual example"><div class="lv2-photo-overlay"></div>${title==='Focus'&&i===1?'<div class="lv2-photo-focus-box"></div>':''}${title==='Composition'&&i===0?'<div class="lv2-photo-thirds-grid"></div>':''}<div class="lv2-shot-label"><b>${esc(p[1])}</b><small>${esc(p[2])}</small></div></div>`).join('')}</div><div class="lv2-own-photo">Using your latest reviewed Canon photo</div>`;
+  }
+
   const head=document.createElement('div');
   head.className='learn-v2-head';
   head.innerHTML=`<div><span class="lv2-eyebrow">T7 FOUNDATIONS</span><h1>Learn by seeing it.</h1><p>One photography idea at a time. See the difference, try it on your camera, then move on.</p></div><div class="lv2-progress"><b id="lv2Progress">0 / 6</b><small>learned</small></div>`;
@@ -61,13 +77,19 @@
   function render(){
     const title=titleEl.textContent.trim(),cfg=configs[title];if(!cfg)return;
     const kicker=$('#lessonKicker')?.textContent||'';
-    stage.innerHTML=`<div class="lv2-card"><div class="lv2-hero"><div class="lv2-hero-copy"><span class="lv2-lesson-no">${kicker}</span><h2>${title}</h2><p>${cfg.desc}</p></div><div class="lv2-demo">${cfg.demo}</div></div><div class="lv2-body"><div class="lv2-takeaways">${cfg.take.map(x=>`<div class="lv2-takeaway"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div><div class="lv2-challenge"><div class="lv2-challenge-icon">✓</div><div><small>TRY IT ON YOUR CAMERA</small><b>Mini challenge</b><p>${cfg.challenge}</p></div><a href="${cfg.href}">${cfg.cta}</a></div><div class="lv2-t7"><div class="lv2-t7-mark">T7</div><div><small>YOUR CAMERA</small><b>${cfg.t7}</b></div></div></div></div>`;
+    stage.innerHTML=`<div class="lv2-card"><div class="lv2-hero"><div class="lv2-hero-copy"><span class="lv2-lesson-no">${kicker}</span><h2>${title}</h2><p>${cfg.desc}</p></div><div class="lv2-demo">${photoDemo(title,cfg.demo)}</div></div><div class="lv2-body"><div class="lv2-takeaways">${cfg.take.map(x=>`<div class="lv2-takeaway"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div><div class="lv2-challenge"><div class="lv2-challenge-icon">✓</div><div><small>TRY IT ON YOUR CAMERA</small><b>Mini challenge</b><p>${cfg.challenge}</p></div><a href="${cfg.href}">${cfg.cta}</a></div><div class="lv2-t7"><div class="lv2-t7-mark">T7</div><div><small>YOUR CAMERA</small><b>${cfg.t7}</b></div></div></div></div>`;
     const p=$('#lv2Progress');if(p)p.textContent=currentProgress();
+  }
+
+  async function loadLatestPhoto(){
+    try{const items=await window.T7History?.all?.()||[];const next=items.find(x=>x?.thumb)?.thumb||'';if(next!==latestThumb){latestThumb=next;render()}}catch{}
   }
 
   let scheduled=false;
   function schedule(){if(scheduled)return;scheduled=true;setTimeout(()=>{scheduled=false;render()},0)}
   new MutationObserver(schedule).observe(titleEl,{childList:true,characterData:true,subtree:true});
   const progress=$('#learnHeaderProgress');if(progress)new MutationObserver(()=>{const p=$('#lv2Progress');if(p)p.textContent=currentProgress()}).observe(progress,{childList:true,characterData:true,subtree:true});
-  schedule();
+  window.addEventListener('t7-history-updated',loadLatestPhoto);
+  window.addEventListener('t7-route-changed',e=>{if(e.detail?.route==='learn')loadLatestPhoto()});
+  schedule();setTimeout(loadLatestPhoto,160);
 })();
