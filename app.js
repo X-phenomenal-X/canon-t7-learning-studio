@@ -62,6 +62,7 @@
     .then(()=>script('./premium-shell.js'))
     .then(()=>script('./onboarding.js'))
     .then(()=>script('./qa-polish.js'))
+    .then(()=>script('./workflow-qa.js'))
     .catch(showLoadError);
 
   if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
