@@ -4,7 +4,7 @@
   const editorLayout=edit.querySelector('.editor-layout');if(!editorLayout)return;
 
   const review=document.createElement('div');review.className='review-flow';review.innerHTML=`
-    <div class="review-head"><div><span class="tag">REVIEW</span><h3>Understand the photo before you edit it</h3><p>This is a technical capture check—not an artistic rating. The app looks for exposure, focus/detail signals, tonal clipping, and contrast locally on your device.</p></div><span class="review-badge">PRIVATE • ON-DEVICE</span></div>
+    <div class="review-head"><div><span class="tag">REVIEW</span><h3>Understand the photo before you edit it</h3><p>This is a technical capture check—not an artistic rating. The app looks for exposure, focus/detail signals, tonal clipping, contrast, and the Canon settings stored in the photo.</p></div><span class="review-badge">PRIVATE • ON-DEVICE</span></div>
     <div class="review-goal"><label for="reviewGoal">What were you trying to shoot?</label><select id="reviewGoal"><option value="general">General</option><option value="portrait">Portrait</option><option value="product">Product / tech</option><option value="landscape">Landscape / building</option><option value="action">Action / movement</option><option value="indoor">Indoor</option><option value="night">Night / low light</option></select></div>
     <div class="review-scene-context" id="reviewSceneContext" hidden><div><small>SCENE ASSIST ACTIVE</small><b id="reviewSceneName">—</b></div><button type="button" id="reviewSceneClear">Use normal review</button></div>
     <div id="reviewEmpty" class="review-empty"><div class="review-empty-mark">01</div><div><b>Upload a photo below</b><p>After the image opens, your technical diagnosis will appear here automatically.</p></div></div>
@@ -15,6 +15,11 @@
         <div class="review-metric"><small>Focus / detail</small><b id="reviewDetail">—</b><span id="reviewDetailNote"></span></div>
         <div class="review-metric"><small>Contrast</small><b id="reviewContrast">—</b><span id="reviewContrastNote"></span></div>
         <div class="review-metric"><small>Tone range</small><b id="reviewClip">—</b><span id="reviewClipNote"></span></div>
+      </div>
+      <div class="review-exif-audit" id="reviewExifAudit">
+        <div class="review-exif-head"><div><small>ACTUAL CAMERA SETTINGS</small><h4>What your T7 actually used</h4></div><span id="reviewExifModel">EXIF</span></div>
+        <div class="review-exif-values" id="reviewExifValues"></div>
+        <div class="review-exif-verdict" id="reviewExifVerdict"></div>
       </div>
       <div class="review-insights"><div class="review-box"><h4>What looks technically good</h4><ul id="reviewGood"></ul></div><div class="review-box"><h4>Improve next time</h4><ul id="reviewImprove"></ul></div></div>
       <div class="review-next"><h4 style="margin:0">Try this on your next T7 shot</h4><div class="review-next-grid"><div><small>Mode</small><b id="reviewMode">Av</b></div><div><small>Lens</small><b id="reviewLens">35mm</b></div><div><small>Exposure</small><b id="reviewSettings">f/5.6</b></div><div><small>ISO</small><b id="reviewIso">100–400</b></div></div><div class="review-actions"><button id="applyReviewEdit" class="button primary">Apply suggested edit</button><a class="button" href="#shoot">Try guided shoot</a><a class="button" href="#learn">Learn this skill</a></div></div>
@@ -52,9 +57,44 @@
     return{exposure:m.mean<108?12:m.mean>150?-10:0,highlights:m.brightPct>2?-18:-5,shadows:m.darkPct>3?16:6,contrast:s.contrast<60?12:4,warmth:0,saturation:m.sat<.18?8:2,sharpness:confidentSoft?14:6};
   }
 
-  function publish(a,n,session){
+  const finite=v=>Number.isFinite(Number(v))&&Number(v)>0;
+  function shutterText(sec){const v=Number(sec);if(!finite(v))return'—';if(v>=1)return`${Math.round(v*10)/10}s`;const den=Math.max(1,Math.round(1/v));return`1/${den}s`}
+  function apertureText(v){return finite(v)?`f/${Math.round(Number(v)*10)/10}`:'—'}
+  function focalText(v){return finite(v)?`${Math.round(Number(v))}mm`:'—'}
+  function isoText(v){return finite(v)?`ISO ${Math.round(Number(v))}`:'—'}
+  function exifTarget(){
+    const key=scene||goal;
+    const rules={
+      portrait:{minShutter:1/125,focal:[45,55],isoMax:1600},product:{minShutter:1/100,focal:[35,55],isoMax:1600},landscape:{isoMax:800},action:{minShutter:1/500,focal:[30,55]},indoor:{minShutter:1/100,isoMax:3200},night:{tripod:true,isoMax:800},
+      tvDark:{minShutter:1/60,maxShutter:1/125,focal:[20,40],iso:[200,1600]},brightWindow:{minShutter:1/125,focal:[45,55],isoMax:1600},blackCarSun:{minShutter:1/125,focal:[30,55],isoMax:400},indoorProduct:{minShutter:1/100,focal:[40,55],isoMax:1600},movingCar:{minShutter:1/800,focal:[30,55]},nightHandheld:{minShutter:1/60,focal:[18,40],iso:[800,6400]}
+    };
+    return rules[key]||{};
+  }
+  function settingAudit(session,a){
+    const exif=session?.exif||{},shutter=Number(exif.exposure),aperture=Number(exif.aperture),iso=Number(exif.iso),focal=Number(exif.focal),has=finite(shutter)||finite(aperture)||finite(iso)||finite(focal),target=exifTarget(),notes=[];
+    if(!has)return{has:false,exif,items:[],summary:'No usable camera settings were found in this file. Try reviewing the original Canon JPEG; some messaging apps and editors remove EXIF data.',level:'neutral'};
+    if(finite(shutter)&&target.minShutter&&shutter>target.minShutter*1.08){const want=shutterText(target.minShutter);notes.push({type:'warn',text:`You shot at ${shutterText(shutter)}. For this situation, start around ${want} or faster to reduce blur.`})}
+    if(finite(shutter)&&target.maxShutter&&shutter<target.maxShutter*.92)notes.push({type:'note',text:`Your ${shutterText(shutter)} shutter is faster than the usual starting range for this screen scene. If you see dark bands, test around 1/60–1/125s.`});
+    if(finite(focal)&&target.focal&&(focal<target.focal[0]-2||focal>target.focal[1]+2))notes.push({type:'note',text:`You used ${focalText(focal)}. A useful starting range here is about ${target.focal[0]}–${target.focal[1]}mm on the kit lens.`});
+    if(finite(iso)&&target.isoMax&&iso>target.isoMax)notes.push({type:'note',text:`${isoText(iso)} is higher than needed for the usual starting setup. If shutter speed is already safe, lower ISO for a cleaner file.`});
+    if(finite(iso)&&target.iso&&(iso<target.iso[0]||iso>target.iso[1]))notes.push({type:'note',text:`You used ${isoText(iso)}. A practical range for this scene is roughly ISO ${target.iso[0]}–${target.iso[1]}, adjusted for the actual light.`});
+    if(target.tripod&&finite(iso)&&iso>800)notes.push({type:'note',text:`For a stable tripod night shot, ${isoText(iso)} is relatively high. Try ISO 100–400 and allow a longer exposure.`});
+    const detailWeak=a?.metrics?.detail<58&&a?.metrics?.detailConfidence>=55;
+    if(detailWeak&&finite(shutter)&&!notes.some(n=>/shot at/.test(n.text))&&!target.tripod)notes.unshift({type:'warn',text:`Detail looks weak. Your shutter was ${shutterText(shutter)}; if the subject or camera moved, try the next faster shutter step and raise ISO only as needed.`});
+    if(!notes.length)notes.push({type:'good',text:'Nothing in the stored shutter, ISO or focal-length values stands out as an obvious technical mismatch. Keep the settings and work on light, focus placement or composition next.'});
+    return{has:true,exif,items:[['SHUTTER',shutterText(shutter)],['APERTURE',apertureText(aperture)],['ISO',isoText(iso).replace('ISO ', '')],['FOCAL LENGTH',focalText(focal)]],notes,summary:notes[0].text,level:notes[0].type||'neutral'};
+  }
+  function renderExifAudit(a,session){
+    const audit=settingAudit(session,a),model=[audit.exif?.make,audit.exif?.model].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();$('#reviewExifModel').textContent=model||'EXIF';
+    if(!audit.has){$('#reviewExifValues').innerHTML='<div class="review-exif-missing">Settings unavailable</div>';$('#reviewExifVerdict').className='review-exif-verdict neutral';$('#reviewExifVerdict').innerHTML=`<b>Try the original Canon JPEG</b><span>${audit.summary}</span>`;return audit}
+    $('#reviewExifValues').innerHTML=audit.items.map(([label,value])=>`<div><small>${label}</small><b>${value}</b></div>`).join('');
+    $('#reviewExifVerdict').className=`review-exif-verdict ${audit.level}`;$('#reviewExifVerdict').innerHTML=`<b>${audit.level==='good'?'Settings look sensible':audit.level==='warn'?'Setting worth changing':'Setting check'}</b><span>${audit.summary}</span>`;
+    return audit;
+  }
+
+  function publish(a,n,session,audit){
     const normalizedSetup={...n,exposure:n.exposure||n.settings};
-    const detail={...a,goal,scene:scene||null,nextSetup:normalizedSetup,thumb:session?.thumb||'',time:session?.createdAt||Date.now()};
+    const detail={...a,goal,scene:scene||null,nextSetup:normalizedSetup,settingsAudit:audit||null,thumb:session?.thumb||'',time:session?.createdAt||Date.now()};
     window.T7ReviewAnalysis=detail;
     window.T7PhotoSession?.patch({analysis:detail});
     if(!window.T7PhotoSession){const prior=window.T7Store?.getSession('photo')||{};window.T7Store?.setSession('photo',{...prior,analysis:detail})}
@@ -70,10 +110,11 @@
     $('#reviewDetail').textContent=s.detail+'/100';$('#reviewDetailNote').textContent=l.detail+(s.detailConfidence<70?` • ${s.detailConfidence}% confidence`:'');
     $('#reviewContrast').textContent=s.contrast+'/100';$('#reviewContrastNote').textContent=l.contrast;
     $('#reviewClip').textContent=s.clipping+'/100';$('#reviewClipNote').textContent=l.clipping;
+    const audit=renderExifAudit(a,session);
     $('#reviewGood').innerHTML=r.good.map(x=>`<li>${x}</li>`).join('');
-    const improve=[...r.improve];if(n.tip&&(goal!=='general'||scene))improve.push((scene?'Scene next step: ':'T7 next step: ')+n.tip);$('#reviewImprove').innerHTML=improve.map(x=>`<li>${x}</li>`).join('');
+    const improve=[...r.improve];if(audit?.has&&audit.level==='warn')improve.unshift('Camera setting: '+audit.summary);if(n.tip&&(goal!=='general'||scene))improve.push((scene?'Scene next step: ':'T7 next step: ')+n.tip);$('#reviewImprove').innerHTML=improve.map(x=>`<li>${x}</li>`).join('');
     $('#reviewMode').textContent=n.mode;$('#reviewLens').textContent=n.lens;$('#reviewSettings').textContent=n.settings;$('#reviewIso').textContent=n.iso;
-    saveRecent(a,n,session);publish(a,n,session);
+    saveRecent(a,n,session);publish(a,n,session,audit);
   }
 
   function saveRecent(a,n,session){
