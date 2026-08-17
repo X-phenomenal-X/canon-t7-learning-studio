@@ -6,6 +6,7 @@
   const review=document.createElement('div');review.className='review-flow';review.innerHTML=`
     <div class="review-head"><div><span class="tag">REVIEW</span><h3>Understand the photo before you edit it</h3><p>This is a technical capture check—not an artistic rating. The app looks for exposure, focus/detail signals, tonal clipping, and contrast locally on your device.</p></div><span class="review-badge">PRIVATE • ON-DEVICE</span></div>
     <div class="review-goal"><label for="reviewGoal">What were you trying to shoot?</label><select id="reviewGoal"><option value="general">General</option><option value="portrait">Portrait</option><option value="product">Product / tech</option><option value="landscape">Landscape / building</option><option value="action">Action / movement</option><option value="indoor">Indoor</option><option value="night">Night / low light</option></select></div>
+    <div class="review-scene-context" id="reviewSceneContext" hidden><div><small>SCENE ASSIST ACTIVE</small><b id="reviewSceneName">—</b></div><button type="button" id="reviewSceneClear">Use normal review</button></div>
     <div id="reviewEmpty" class="review-empty"><div class="review-empty-mark">01</div><div><b>Upload a photo below</b><p>After the image opens, your technical diagnosis will appear here automatically.</p></div></div>
     <div id="reviewResults" class="review-results" hidden>
       <div class="review-scoreline"><div class="review-score-ring" id="reviewRing" style="--score:0"><b id="reviewScore">—</b><small>INTERNAL</small></div><div class="review-summary"><h4 id="reviewTitle">Technical review</h4><p id="reviewText">—</p><small id="reviewConfidence"></small></div></div>
@@ -20,16 +21,28 @@
     </div>`;
   editorLayout.before(review);
 
-  let lastAnalysis=null,lastSession=null,goal='general';
-  const goalEl=$('#reviewGoal');
-  try{goal=window.T7Store?.get('reviewGoal',null)||localStorage.getItem('canonReviewGoal')||'general'}catch{}
+  let lastAnalysis=null,lastSession=null,goal='general',scene=null;
+  const goalEl=$('#reviewGoal'),sceneBox=$('#reviewSceneContext');
+  try{goal=window.T7Store?.get('reviewGoal',null)||localStorage.getItem('canonReviewGoal')||'general';scene=window.T7Store?.get('reviewScene',null)||null}catch{}
   goalEl.value=goal;
-  goalEl.onchange=()=>{goal=goalEl.value;window.T7Store?.set('reviewGoal',goal);if(lastAnalysis)render(lastAnalysis,lastSession)};
+  function syncScene(){const d=scene&&window.T7Engine?.scenes?.[scene];sceneBox.hidden=!d;if(d)$('#reviewSceneName').textContent=d.name}
+  goalEl.onchange=()=>{goal=goalEl.value;scene=null;window.T7Store?.set('reviewGoal',goal);window.T7Store?.set('reviewScene',null);syncScene();if(lastAnalysis)render(lastAnalysis,lastSession)};
+  $('#reviewSceneClear').onclick=()=>{scene=null;window.T7Store?.set('reviewScene',null);syncScene();if(lastAnalysis)render(lastAnalysis,lastSession)};
+  syncScene();
 
   function nextSetup(a){
-    const m=a.raw,s=a.metrics,detailProblem=s.detail<58&&s.detailConfidence>=55;
+    const m=a.raw,s=a.metrics,detailProblem=s.detail<58&&s.detailConfidence>=55,engine=window.T7Engine;
+    if(scene&&engine?.scenes?.[scene]){
+      const rec=engine.recommendScene(scene)||null;if(rec){
+        let tip=rec.tip;
+        if(m.mean>155&&engine.sceneFix(scene,'tooBright'))tip=engine.sceneFix(scene,'tooBright');
+        else if(m.mean<92&&engine.sceneFix(scene,'tooDark'))tip=engine.sceneFix(scene,'tooDark');
+        else if(detailProblem&&engine.sceneFix(scene,'blurry'))tip=engine.sceneFix(scene,'blurry');
+        return{mode:rec.mode,lens:rec.lens,settings:rec.exposure,iso:rec.iso,afMode:rec.afMode,drive:rec.drive,tip,scene:rec.name};
+      }
+    }
     if(goal==='general')return{mode:'Av',lens:'35mm',settings:detailProblem?'f/5.6 • keep 1/250+ if possible':'f/5.6',iso:m.mean<100?'400–800':'100–400'};
-    const rec=window.T7Engine?.reviewNext(goal,{mean:m.mean,detailScore:detailProblem?s.detail:75})||window.T7Engine?.recommend(goal)||null;
+    const rec=engine?.reviewNext(goal,{mean:m.mean,detailScore:detailProblem?s.detail:75})||engine?.recommend(goal)||null;
     if(!rec)return{mode:'Av',lens:'35mm',settings:'f/5.6',iso:'100–400'};
     return{mode:rec.mode,lens:rec.lens,settings:rec.exposure,iso:rec.iso,afMode:rec.afMode,drive:rec.drive,tip:rec.tip};
   }
@@ -41,7 +54,7 @@
 
   function publish(a,n,session){
     const normalizedSetup={...n,exposure:n.exposure||n.settings};
-    const detail={...a,goal,nextSetup:normalizedSetup,thumb:session?.thumb||'',time:session?.createdAt||Date.now()};
+    const detail={...a,goal,scene:scene||null,nextSetup:normalizedSetup,thumb:session?.thumb||'',time:session?.createdAt||Date.now()};
     window.T7ReviewAnalysis=detail;
     window.T7PhotoSession?.patch({analysis:detail});
     if(!window.T7PhotoSession){const prior=window.T7Store?.getSession('photo')||{};window.T7Store?.setSession('photo',{...prior,analysis:detail})}
@@ -58,20 +71,21 @@
     $('#reviewContrast').textContent=s.contrast+'/100';$('#reviewContrastNote').textContent=l.contrast;
     $('#reviewClip').textContent=s.clipping+'/100';$('#reviewClipNote').textContent=l.clipping;
     $('#reviewGood').innerHTML=r.good.map(x=>`<li>${x}</li>`).join('');
-    const improve=[...r.improve];if(n.tip&&goal!=='general')improve.push('T7 next step: '+n.tip);$('#reviewImprove').innerHTML=improve.map(x=>`<li>${x}</li>`).join('');
+    const improve=[...r.improve];if(n.tip&&(goal!=='general'||scene))improve.push((scene?'Scene next step: ':'T7 next step: ')+n.tip);$('#reviewImprove').innerHTML=improve.map(x=>`<li>${x}</li>`).join('');
     $('#reviewMode').textContent=n.mode;$('#reviewLens').textContent=n.lens;$('#reviewSettings').textContent=n.settings;$('#reviewIso').textContent=n.iso;
     saveRecent(a,n,session);publish(a,n,session);
   }
 
   function saveRecent(a,n,session){
     const thumb=session?.thumb||'';if(!thumb)return;
-    const payload={thumb,score:a.metrics.overall,status:a.diagnosis.short,diagnosis:a.diagnosis.title,confidence:a.diagnosis.confidenceLabel,goal,settings:`${n.mode} • ${n.lens} • ${n.settings}`,time:session?.createdAt||Date.now()};
+    const sceneName=scene&&window.T7Engine?.scenes?.[scene]?.name;
+    const payload={thumb,score:a.metrics.overall,status:a.diagnosis.short,diagnosis:a.diagnosis.title,confidence:a.diagnosis.confidenceLabel,goal,scene:scene||null,sceneName:sceneName||'',settings:`${n.mode} • ${n.lens} • ${n.settings}`,time:session?.createdAt||Date.now()};
     window.T7Store?.set('recentPhoto',payload);if(!window.T7Store)try{localStorage.setItem('canonRecentPhoto',JSON.stringify(payload))}catch{}
     renderRecent(payload);
   }
   function renderRecent(p){
     const box=document.querySelector('.recent-photo-empty');if(!box||!p)return;box.className='recent-photo-card-live';const date=new Date(p.time).toLocaleDateString([], {month:'short',day:'numeric'});
-    box.innerHTML=`<img src="${p.thumb}" alt="Recent uploaded photo"><div class="recent-photo-meta"><b>${p.goal[0].toUpperCase()+p.goal.slice(1)} review</b><small>${p.settings}</small><small>${date}</small></div><div class="recent-score">${p.status||p.score||'Reviewed'}</div>`;
+    box.innerHTML=`<img src="${p.thumb}" alt="Recent uploaded photo"><div class="recent-photo-meta"><b>${p.sceneName||p.goal[0].toUpperCase()+p.goal.slice(1)} review</b><small>${p.settings}</small><small>${date}</small></div><div class="recent-score">${p.status||p.score||'Reviewed'}</div>`;
   }
   try{const recent=window.T7Store?.get('recentPhoto',null)||JSON.parse(localStorage.getItem('canonRecentPhoto')||'null');if(recent)renderRecent(recent)}catch{}
 
