@@ -7,7 +7,7 @@
     try{libraryItems=await window.T7History.all()}catch{libraryItems=[]}
     const filter=$('#libFilter')?.value||'all',visible=filter==='all'?libraryItems:libraryItems.filter(x=>x.goal===filter),buttons=$$('#libList .library-mini[data-shoot-goal]');
     buttons.forEach((b,i)=>{const item=visible[i];if(!item)return;b.dataset.shootScene=item.scene||'';b.dataset.sessionId=item.sessionId||'';b.setAttribute('aria-label',`Shoot ${item.sceneName||item.goal||'this subject'} again`)});
-    $$('.library-gallery-shot').forEach((card,i)=>{card.href='#library';card.dataset.libraryIndex=String(i);card.setAttribute('aria-label','Open this photo in the full Library archive')});
+    $$('.library-gallery-shot').forEach((card,i)=>{card.href='#library';card.dataset.libraryIndex=String(i);card.setAttribute('aria-label','Open this photo in fullscreen viewer')});
   }
 
   document.addEventListener('click',e=>{
@@ -22,6 +22,7 @@
     const gallery=e.target.closest?.('.library-gallery-shot');
     if(gallery){
       e.preventDefault();e.stopImmediatePropagation();
+      if(window.T7PhotoViewer?.openLibraryIndex){window.T7PhotoViewer.openLibraryIndex(Number(gallery.dataset.libraryIndex)||0);return}
       const archive=$('.qa-library-archive');if(archive)archive.open=true;
       setTimeout(()=>$('.library-list-card')?.scrollIntoView({behavior:'smooth',block:'start'}),40);
     }
@@ -32,5 +33,5 @@
   $('#libFilter')?.addEventListener('change',()=>setTimeout(syncLibraryActions,40));
   setTimeout(syncLibraryActions,300);
 
-  window.T7WorkflowQA={syncLibraryActions,version:'1.0.0'};
+  window.T7WorkflowQA={syncLibraryActions,version:'1.1.0'};
 })();
