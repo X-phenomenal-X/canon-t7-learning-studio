@@ -1,6 +1,7 @@
 (()=>{
   const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const home=$('#home');if(!home)return;
+  if(!document.querySelector('link[data-home-coach]')){const l=document.createElement('link');l.rel='stylesheet';l.href='./home-coach.css';l.dataset.homeCoach='1';document.head.appendChild(l)}
   const hour=new Date().getHours();
   const hello=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
   const cameraEssentials=['modeDial','shutter','mainDial','q','iso','af','afPoint','avComp'];
