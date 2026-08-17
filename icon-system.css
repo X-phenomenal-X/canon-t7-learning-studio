@@ -1,7 +1,7 @@
 /* T7 Studio V58 — unified premium iconography */
 .t7-icon{width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;transition:transform .18s ease,opacity .18s ease,color .18s ease}
-.t7-has-icon{display:inline-flex;align-items:center;gap:7px}
-button.t7-has-icon,.button.t7-has-icon,a.button.t7-has-icon{justify-content:center}
+.t7-has-icon{align-items:center;gap:7px}
+button.t7-has-icon,.button.t7-has-icon,a.button.t7-has-icon{display:inline-flex;align-items:center;justify-content:center;gap:7px}
 
 /* Navigation */
 .desktop-nav a.t7-has-icon,.mobile-dock a.t7-has-icon{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important}
@@ -28,11 +28,20 @@ button.t7-has-icon,.button.t7-has-icon,a.button.t7-has-icon{justify-content:cent
 .ev2-tab.active .t7-icon,.cv3-tab.active .t7-icon{color:#ff9575;opacity:1}
 .ev2-crop .t7-icon{width:15px;height:15px}
 
-/* Subject / scene cards */
-.subject-card.t7-has-icon,.choice.t7-has-icon,.scene-assist-option.t7-has-icon{position:relative;display:flex!important;align-items:flex-start!important;justify-content:flex-end!important;flex-direction:column!important;gap:4px!important;padding-top:46px!important}
-.subject-card>.t7-icon,.choice[data-shot]>.t7-icon,.scene-assist-option>.t7-icon{position:absolute;top:14px;left:14px;width:23px;height:23px;color:rgba(243,247,250,.78);filter:drop-shadow(0 3px 10px rgba(0,0,0,.28))}
-.subject-card.active>.t7-icon,.subject-card.selected>.t7-icon,.choice.active>.t7-icon,.scene-assist-option.active>.t7-icon,.scene-assist-option.selected>.t7-icon{color:#ff9a78}
-.scene-assist-option>.t7-icon{width:20px;height:20px;top:12px}
+/* Complex cards keep their original layout. */
+.subject-card-v2.t7-has-icon{position:relative!important;display:block!important;padding:0!important}
+.subject-card-v2>.t7-icon{position:absolute;z-index:5;right:12px;top:12px;left:auto;width:18px;height:18px;color:rgba(244,247,250,.8);filter:drop-shadow(0 3px 9px rgba(0,0,0,.45))}
+.subject-card-v2.selected>.t7-icon,.subject-card-v2.subject-active-context>.t7-icon{color:#ff9b7b}
+.subject-card.t7-has-icon,.choice.t7-has-icon{position:relative!important}
+.subject-card>.t7-icon,.choice[data-shot]>.t7-icon{width:20px;height:20px;color:rgba(243,247,250,.78);margin-bottom:7px;filter:drop-shadow(0 3px 10px rgba(0,0,0,.28))}
+.subject-card.active>.t7-icon,.subject-card.selected>.t7-icon,.choice.active>.t7-icon{color:#ff9a78}
+.scene-assist-option.t7-has-icon{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;padding:8px 11px!important}
+.scene-assist-option>.t7-icon{position:static!important;width:16px!important;height:16px!important;color:#8b97a3;filter:none!important}
+.scene-assist-option.selected>.t7-icon{color:#ff9a78}
+.ev2-preset.t7-has-icon,.recipe.t7-has-icon{position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-end!important;text-align:left!important;padding-top:40px!important}
+.ev2-preset>.t7-icon,.recipe>.t7-icon{position:absolute;left:12px;top:12px;width:18px;height:18px;color:#ff9a78}
+#learn .learn-list button.t7-has-icon{display:grid!important}
+#learn .learn-list button>.t7-icon{display:none!important}
 
 /* Technical data cards */
 .t7-icon-card{position:relative}
@@ -94,8 +103,7 @@ a[href="#shoot"]>.t7-icon{color:#ff9372}
   .t7-heading-icon .t7-icon{width:18px;height:18px}
   .home-v2-hero-copy.t7-heading-with-icon{padding-left:0!important}
   .home-v2-hero-copy>.t7-heading-icon{width:40px;height:40px}
-  .subject-card.t7-has-icon,.choice.t7-has-icon{padding-top:42px!important}
-  .subject-card>.t7-icon,.choice[data-shot]>.t7-icon{width:21px;height:21px;top:12px;left:12px}
+  .subject-card-v2>.t7-icon{right:10px;top:10px;width:17px;height:17px}
   .t7-corner-icon{width:30px;height:30px;right:12px;top:12px}
   .t7-corner-icon .t7-icon{width:15px;height:15px}
   .desktop-nav{display:none!important}
