@@ -26,14 +26,20 @@
   function stats(items){const avg=key=>items.length?Math.round(items.reduce((s,x)=>s+Number(x[key]||0),0)/items.length):0;return{count:items.length,detail:avg('detail'),exposure:avg('exposure'),contrast:avg('contrast'),clipping:avg('clipping'),detailTrend:trend(items,'detail'),exposureTrend:trend(items,'exposure')}}
   async function broadcast(){const items=await all(),summary=stats(items);window.dispatchEvent(new CustomEvent('t7-history-updated',{detail:{items,stats:summary}}));return{items,stats:summary}}
 
+  function localPreview(photo){
+    try{
+      const src=photo?.workingCanvas;if(!src?.width||!src?.height)return photo?.thumb||'';
+      const max=1100,scale=Math.min(1,max/Math.max(src.width,src.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(src.width*scale));c.height=Math.max(1,Math.round(src.height*scale));c.getContext('2d').drawImage(src,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.84);
+    }catch{return photo?.thumb||''}
+  }
   function snapshot(analysis){
     const photo=window.T7PhotoSession?.current?.()||window.T7Store?.getSession('photo')||{},m=analysis.metrics||{},d=analysis.diagnosis||{},l=analysis.labels||{},setup=analysis.nextSetup||{},scene=analysis.scene||window.T7Store?.get('reviewScene',null)||null,audit=analysis.settingsAudit||null;
     const time=Number(photo.createdAt||analysis.time||Date.now()),sceneName=scene&&window.T7Engine?.scenes?.[scene]?.name||'';
     return{
-      id:time,time,sessionId:photo.id||'',goal:analysis.goal||window.T7Store?.get('reviewGoal','general')||'general',scene,sceneName,thumb:analysis.thumb||photo.thumb||'',
+      id:time,time,sessionId:photo.id||'',goal:analysis.goal||window.T7Store?.get('reviewGoal','general')||'general',scene,sceneName,thumb:analysis.thumb||photo.thumb||'',preview:localPreview(photo),
       settings:[setup.mode,setup.lens,setup.settings||setup.exposure].filter(Boolean).join(' • '),score:Number(m.overall||0),exposure:Number(m.exposure||0),detail:Number(m.detail||0),contrast:Number(m.contrast||0),clipping:Number(m.clipping||0),detailConfidence:Number(m.detailConfidence||0),
       status:d.short||'Reviewed',diagnosis:d.title||'Technical review',confidence:d.confidenceLabel||'',labels:{exposure:l.exposure||'',detail:l.detail||'',contrast:l.contrast||'',clipping:l.clipping||''},
-      exif:photo.exif||{},settingsAudit:audit?{has:!!audit.has,level:audit.level||'',summary:audit.summary||''}:null,version:analysis.version||'2.3.0'
+      exif:photo.exif||{},settingsAudit:audit?{has:!!audit.has,level:audit.level||'',summary:audit.summary||''}:null,version:analysis.version||'2.4.0'
     };
   }
   function signature(record){return[record.id,record.goal,record.scene||'',record.score,record.exposure,record.detail,record.contrast,record.clipping,record.settings,record.settingsAudit?.level||'',record.settingsAudit?.summary||''].join('|')}
@@ -47,7 +53,7 @@
     open:openDB,all,put,
     remove:async id=>{await remove(id);lastSignature='';return broadcast()},
     clear:async()=>{await clear();lastSignature='';return broadcast()},
-    stats,trend,metricStatus,saveAnalysis,version:'2.3.0'
+    stats,trend,metricStatus,saveAnalysis,version:'2.4.0'
   };
   window.addEventListener('t7-review-updated',e=>saveAnalysis(e.detail).catch(err=>console.warn('Could not save photo history',err)));
   openDB().then(broadcast).catch(err=>console.warn('Photo history unavailable',err));
