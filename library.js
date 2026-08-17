@@ -1,5 +1,5 @@
 (()=>{
-  const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const main=document.querySelector('main'),edit=document.getElementById('edit');if(!main||!edit||document.getElementById('library'))return;
   const section=document.createElement('section');section.id='library';section.className='section library-screen';
   section.innerHTML=`
