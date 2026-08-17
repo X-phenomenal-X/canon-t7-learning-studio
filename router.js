@@ -44,6 +44,10 @@
     const reviewButton=e.target.closest?.('#reviewShot');
     if(!reviewButton)return;
     e.preventDefault();e.stopImmediatePropagation();
+    const subject=window.T7Store?.get('shootSubject',null)||null,scene=window.T7Store?.get('shootScene',null)||null;
+    if(subject)window.T7Store?.set('reviewGoal',subject);
+    window.T7Store?.set('reviewScene',scene||null);
+    try{if(subject)localStorage.setItem('canonReviewGoal',subject)}catch{}
     location.hash='review';
     setTimeout(()=>{try{$('#fileInput')?.click()}catch{}},220);
   },true);
