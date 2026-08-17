@@ -22,11 +22,11 @@
     document.querySelector('.t7-premium-boot')?.remove();
     const banner=document.createElement('div');banner.style.cssText='position:fixed;left:12px;right:12px;top:12px;z-index:9999;padding:12px 14px;border-radius:12px;background:#2a171b;color:#ffd8dc;border:1px solid #58303a;font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';banner.textContent='Some photography tools did not load. Refresh the app to try again.';document.body.appendChild(banner)
   }
-  function showUpdate(reg){if(document.getElementById('appUpdateBanner'))return;const bar=document.createElement('div');bar.id='appUpdateBanner';bar.style.cssText='position:fixed;left:12px;right:12px;bottom:72px;z-index:9998;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;background:#151c25;color:#fff;border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 30px rgba(0,0,0,.35);font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';bar.innerHTML='<span>New T7 Studio version available.</span><button style="border:0;border-radius:9px;padding:8px 10px;background:#eef3f7;color:#0b0e12;font-weight:800">Refresh</button>';bar.querySelector('button').onclick=()=>{reg.waiting?.postMessage({type:'SKIP_WAITING'});setTimeout(()=>location.reload(),300)};document.body.appendChild(bar)}
+  function showUpdate(reg){if(document.getElementById('appUpdateBanner'))return;const bar=document.createElement('div');bar.id='appUpdateBanner';bar.style.cssText='position:fixed;left:12px;right:12px;bottom:82px;z-index:9998;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border-radius:16px;background:rgba(15,20,27,.94);backdrop-filter:blur(18px);color:#fff;border:1px solid rgba(255,255,255,.1);box-shadow:0 16px 40px rgba(0,0,0,.38);font:700 12px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';bar.innerHTML='<span>New T7 Studio version available.</span><button style="border:0;border-radius:11px;padding:9px 11px;background:linear-gradient(135deg,#ff735f,#ff9d73);color:#fff;font-weight:900">Refresh</button>';bar.querySelector('button').onclick=()=>{reg.waiting?.postMessage({type:'SKIP_WAITING'});setTimeout(()=>location.reload(),300)};document.body.appendChild(bar)}
 
   bootNow();
   simplifyNavigation();
-  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./premium-shell.css');
+  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');
   script('./store.js')
     .then(()=>script('./photo-session.js'))
     .then(()=>script('./t7-engine.js'))
@@ -36,6 +36,7 @@
     .then(()=>script('./shoot-flow.js'))
     .then(()=>script('./shoot-subject.js'))
     .then(()=>script('./shoot-focus.js'))
+    .then(()=>script('./shoot-finish.js'))
     .then(()=>script('./learn.js'))
     .then(()=>script('./review-flow.js'))
     .then(()=>{
@@ -58,6 +59,7 @@
     .then(()=>script('./polish-v2.js'))
     .then(()=>script('./motion-v1.js'))
     .then(()=>script('./premium-shell.js'))
+    .then(()=>script('./onboarding.js'))
     .catch(showLoadError);
 
   if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
