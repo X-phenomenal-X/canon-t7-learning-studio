@@ -1,6 +1,6 @@
 (()=>{
   if(window.T7MobileShellFix)return;
-  const routes={home:['home','Home'],shoot:['shoot','Shoot'],review:['review','Review'],learn:['learn','Learn'],library:['library','Library']};
+  const routes={home:['home','Home'],shoot:['shoot','Shoot'],review:['review','Review'],learn:['learn','Guide'],library:['library','Library']};
 
   function normalizeDock(){
     const dock=document.querySelector('.mobile-dock');
@@ -29,5 +29,5 @@
   window.addEventListener('resize',schedule,{passive:true});
   setTimeout(normalizeDock,40);
   setTimeout(normalizeDock,300);
-  window.T7MobileShellFix={normalizeDock,version:'1.0.0'};
+  window.T7MobileShellFix={normalizeDock,version:'1.1.0'};
 })();
