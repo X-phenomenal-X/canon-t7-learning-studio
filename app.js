@@ -6,16 +6,16 @@
     if(document.querySelector('.t7-premium-boot'))return;
     const boot=document.createElement('div');boot.className='t7-premium-boot';
     boot.style.cssText='position:fixed;inset:0;z-index:12000;display:grid;place-items:center;background:#07090d;color:#f5f7f9;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';
-    boot.innerHTML='<div class="t7-premium-boot-inner"><div class="t7-premium-lens"></div><div class="t7-premium-boot-copy"><b>T7 Studio</b><span>Canon Rebel T7 companion</span></div><div class="t7-premium-loader"><i></i></div></div>';
+    boot.innerHTML='<div class="t7-premium-boot-inner"><div class="t7-premium-lens"></div><div class="t7-premium-boot-copy"><b>T7 Studio</b><span>Canon Rebel T7 photography guide</span></div><div class="t7-premium-loader"><i></i></div></div>';
     document.body.appendChild(boot);
   }
   function style(href){if(loaded.has(href)||document.querySelector(`link[href="${href}"]`))return;loaded.add(href);const l=document.createElement('link');l.rel='stylesheet';l.href=href;head.appendChild(l)}
   function script(src){return new Promise((resolve,reject)=>{if(document.querySelector(`script[src="${src}"]`)){resolve();return}const s=document.createElement('script');s.src=src;s.async=false;s.onload=resolve;s.onerror=()=>reject(new Error('Failed to load '+src));document.body.appendChild(s)})}
   function simplifyNavigation(){
     const desktop=document.querySelector('.desktop-nav');
-    if(desktop)desktop.innerHTML='<a href="#home">Home</a><a href="#shoot">Shoot</a><a href="#review">Review</a><a href="#learn">Learn</a><a href="#library">Library</a>';
+    if(desktop)desktop.innerHTML='<a href="#home">Home</a><a href="#shoot">Shoot</a><a href="#review">Review</a><a href="#learn">Guide</a><a href="#library">Library</a>';
     const dock=document.querySelector('.mobile-dock');
-    if(dock)dock.innerHTML='<a href="#home">Home</a><a class="shoot-dock" href="#shoot">Shoot</a><a href="#review">Review</a><a href="#learn">Learn</a><a href="#library">Library</a>';
+    if(dock)dock.innerHTML='<a href="#home">Home</a><a class="shoot-dock" href="#shoot">Shoot</a><a href="#review">Review</a><a href="#learn">Guide</a><a href="#library">Library</a>';
   }
   function showLoadError(err){
     console.error(err);
@@ -26,7 +26,7 @@
 
   bootNow();
   simplifyNavigation();
-  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');style('./qa-polish.css');style('./icon-system.css');style('./photo-viewer.css');style('./portfolio.css');style('./mobile-shell-fix.css');
+  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');style('./qa-polish.css');style('./icon-system.css');style('./photo-viewer.css');style('./portfolio.css');style('./mobile-shell-fix.css');style('./photography-guide.css');
   script('./store.js')
     .then(()=>script('./photo-session.js'))
     .then(()=>script('./t7-engine.js'))
@@ -64,6 +64,7 @@
     .then(()=>script('./qa-polish.js'))
     .then(()=>script('./workflow-qa.js'))
     .then(()=>script('./icon-system.js'))
+    .then(()=>script('./photography-guide.js'))
     .then(()=>script('./photo-viewer.js'))
     .then(()=>script('./portfolio.js'))
     .then(()=>script('./mobile-shell-fix.js'))
