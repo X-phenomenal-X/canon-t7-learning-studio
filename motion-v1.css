@@ -1,0 +1,52 @@
+/* T7 Studio V48 — interaction, motion, and tactile mobile polish */
+:root{--motion-spring:cubic-bezier(.16,1,.3,1);--motion-ease:cubic-bezier(.22,.72,.22,1);--motion-fast:180ms;--motion-med:360ms}
+
+/* Route motion */
+.motion-enter-forward.app-screen-active{animation:motionEnterForward 360ms var(--motion-spring) both!important}.motion-enter-back.app-screen-active{animation:motionEnterBack 320ms var(--motion-spring) both!important}.motion-enter-soft.app-screen-active{animation:motionEnterSoft 300ms var(--motion-spring) both!important}
+@keyframes motionEnterForward{from{opacity:0;transform:translate3d(18px,5px,0) scale(.992)}to{opacity:1;transform:none}}
+@keyframes motionEnterBack{from{opacity:0;transform:translate3d(-14px,4px,0) scale(.994)}to{opacity:1;transform:none}}
+@keyframes motionEnterSoft{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+/* Top chrome gets depth only after scrolling */
+.topbar{transition:box-shadow 240ms ease,background-color 240ms ease,border-color 240ms ease}.motion-scrolled .topbar{background:rgba(7,10,14,.91)!important;box-shadow:0 10px 30px rgba(0,0,0,.2)!important;border-bottom-color:rgba(255,255,255,.1)!important}
+
+/* The main Shoot tab reads like the camera action */
+.mobile-dock .shoot-dock{position:relative!important;margin:0 3px!important;border-radius:18px!important;background:linear-gradient(145deg,#ff6f61,#ff9470)!important;color:#fff!important;box-shadow:0 9px 22px rgba(255,111,97,.22)!important;transform:translateY(-4px);overflow:visible!important;transition:transform 180ms var(--motion-spring),box-shadow 180ms ease!important}.mobile-dock .shoot-dock:before{content:'';position:absolute;width:29px;height:29px;border-radius:50%;border:1px solid rgba(255,255,255,.52);box-shadow:inset 0 0 0 5px rgba(8,10,13,.18);top:6px;left:50%;transform:translateX(-50%);pointer-events:none}.mobile-dock .shoot-dock svg{position:relative;z-index:2;width:18px!important;height:18px!important}.mobile-dock .shoot-dock span{position:relative;z-index:2;color:#fff!important}.mobile-dock .shoot-dock.active{background:linear-gradient(145deg,#ff6658,#ffa078)!important;color:#fff!important;box-shadow:0 11px 28px rgba(255,111,97,.3)!important;transform:translateY(-6px)}.mobile-dock .shoot-dock.active:after{display:none!important}.mobile-dock .shoot-dock:active{transform:translateY(-3px) scale(.96)!important}
+
+/* Tactile press and hover system */
+.button,.native-action,.subject-card-v2,.scene-assist-option,.cv2-goal,.library-gallery-shot,.library-item,.ev2-preset,.cv3-control-chip,.learn-list button{will-change:transform}.motion-tap{transform:scale(.972)!important}.button.primary:active,.rv2-primary:active,.cv2-actions .primary:active{transform:scale(.975)!important}
+@media(hover:hover) and (pointer:fine){.native-action:hover,.library-gallery-shot:hover,.ev2-preset:hover,.cv3-control-chip:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.14)!important}.native-shoot-card:hover{transform:translateY(-2px) scale(1.002);box-shadow:0 28px 70px rgba(0,0,0,.34)!important}.subject-card-v2:hover{transform:translateY(-2px)}.button:hover{filter:brightness(1.06)}}
+
+/* Selection feels more deliberate */
+.subject-card-v2.selected{transform:translateY(-1px)}.subject-card-v2.selected:after{filter:saturate(1.08) brightness(1.03)}.subject-card-v2.selected .subject-arrow{transform:translateX(3px);transition:transform 220ms var(--motion-spring)}.scene-assist-option.selected,.cv2-goal.active{box-shadow:0 8px 22px rgba(255,111,97,.1)!important}
+
+/* Capture-stage shutter readiness */
+.capture-ready-v2.motion-capture-ready .capture-shutter{animation:motionShutterReady 820ms var(--motion-spring) both}.capture-ready-v2.motion-capture-ready .capture-shutter span{animation:motionShutterInner 820ms var(--motion-spring) both}
+@keyframes motionShutterReady{0%{transform:scale(.88);opacity:.45}48%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes motionShutterInner{0%,100%{box-shadow:inset 0 0 0 8px #10151c,0 0 0 3px #ff806c}50%{box-shadow:inset 0 0 0 8px #10151c,0 0 0 5px rgba(255,128,108,.45),0 0 30px rgba(255,111,97,.25)}}
+
+/* Photo surfaces reveal like photographs, not dashboard widgets */
+body.motion-ready .motion-reveal-item{opacity:0;transform:translateY(12px) scale(.985)}body.motion-ready .motion-reveal-item.motion-inview{animation:motionCardIn 480ms var(--motion-spring) both;animation-delay:var(--motion-delay,0ms)}
+@keyframes motionCardIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+.library-gallery-shot img,.native-latest .recent-photo-card-live img,.rv2-photo-wrap img{transition:transform 520ms var(--motion-spring),filter 300ms ease!important}.library-gallery-shot:active img,.native-latest .recent-photo-card-live:active img{transform:scale(1.025)}
+
+/* Review photo arrival */
+.rv2-result.motion-photo-arrive .rv2-photo-wrap{animation:motionPhotoArrive 460ms var(--motion-spring) both}.rv2-result.motion-photo-arrive .rv2-result-copy{animation:motionCopyArrive 420ms 70ms var(--motion-spring) both}
+@keyframes motionPhotoArrive{from{opacity:0;transform:scale(.95) rotate(-.5deg)}to{opacity:1;transform:none}}
+@keyframes motionCopyArrive{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+
+/* Editor: custom filled slider tracks */
+.editor-v2-layout input[type="range"]{-webkit-appearance:none;appearance:none;height:28px!important;background:transparent!important;cursor:pointer}.editor-v2-layout input[type="range"]::-webkit-slider-runnable-track{height:5px;border-radius:999px;background:linear-gradient(90deg,#ff806c 0 var(--range-pct,50%),#27303a var(--range-pct,50%) 100%)}.editor-v2-layout input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;margin-top:-6.5px;background:#fff;border:3px solid #ff806c;box-shadow:0 3px 11px rgba(0,0,0,.36);transition:transform 120ms ease}.editor-v2-layout input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.18)}.editor-v2-layout input[type="range"]::-moz-range-track{height:5px;border-radius:999px;background:#27303a}.editor-v2-layout input[type="range"]::-moz-range-progress{height:5px;border-radius:999px;background:#ff806c}.editor-v2-layout input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #ff806c}.editor-v2-layout.motion-editor-ready>.canvas-wrap canvas{animation:motionCanvasReady 420ms var(--motion-spring) both}@keyframes motionCanvasReady{from{opacity:.35;transform:scale(.985)}to{opacity:1;transform:none}}
+
+/* Camera trainer hotspot attention without becoming noisy */
+.cv3-hotspot.active:after{animation:motionHotspotPulse 1.8s ease-out infinite}@keyframes motionHotspotPulse{0%{transform:scale(.8);opacity:.8}75%,100%{transform:scale(1.55);opacity:0}}
+
+/* Loading skeletons */
+.conditions-v2.is-loading .cv2-empty,.review-flow.is-processing .rv2-empty{position:relative;overflow:hidden}.conditions-v2.is-loading .cv2-empty:after,.review-flow.is-processing .rv2-empty:after{content:'';position:absolute;inset:0;transform:translateX(-120%);background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.055) 46%,rgba(255,255,255,.11) 50%,rgba(255,255,255,.055) 54%,transparent 75%);animation:motionShimmer 1.25s linear infinite;pointer-events:none}@keyframes motionShimmer{to{transform:translateX(120%)}}
+
+/* Subtle completion feedback */
+.capture-check-v2{transition:background-color 180ms ease,border-color 180ms ease,transform 180ms var(--motion-spring)}.capture-check-v2:has(input:checked){background:linear-gradient(145deg,#14251d,#10191a)!important;border-color:rgba(112,214,161,.28)!important}.capture-check-v2:has(input:checked) span{color:#b8e8cb}.capture-check-v2:has(input:checked){transform:translateX(2px)}
+
+@media(max-width:760px){.mobile-dock{overflow:visible!important}.mobile-dock .shoot-dock{min-height:54px!important}.native-shoot-card{transform-origin:center bottom}.motion-enter-forward.app-screen-active,.motion-enter-back.app-screen-active{animation-duration:300ms!important}.library-gallery-shot,.rv2-photo-wrap,.editor-v2-layout>.canvas-wrap{transform:translateZ(0)}}
+@media(max-width:430px){.mobile-dock .shoot-dock{margin-left:1px!important;margin-right:1px!important}.mobile-dock .shoot-dock:before{width:27px;height:27px}.motion-scrolled .topbar{box-shadow:0 7px 22px rgba(0,0,0,.17)!important}}
+@media(prefers-reduced-motion:reduce){.motion-enter-forward.app-screen-active,.motion-enter-back.app-screen-active,.motion-enter-soft.app-screen-active,.motion-reveal-item.motion-inview,.rv2-result.motion-photo-arrive .rv2-photo-wrap,.rv2-result.motion-photo-arrive .rv2-result-copy,.editor-v2-layout.motion-editor-ready>.canvas-wrap canvas,.capture-ready-v2.motion-capture-ready .capture-shutter,.capture-ready-v2.motion-capture-ready .capture-shutter span,.cv3-hotspot.active:after{animation:none!important}.mobile-dock .shoot-dock{transform:none!important}}
