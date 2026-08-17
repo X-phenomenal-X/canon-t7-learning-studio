@@ -15,11 +15,8 @@
   stack.prepend(tabs);
 
   const controls=$$('#editorControls .editor-control');
-  const byInput={};
-  controls.forEach(c=>{const i=c.querySelector('input');if(i)byInput[i.id]=c});
-  const panelHost=document.createElement('div');
-  panelHost.className='ev2-panels';
-  tabs.after(panelHost);
+  const byInput={};controls.forEach(c=>{const i=c.querySelector('input');if(i)byInput[i.id]=c});
+  const panelHost=document.createElement('div');panelHost.className='ev2-panels';tabs.after(panelHost);
   function panel(name,title,desc){const p=document.createElement('section');p.className=`ev2-panel${name==='quick'?' active':''}`;p.dataset.ev2Panel=name;p.innerHTML=`<div class="ev2-panel-head"><small>${name}</small><b>${title}</b><p>${desc}</p></div>`;panelHost.appendChild(p);return p}
 
   const quick=panel('quick','Start simple','Use a preset or let the app apply a balanced first pass.');
@@ -35,48 +32,35 @@
   const rotate=document.createElement('div');rotate.className='ev2-rotate-row';rotate.innerHTML='<button class="button" id="ev2RotateLeft">Rotate left</button><button class="button" id="ev2RotateRight">Rotate right</button>';crop.appendChild(rotate);
 
   const advanced=document.createElement('details');advanced.className='ev2-advanced';advanced.innerHTML='<summary>More controls</summary><div class="ev2-advanced-body"></div>';stack.appendChild(advanced);
-  const adv=advanced.querySelector('.ev2-advanced-body');
-  ['#resetBtn','#splitBtn'].forEach(sel=>{const el=$(sel);if(el)adv.appendChild(el)});
-  const split=$('#splitControl');if(split)adv.appendChild(split);
-  const oldRows=[...stack.querySelectorAll(':scope > .button-row')];oldRows.forEach(r=>{if(r.querySelector('#rotateLeft,#rotateRight,#compareBtn,#downloadBtn'))r.style.display='none'});
-  const originalUpload=stack.querySelector('.upload');if(originalUpload)originalUpload.style.display='none';
+  const adv=advanced.querySelector('.ev2-advanced-body');['#resetBtn','#splitBtn'].forEach(sel=>{const el=$(sel);if(el)adv.appendChild(el)});const split=$('#splitControl');if(split)adv.appendChild(split);
+  const oldRows=[...stack.querySelectorAll(':scope > .button-row')];oldRows.forEach(r=>{if(r.querySelector('#rotateLeft,#rotateRight,#compareBtn,#downloadBtn'))r.style.display='none'});const originalUpload=stack.querySelector('.upload');if(originalUpload)originalUpload.style.display='none';
 
-  const overlay=document.createElement('div');overlay.className='ev2-crop-overlay';canvasWrap.appendChild(overlay);
-  let cropRatio='original';
-  function updateCropOverlay(){
-    if(cropRatio==='original'||!canvas.width||canvas.hidden){overlay.classList.remove('show');return}
-    const c=canvas.getBoundingClientRect(),w=Number(cropRatio),targetRatio=w;
-    let ow=c.width,oh=ow/targetRatio;if(oh>c.height){oh=c.height;ow=oh*targetRatio}
-    const wr=canvasWrap.getBoundingClientRect();overlay.style.width=ow+'px';overlay.style.height=oh+'px';overlay.style.left=(c.left-wr.left+(c.width-ow)/2)+'px';overlay.style.top=(c.top-wr.top+(c.height-oh)/2)+'px';overlay.classList.add('show');
-  }
+  const overlay=document.createElement('div');overlay.className='ev2-crop-overlay';canvasWrap.appendChild(overlay);let cropRatio='original';
+  function updateCropOverlay(){if(cropRatio==='original'||!canvas.width||canvas.hidden){overlay.classList.remove('show');return}const c=canvas.getBoundingClientRect(),targetRatio=Number(cropRatio);let ow=c.width,oh=ow/targetRatio;if(oh>c.height){oh=c.height;ow=oh*targetRatio}const wr=canvasWrap.getBoundingClientRect();overlay.style.width=ow+'px';overlay.style.height=oh+'px';overlay.style.left=(c.left-wr.left+(c.width-ow)/2)+'px';overlay.style.top=(c.top-wr.top+(c.height-oh)/2)+'px';overlay.classList.add('show')}
   window.addEventListener('resize',()=>requestAnimationFrame(updateCropOverlay));
-
   $$('.ev2-tab').forEach(b=>b.onclick=()=>{$$('.ev2-tab').forEach(x=>x.classList.toggle('active',x===b));$$('.ev2-panel').forEach(p=>p.classList.toggle('active',p.dataset.ev2Panel===b.dataset.ev2Tab));if(b.dataset.ev2Tab==='crop')requestAnimationFrame(updateCropOverlay)});
   $$('.ev2-crop').forEach(b=>b.onclick=()=>{cropRatio=b.dataset.ratio;$$('.ev2-crop').forEach(x=>x.classList.toggle('active',x===b));updateCropOverlay()});
 
   function setValue(id,v){const el=$('#'+id);if(!el)return;el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))}
-  function autoFix(){
-    const score=Number(String($('#reviewScore')?.textContent||'').replace(/[^0-9.]/g,''))||0;
-    if(score&&$('#applyReviewEdit')){$('#applyReviewEdit').click();return}
-    const general={exposure:4,highlights:-12,shadows:8,contrast:5,warmth:1,saturation:3,sharpness:8};Object.entries(general).forEach(([k,v])=>setValue(k,v));
-  }
-  $('#ev2Auto').onclick=autoFix;$('#ev2AutoInside').onclick=autoFix;
-  $('#ev2Upload').onclick=()=>file.click();
-  $('#ev2RotateLeft').onclick=()=>$('#rotateLeft')?.click();$('#ev2RotateRight').onclick=()=>$('#rotateRight')?.click();
-  $$('.ev2-preset').forEach(b=>b.onclick=()=>document.querySelector(`.recipe[data-recipe="${b.dataset.ev2Recipe}"]`)?.click());
+  function autoFix(){const score=Number(String($('#reviewScore')?.textContent||'').replace(/[^0-9.]/g,''))||0;if(score&&$('#applyReviewEdit')){$('#applyReviewEdit').click();return}const general={exposure:4,highlights:-12,shadows:8,contrast:5,warmth:1,saturation:3,sharpness:8};Object.entries(general).forEach(([k,v])=>setValue(k,v))}
+  $('#ev2Auto').onclick=autoFix;$('#ev2AutoInside').onclick=autoFix;$('#ev2Upload').onclick=()=>file.click();$('#ev2RotateLeft').onclick=()=>$('#rotateLeft')?.click();$('#ev2RotateRight').onclick=()=>$('#rotateRight')?.click();$$('.ev2-preset').forEach(b=>b.onclick=()=>document.querySelector(`.recipe[data-recipe="${b.dataset.ev2Recipe}"]`)?.click());
 
-  const compare=$('#compareBtn'),compareTop=$('#ev2Compare');
-  if(compare&&compareTop){compareTop.addEventListener('pointerdown',()=>compare.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})));['pointerup','pointerleave','pointercancel'].forEach(ev=>compareTop.addEventListener(ev,()=>compare.dispatchEvent(new PointerEvent(ev,{bubbles:true}))));}
+  const compare=$('#compareBtn'),compareTop=$('#ev2Compare');if(compare&&compareTop){compareTop.addEventListener('pointerdown',()=>compare.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})));['pointerup','pointerleave','pointercancel'].forEach(ev=>compareTop.addEventListener(ev,()=>compare.dispatchEvent(new PointerEvent(ev,{bubbles:true}))))}
 
-  function cropCanvasSource(){
-    const ratio=cropRatio==='original'?null:Number(cropRatio);if(!ratio||!canvas.width||!canvas.height)return canvas;
-    let sw=canvas.width,sh=sw/ratio;if(sh>canvas.height){sh=canvas.height;sw=sh*ratio}
-    const sx=(canvas.width-sw)/2,sy=(canvas.height-sh)/2,out=document.createElement('canvas');out.width=Math.round(sw);out.height=Math.round(sh);out.getContext('2d').drawImage(canvas,sx,sy,sw,sh,0,0,out.width,out.height);return out;
+  function cropCanvasSource(source){
+    const ratio=cropRatio==='original'?null:Number(cropRatio);if(!ratio||!source?.width||!source?.height)return source;
+    let sw=source.width,sh=sw/ratio;if(sh>source.height){sh=source.height;sw=sh*ratio}
+    const sx=(source.width-sw)/2,sy=(source.height-sh)/2,out=document.createElement('canvas');out.width=Math.round(sw);out.height=Math.round(sh);out.getContext('2d').drawImage(source,sx,sy,sw,sh,0,0,out.width,out.height);return out;
   }
   const exportBtn=$('#downloadBtn');
-  if(exportBtn){exportBtn.onclick=()=>{if(!canvas.width)return;const splitBtn=$('#splitBtn');if(splitBtn&&/Exit split/i.test(splitBtn.textContent))splitBtn.click();const src=cropCanvasSource(),a=document.createElement('a');a.download='canon-t7-edited.jpg';a.href=src.toDataURL('image/jpeg',.94);a.click()};}
+  if(exportBtn){exportBtn.onclick=()=>{
+    const core=window.T7EditorCore;if(!core?.renderExportCanvas)return;
+    const status=$('#ev2FileStatus'),prior=status?.textContent||'';if(status)status.textContent='Rendering export…';
+    requestAnimationFrame(()=>setTimeout(()=>{try{const full=core.renderExportCanvas();if(!full?.width)return;const src=cropCanvasSource(full),a=document.createElement('a');a.download='canon-t7-edited.jpg';a.href=src.toDataURL('image/jpeg',.94);a.click()}finally{if(status)status.textContent=prior}},0));
+  }}
   $('#ev2Export').onclick=()=>exportBtn?.click();
 
   file.addEventListener('change',()=>{const f=file.files?.[0];$('#ev2FileStatus').textContent=f?f.name:'No photo loaded';setTimeout(()=>requestAnimationFrame(updateCropOverlay),300)});
+  window.addEventListener('t7-editor-photo-ready',e=>{const s=e.detail;if(s?.name)$('#ev2FileStatus').textContent=s.name;setTimeout(()=>requestAnimationFrame(updateCropOverlay),80)});
   const obs=new MutationObserver(()=>requestAnimationFrame(updateCropOverlay));obs.observe(canvas,{attributes:true,attributeFilter:['width','height','style']});
 })();
