@@ -1,0 +1,130 @@
+/* T7 Studio V54 — premium QA / fit-and-finish */
+html,body{max-width:100%;overflow-x:hidden}
+body{overscroll-behavior-y:none}
+button,a,input,select,summary{-webkit-tap-highlight-color:transparent}
+button,a,summary{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid rgba(255,132,105,.9)!important;outline-offset:3px!important}
+h1,h2,h3{ text-wrap:balance }
+p,.home-v2-next-copy span,.rv2-summary,.cv3-detail p{ text-wrap:pretty }
+img{max-width:100%}
+
+/* Remove legacy layers that are still rendered underneath premium modules. */
+#learn>.section-head{display:none!important}
+#learn .lesson-card>.lesson-top,
+#learn .lesson-card>.lesson-points{display:none!important}
+#learn .lesson-actions>#lessonTry{display:none!important}
+#conditions>.section-head{display:none!important}
+.review-flow>.review-head{display:none!important}
+.review-flow>#reviewEmpty{display:none!important}
+
+/* Learn: keep navigation/progress, remove duplicated lesson explanation. */
+#learn .learn-shell{align-items:start!important}
+#learn .lesson-card{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;min-width:0}
+#learn .lesson-stage{margin:0!important}
+#learn .lesson-stage-inner{padding:0!important}
+#learn .lesson-actions{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:9px!important;margin-top:10px!important;padding:10px!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:18px!important;background:rgba(12,16,21,.78)!important}
+#learn .lesson-actions>#lessonComplete{order:2;min-height:42px!important;white-space:nowrap}
+#learn .lesson-nav{order:1;display:flex!important;gap:6px!important;margin:0!important}
+#learn .lesson-nav .button{min-height:42px!important;padding-inline:11px!important}
+#learn .learn-tools a{min-height:54px}
+
+/* Review: one clear premium review surface, compact intent selector. */
+.review-flow{max-width:1000px;margin-inline:auto!important}
+.review-flow>.review-goal{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:9px!important;margin:0 0 10px!important;padding:0!important;border:0!important;background:transparent!important}
+.review-flow>.review-goal label{font-size:8px!important;font-weight:900!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#717c88!important}
+.review-flow>.review-goal select{width:auto!important;min-width:150px!important;min-height:38px!important;border-radius:12px!important;font-size:10px!important}
+.rv2-empty,.rv2-result{overflow:hidden}
+.rv2-empty-copy p,.rv2-result-copy p{max-width:620px}
+.rv2-actions a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.rv2-details summary{min-height:48px}
+
+/* Conditions: premium module owns the screen; remove legacy title gap. */
+#conditions .conditions-v2{margin-top:0!important}
+#conditions .cv2-search input,#conditions .cv2-search button{min-height:44px!important}
+#conditions .cv2-goal{min-height:50px}
+#conditions .cv2-actions a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+
+/* Camera: cleaner control trainer hierarchy. */
+#camera .cv3-camera-hint{font-size:8px!important;letter-spacing:.05em!important;text-transform:uppercase;color:#65717d!important}
+#camera .cv3-control-chip,#camera .cv3-tab,#camera .cv3-detail-actions .button{min-height:44px}
+#camera .cv3-source{opacity:.62}
+#camera .cv3-tour-actions #cv3Reset{background:transparent!important;border-color:rgba(255,255,255,.05)!important;color:#6f7984!important;box-shadow:none!important}
+
+/* Library: make photo work primary and analytics quieter. */
+.library-screen{max-width:1080px;margin-inline:auto!important}
+.library-gallery{margin-bottom:10px!important}
+.library-summary{gap:8px!important}
+.library-stat{min-width:0}
+.library-card-head p{max-width:520px}
+.library-filter{min-height:40px!important}
+.library-list-card{margin-top:10px!important}
+.library-danger{margin-top:12px!important;border-top:1px solid rgba(255,255,255,.055)!important;padding-top:8px!important}
+.library-danger summary{min-height:40px;display:flex;align-items:center;color:#6f7a86!important;font-size:9px!important;font-weight:850!important}
+.library-item-copy,.library-item-status{min-width:0}
+.library-item-copy small,.library-item-status span{overflow:hidden;text-overflow:ellipsis}
+
+/* Editor: keep the image dominant and controls intentional. */
+body[data-route="edit"] #edit{max-width:1120px;margin-inline:auto!important}
+.editor-v2-toolbar{position:sticky!important;top:78px!important;z-index:40!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.ev2-file-status{min-width:0;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev2-tab,.ev2-tool-btn,.ev2-crop{min-height:42px}
+.ev2-panel-head p{max-width:560px}
+.canvas-wrap{min-width:0}
+
+/* Secondary learning tools: consistent containment. */
+#simulator,#visuals,#practice{max-width:1060px;margin-inline:auto!important}
+#simulator .section-head,#visuals .section-head,#practice .section-head{margin-bottom:14px!important}
+#simulator .control-box input[type="range"],#visuals input[type="range"]{min-height:32px}
+
+/* Global mobile QA: compact, tappable, no horizontal spill. */
+@media(max-width:760px){
+ main{width:min(100% - 22px,1180px)!important;padding-bottom:104px!important}
+ .topbar{width:calc(100% - 16px)!important;margin-top:7px!important;height:58px!important;min-height:58px!important;border-radius:18px!important}
+ .brand{min-width:0!important}.brand b{max-width:155px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand small{display:none!important}
+ .premium-status{display:none!important}
+ .section,.dashboard-home{scroll-margin-top:72px}
+ .section-head{gap:9px!important;margin-bottom:12px!important}.section-head h2{font-size:30px!important}.section-head p{font-size:10px!important}
+ .button,button,[role="button"]{min-height:44px}
+ .card{border-radius:22px!important}
+
+ #learn .learn-shell{display:block!important}
+ #learn .learn-path{margin-bottom:10px!important}
+ #learn .learn-list{display:flex!important;overflow-x:auto!important;gap:6px!important;padding:2px 1px 6px!important;scrollbar-width:none}
+ #learn .learn-list::-webkit-scrollbar{display:none}
+ #learn .learn-list button{flex:0 0 auto!important;min-width:138px!important;min-height:52px!important}
+ #learn .learn-finish,#learn .learn-tools{margin-top:8px!important}
+ #learn .lesson-actions{position:relative!important;display:grid!important;grid-template-columns:1fr auto!important}
+ #learn .lesson-nav{min-width:0!important}.lesson-nav .button{font-size:9px!important}
+ #learn .lesson-actions>#lessonComplete{grid-column:2;grid-row:1}
+
+ .review-flow>.review-goal{justify-content:space-between!important}.review-flow>.review-goal select{min-width:145px!important;max-width:58vw!important}
+ .rv2-diagnostics{grid-template-columns:1fr 1fr!important}
+ .rv2-setting-row{grid-template-columns:1fr 1fr!important}
+ .rv2-actions{display:grid!important;grid-template-columns:1fr!important}
+
+ #camera .cv3-hero{gap:10px!important}.cv3-hero h1{font-size:34px!important}.cv3-progress{align-self:start}
+ #camera .cv3-layout{display:block!important}.cv3-detail{margin-top:9px!important}.cv3-lower{display:block!important}.cv3-reference{margin-top:9px!important}
+ #camera .cv3-tabs{overflow-x:auto!important;scrollbar-width:none}.cv3-tabs::-webkit-scrollbar{display:none}.cv3-tab{white-space:nowrap}
+
+ .library-summary{grid-template-columns:1fr 1fr!important}.library-main{display:block!important}.library-main>.library-card+ .library-card{margin-top:9px!important}
+ .library-card-head{display:block!important}.library-filter{width:100%!important;margin-top:10px!important}
+ .library-list{overflow:hidden}.library-item{grid-template-columns:64px minmax(0,1fr)!important}.library-item-status{grid-column:2!important;text-align:left!important;margin-top:4px!important;padding-right:30px!important}.library-delete{top:auto!important;bottom:4px!important}
+ .library-chart{overflow-x:auto!important}.library-chart svg{min-width:560px}
+
+ .editor-v2-toolbar{top:66px!important;overflow-x:auto!important;scrollbar-width:none!important;padding-bottom:7px!important}.editor-v2-toolbar::-webkit-scrollbar{display:none}.ev2-tool-btn{flex:0 0 auto}.ev2-file-status{flex:0 0 145px!important}
+ .ev2-tabs{overflow-x:auto!important;scrollbar-width:none}.ev2-tabs::-webkit-scrollbar{display:none}.ev2-tab{flex:0 0 auto!important}
+
+ #conditions .cv2-search{grid-template-columns:1fr auto!important}.cv2-locate{grid-column:1/-1!important}.cv2-goals{grid-template-columns:1fr 1fr!important}
+}
+
+@media(max-width:430px){
+ main{width:calc(100% - 18px)!important}
+ .mobile-dock{left:8px!important;right:8px!important}
+ .home-v2-hero{min-height:368px!important}
+ .home-v2-next{grid-template-columns:36px minmax(0,1fr)!important}.home-v2-next>a{grid-column:2!important;justify-self:start!important;margin-top:4px!important}.home-v2-next-copy span{display:block!important;white-space:normal!important;overflow:visible!important;font-size:8px!important}
+ .rv2-diagnostics,.rv2-setting-row{grid-template-columns:1fr!important}
+ .library-summary{grid-template-columns:1fr!important}.library-stat{min-height:92px!important}
+ #learn .lesson-actions{grid-template-columns:1fr!important}.lesson-actions>#lessonComplete{grid-column:1!important;grid-row:2!important;width:100%}.lesson-nav{justify-content:space-between!important}
+}
+
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
