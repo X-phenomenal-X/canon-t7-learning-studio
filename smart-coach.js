@@ -20,9 +20,16 @@
   function parseAperture(v){const m=String(v).match(/f\/?\s*([0-9.]+)/i);return m?Number(m[1]):null}
   function parseIso(v){const m=String(v).match(/([0-9]{2,6})/);return m?Number(m[1]):null}
   function parseShutter(v){v=String(v).trim();let m=v.match(/1\s*\/\s*([0-9.]+)/);if(m)return 1/Number(m[1]);m=v.match(/([0-9.]+)\s*s/i);if(m)return Number(m[1]);return null}
-  function shutterLabel(sec){if(sec==null)return null;if(sec>=1)return `${Math.round(sec*10)/10}s`;return `1/${Math.max(1,Math.round(1/sec))}`}
-  function readExif(){return{camera:text('#exifCamera'),focalText:text('#exifFocal'),apertureText:text('#exifAperture'),shutterText:text('#exifShutter'),isoText:text('#exifIso'),focal:parseFocal(text('#exifFocal')),aperture:parseAperture(text('#exifAperture')),shutter:parseShutter(text('#exifShutter')),iso:parseIso(text('#exifIso'))}}
-  function conditionsText(){if(latestConditions){const c=latestConditions.current||{},a=latestConditions.advice||{};return `${a.title||'Live conditions'} • ${Math.round(c.cloud_cover||0)}% cloud • ${Math.round(c.wind_speed_10m||0)} km/h wind.`}const cloud=text('#wcCloud'),wind=text('#wcWind'),title=text('#photoAdviceTitle');if(cloud&&cloud!=='—')return `${title||'Live conditions'} • ${cloud} cloud • ${wind||'—'} wind.`;return'Check Photo Conditions for weather-aware advice.'}
+  function shutterLabel(sec){if(sec==null)return null;if(sec>=1)return`${Math.round(sec*10)/10}s`;return`1/${Math.max(1,Math.round(1/sec))}`}
+  function readExif(){
+    const sx=window.T7PhotoSession?.current?.()?.exif||window.T7Store?.getSession('photo')?.exif||null;
+    if(sx&&(sx.model||sx.focal||sx.aperture||sx.exposure||sx.iso)){
+      const focalText=sx.focal?`${Math.round(sx.focal*10)/10}mm`:'',apertureText=sx.aperture?`f/${Math.round(sx.aperture*10)/10}`:'',shutterText=sx.exposure?shutterLabel(sx.exposure):'',isoText=sx.iso?`ISO ${sx.iso}`:'';
+      return{camera:[sx.make,sx.model].filter(Boolean).join(' '),focalText,apertureText,shutterText,isoText,focal:sx.focal||null,aperture:sx.aperture||null,shutter:sx.exposure||null,iso:sx.iso||null};
+    }
+    return{camera:text('#exifCamera'),focalText:text('#exifFocal'),apertureText:text('#exifAperture'),shutterText:text('#exifShutter'),isoText:text('#exifIso'),focal:parseFocal(text('#exifFocal')),aperture:parseAperture(text('#exifAperture')),shutter:parseShutter(text('#exifShutter')),iso:parseIso(text('#exifIso'))};
+  }
+  function conditionsText(){if(latestConditions){const c=latestConditions.current||{},a=latestConditions.advice||{};return`${a.title||'Live conditions'} • ${Math.round(c.cloud_cover||0)}% cloud • ${Math.round(c.wind_speed_10m||0)} km/h wind.`}const cloud=text('#wcCloud'),wind=text('#wcWind'),title=text('#photoAdviceTitle');if(cloud&&cloud!=='—')return`${title||'Live conditions'} • ${cloud} cloud • ${wind||'—'} wind.`;return'Check Photo Conditions for weather-aware advice.'}
   function fallbackAnalysis(){return{raw:{mean:num('#reviewExposure')<55?95:128},metrics:{overall:num('#reviewScore'),exposure:num('#reviewExposure'),detail:num('#reviewDetail'),contrast:num('#reviewContrast'),clipping:num('#reviewClip'),detailConfidence:100},diagnosis:{key:'unknown'}}}
 
   function priority(goal,a,x,rec){
@@ -40,7 +47,7 @@
     if(d.key==='contrast'||m.contrast<60)return{title:'Change the light direction',why:'The image has limited tonal separation. Try side light, window light, or a clearer light direction before reaching for the contrast slider.',skill:'Lighting'};
     if(wind>=25&&(goal==='portrait'||goal==='action'))return{title:'Account for the wind',why:`Wind is around ${Math.round(wind)} km/h. Use a faster shutter when hair, clothing, leaves, or subject movement matters.`,skill:'Shutter Speed'};
     if(cloud>=70&&(goal==='portrait'||goal==='product'))return{title:'Use the soft light you already have',why:`Cloud cover is around ${Math.round(cloud)}%, which can act like a large diffuser. Keep the subject facing the brightest part of the sky and focus on clean framing.`,skill:'Composition'};
-    return{title:'Keep the setup and improve composition',why:`The main technical signals are usable. Keep ${rec.mode}, ${rec.lens}, and ${rec.exposure}; now simplify the background, check the frame edges, and make subject placement intentional.`,skill:'Composition'};
+    return{title:'Keep the setup and improve composition',why:`The main technical signals are usable. Keep ${rec.mode}, ${rec.lens}, and ${rec.exposure||rec.settings}; now simplify the background, check the frame edges, and make subject placement intentional.`,skill:'Composition'};
   }
 
   function refresh(){
