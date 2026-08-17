@@ -7,7 +7,7 @@
   window.addEventListener('t7-review-updated',e=>{latestAnalysis=e.detail||null;setTimeout(refresh,0)});
 
   const host=$('#reviewResults')||review,coach=document.createElement('section');coach.className='smart-coach';coach.innerHTML=`
-    <div class="smart-head"><div><span class="tag">SMART COACH</span><h4>Your next best change</h4><p>Combines the local technical diagnosis, Canon settings, shooting goal, and conditions when available.</p></div><span class="smart-free">FREE • ON-DEVICE</span></div>
+    <div class="smart-head"><div><span class="tag">SMART COACH</span><h4>Your next best change</h4><p>Combines the local technical diagnosis, actual Canon settings, shooting goal, Scene Assist, and conditions when available.</p></div><span class="smart-free">FREE • ON-DEVICE</span></div>
     <div class="smart-priority"><i>1</i><div><b id="smartTitle">Review a photo first</b><span id="smartWhy">Upload a photo and the app will choose one useful change to try next.</span></div></div>
     <div class="smart-grid"><div><small>MODE</small><b id="smartMode">—</b></div><div><small>LENS</small><b id="smartLens">—</b></div><div><small>EXPOSURE</small><b id="smartExposure">—</b></div><div><small>ISO</small><b id="smartIso">—</b></div></div>
     <div class="smart-context"><div class="smart-box"><small>Your capture</small><p id="smartCapture">Waiting for EXIF/settings…</p></div><div class="smart-box"><small>Shooting context</small><p id="smartConditions">Check Photo Conditions for weather-aware advice.</p></div></div>
@@ -34,6 +34,11 @@
 
   function priority(goal,a,x,rec){
     const m=a.metrics||{},d=a.diagnosis||{},cloud=Number(latestConditions?.current?.cloud_cover||String(text('#wcCloud')).replace(/[^0-9.]/g,''))||0,wind=Number(latestConditions?.current?.wind_speed_10m||String(text('#wcWind')).replace(/[^0-9.]/g,''))||0;
+    if(a.settingsAudit?.has&&a.settingsAudit?.level==='warn'){
+      const summary=a.settingsAudit.summary||'One stored camera setting is a stronger suspect than editing.';
+      const skill=/shutter|1\//i.test(summary)?'Shutter Speed':/mm|focal/i.test(summary)?'18–55mm Lens':/ISO/i.test(summary)?'ISO':'Exposure';
+      return{title:'Fix the camera setting first',why:summary,skill};
+    }
     if(goal==='portrait'&&x.focal&&x.focal<40)return{title:'Use the long end of your kit lens',why:`This portrait was captured around ${Math.round(x.focal)}mm. Move toward 50–55mm and step back for a more flattering perspective and easier background separation.`,skill:'18–55mm Lens'};
     if(goal==='action'&&x.shutter&&x.shutter>1/500)return{title:'Freeze the action first',why:`Your shutter was about ${shutterLabel(x.shutter)}. Start at 1/500 and push toward 1/1000 for faster movement, using AI Servo and continuous drive.`,skill:'Shutter Speed'};
     if((goal==='portrait'||goal==='indoor')&&x.shutter&&x.shutter>1/125&&m.detail<70&&m.detailConfidence>=55)return{title:'Protect shutter speed',why:`Your shutter was about ${shutterLabel(x.shutter)} and the focus/detail signal is weak enough to investigate. Aim for roughly 1/125 or faster for still people, and around 1/250 when movement or camera shake is a concern.`,skill:'Shutter Speed'};
