@@ -1,0 +1,112 @@
+/* T7 Studio V58 — unified premium iconography */
+.t7-icon{width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;transition:transform .18s ease,opacity .18s ease,color .18s ease}
+.t7-has-icon{display:inline-flex;align-items:center;gap:7px}
+button.t7-has-icon,.button.t7-has-icon,a.button.t7-has-icon{justify-content:center}
+
+/* Navigation */
+.desktop-nav a.t7-has-icon,.mobile-dock a.t7-has-icon{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important}
+.desktop-nav a .t7-icon{width:16px;height:16px;opacity:.68}
+.desktop-nav a.active .t7-icon,.desktop-nav a[aria-current="page"] .t7-icon{opacity:1;color:#ff8d6f}
+.mobile-dock a .t7-icon{width:18px;height:18px;display:block}
+.mobile-dock a{flex-direction:column!important;gap:3px!important}
+.mobile-dock .shoot-dock .t7-icon{width:21px;height:21px}
+.mobile-dock a.active .t7-icon,.mobile-dock a[aria-current="page"] .t7-icon{color:#ff9275}
+
+/* Heading icon tile */
+.t7-heading-with-icon{position:relative;padding-left:52px!important}
+.t7-heading-icon{position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#ff9b7b;background:linear-gradient(145deg,rgba(255,145,111,.15),rgba(255,255,255,.035));border:1px solid rgba(255,155,123,.16);box-shadow:inset 0 1px rgba(255,255,255,.05),0 8px 24px rgba(0,0,0,.2)}
+.t7-heading-icon .t7-icon{width:20px;height:20px;stroke-width:1.9}
+.home-v2-hero-copy.t7-heading-with-icon{padding-left:0!important}
+.home-v2-hero-copy>.t7-heading-icon{position:relative;left:auto;top:auto;margin-bottom:13px;width:44px;height:44px;border-radius:15px;background:rgba(8,12,17,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+
+/* Buttons / controls */
+.button .t7-icon,button .t7-icon,.ev2-tool-btn .t7-icon,.ev2-tab .t7-icon,.cv3-tab .t7-icon{width:16px;height:16px;opacity:.8}
+.button.primary .t7-icon,button.primary .t7-icon,.learn-primary .t7-icon,.shoot-dock .t7-icon{opacity:1}
+.button:hover .t7-icon,button:hover .t7-icon{transform:translateY(-1px)}
+.button:active .t7-icon,button:active .t7-icon{transform:scale(.92)}
+.ev2-tab,.cv3-tab{gap:6px!important}
+.ev2-tab.active .t7-icon,.cv3-tab.active .t7-icon{color:#ff9575;opacity:1}
+.ev2-crop .t7-icon{width:15px;height:15px}
+
+/* Subject / scene cards */
+.subject-card.t7-has-icon,.choice.t7-has-icon,.scene-assist-option.t7-has-icon{position:relative;display:flex!important;align-items:flex-start!important;justify-content:flex-end!important;flex-direction:column!important;gap:4px!important;padding-top:46px!important}
+.subject-card>.t7-icon,.choice[data-shot]>.t7-icon,.scene-assist-option>.t7-icon{position:absolute;top:14px;left:14px;width:23px;height:23px;color:rgba(243,247,250,.78);filter:drop-shadow(0 3px 10px rgba(0,0,0,.28))}
+.subject-card.active>.t7-icon,.subject-card.selected>.t7-icon,.choice.active>.t7-icon,.scene-assist-option.active>.t7-icon,.scene-assist-option.selected>.t7-icon{color:#ff9a78}
+.scene-assist-option>.t7-icon{width:20px;height:20px;top:12px}
+
+/* Technical data cards */
+.t7-icon-card{position:relative}
+.t7-card-icon{width:16px;height:16px;color:#7f8b98;opacity:.8;margin-bottom:7px}
+.review-metric.t7-icon-card,.library-stat.t7-icon-card,.exif-card.t7-icon-card,.weather-grid>div.t7-icon-card,.golden-grid>div.t7-icon-card{padding-top:13px!important}
+.review-metric.t7-icon-card>.t7-card-icon,.library-stat.t7-icon-card>.t7-card-icon{color:#ff9677}
+.review-exif-values>div.t7-icon-card>.t7-card-icon,.rv2-setting-row>div.t7-icon-card>.t7-card-icon{color:#8b96a4}
+.library-skill.t7-icon-card{padding-left:28px!important}
+.library-skill.t7-icon-card>.t7-card-icon{position:absolute;left:0;top:1px}
+.shoot-focus-support>div.t7-icon-card>.t7-card-icon,.shoot-focus-full-grid>div.t7-icon-card>.t7-card-icon{color:#ff9a79}
+
+/* Corner semantic icons for major modules */
+.t7-corner-icon{position:absolute;right:15px;top:15px;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#74818e;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);z-index:2;pointer-events:none}
+.t7-corner-icon .t7-icon{width:17px;height:17px}
+.home-v2-next,.home-v2-recent,.home-v2-light,.home-v2-learning,.review-exif-audit,.review-next,.reshoot-flow,.library-reshoot,.library-list-card,.lv2-challenge,.lv2-t7,.ev2-auto-card,.conditions-v2,.cv3-tour,.cv3-reference{position:relative}
+.home-v2-next>.t7-corner-icon,.review-next>.t7-corner-icon,.lv2-challenge>.t7-corner-icon{color:#ff9776;background:rgba(255,142,109,.08);border-color:rgba(255,142,109,.12)}
+.home-v2-light>.t7-corner-icon,.conditions-v2>.t7-corner-icon{color:#f4c06b}
+.home-v2-learning>.t7-corner-icon,.lv2-t7>.t7-corner-icon{color:#9cc2ff}
+.reshoot-flow>.t7-corner-icon,.library-reshoot>.t7-corner-icon{color:#8de0bb}
+
+/* Camera control chips */
+.cv3-control-chip.t7-has-icon{display:grid!important;grid-template-columns:22px 1fr!important;grid-template-rows:auto auto!important;column-gap:8px!important;text-align:left!important;justify-content:start!important}
+.cv3-control-chip>.t7-icon{grid-row:1/3;align-self:center;width:18px;height:18px;color:#7e8995}
+.cv3-control-chip.active>.t7-icon{color:#ff9473}
+.cv3-control-chip small,.cv3-control-chip b{grid-column:2}
+
+/* Status and privacy */
+.t7-status-icon{width:13px;height:13px;flex:0 0 auto}
+.review-scene-context,.review-badge,.library-local,.privacy-badge{align-items:center!important;gap:6px!important}
+.review-scene-context>.t7-status-icon{color:#ff9876}
+.review-badge>.t7-status-icon,.library-local>.t7-status-icon,.privacy-badge>.t7-status-icon{color:#83d6ad}
+
+/* Archive / list actions */
+.qa-library-archive>summary.t7-has-icon{display:grid!important;grid-template-columns:20px 1fr auto!important;gap:10px!important}
+.qa-library-archive>summary>.t7-icon{width:17px;height:17px;color:#7d8996}
+.library-mini.t7-has-icon{gap:5px!important}
+.library-mini .t7-icon{width:14px;height:14px}
+
+/* Editor */
+.editor-v2-toolbar .t7-icon{width:16px;height:16px}
+.ev2-tab.t7-has-icon{display:flex!important;align-items:center!important;justify-content:center!important}
+.ev2-auto-card>.t7-corner-icon{color:#ff9a77}
+
+/* Icon colors for common semantic buttons */
+a[href="#review"]>.t7-icon{color:#9fb9ff}
+a[href="#learn"]>.t7-icon{color:#b7a7ff}
+a[href="#library"]>.t7-icon{color:#9bd8bf}
+a[href="#conditions"]>.t7-icon{color:#f1bd67}
+a[href="#shoot"]>.t7-icon{color:#ff9372}
+.button.primary>.t7-icon,.shoot-dock>.t7-icon{color:currentColor}
+
+/* Don't let icon injection create layout noise in ultra-small badges. */
+.pill.t7-has-icon,.tag.t7-has-icon{gap:4px}
+.pill .t7-icon,.tag .t7-icon{width:12px;height:12px}
+
+@media(max-width:760px){
+  .t7-heading-with-icon{padding-left:46px!important}
+  .t7-heading-icon{width:36px;height:36px;border-radius:12px;top:1px}
+  .t7-heading-icon .t7-icon{width:18px;height:18px}
+  .home-v2-hero-copy.t7-heading-with-icon{padding-left:0!important}
+  .home-v2-hero-copy>.t7-heading-icon{width:40px;height:40px}
+  .subject-card.t7-has-icon,.choice.t7-has-icon{padding-top:42px!important}
+  .subject-card>.t7-icon,.choice[data-shot]>.t7-icon{width:21px;height:21px;top:12px;left:12px}
+  .t7-corner-icon{width:30px;height:30px;right:12px;top:12px}
+  .t7-corner-icon .t7-icon{width:15px;height:15px}
+  .desktop-nav{display:none!important}
+}
+
+@media(max-width:430px){
+  .mobile-dock a{font-size:8px!important}
+  .mobile-dock a .t7-icon{width:17px;height:17px}
+  .mobile-dock .shoot-dock .t7-icon{width:20px;height:20px}
+  .t7-heading-with-icon{padding-left:43px!important}
+  .t7-heading-icon{width:34px;height:34px}
+}
+
+@media(prefers-reduced-motion:reduce){.t7-icon{transition:none!important}}
