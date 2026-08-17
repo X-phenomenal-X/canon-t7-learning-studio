@@ -1,32 +1,51 @@
 (()=>{
-  const $=s=>document.querySelector(s);
-  const review=$('.review-flow'),scoreEl=$('#reviewScore');
-  if(!review||!scoreEl)return;
   const DB_NAME='canonT7Studio',STORE='photoHistory',DB_VERSION=1;
-  let db=null,filter='all',saving=false,lastSeen=0;
+  let db=null,lastSavedId=null;
 
-  function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(STORE)){const s=d.createObjectStore(STORE,{keyPath:'id'});s.createIndex('time','time');s.createIndex('goal','goal')}};req.onsuccess=()=>{db=req.result;resolve(db)};req.onerror=()=>reject(req.error)})}
-  function tx(mode='readonly'){return db.transaction(STORE,mode).objectStore(STORE)}
-  function put(v){return new Promise((res,rej)=>{const r=tx('readwrite').put(v);r.onsuccess=()=>res(v);r.onerror=()=>rej(r.error)})}
-  function remove(id){return new Promise((res,rej)=>{const r=tx('readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
-  function clear(){return new Promise((res,rej)=>{const r=tx('readwrite').clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
-  function all(){return new Promise((res,rej)=>{const r=tx().getAll();r.onsuccess=()=>res((r.result||[]).sort((a,b)=>b.time-a.time));r.onerror=()=>rej(r.error)})}
-  const num=id=>Number(String($(id)?.textContent||'').replace(/[^0-9.-]/g,''))||0;
-  const text=id=>$(id)?.textContent?.trim()||'';
-  function recent(){try{return JSON.parse(localStorage.getItem('canonRecentPhoto')||'null')}catch{return null}}
-  function exif(){return{camera:text('#exifCamera'),focal:text('#exifFocal'),aperture:text('#exifAperture'),shutter:text('#exifShutter'),iso:text('#exifIso'),date:text('#exifDate')}}
-  function snapshot(){const r=recent();const goal=$('#reviewGoal')?.value||'general';return{id:r?.time||Date.now(),time:r?.time||Date.now(),goal,thumb:r?.thumb||'',settings:r?.settings||'',score:num('#reviewScore'),exposure:num('#reviewExposure'),detail:num('#reviewDetail'),contrast:num('#reviewContrast'),clipping:num('#reviewClip'),exif:exif()}}
+  function openDB(){
+    if(db)return Promise.resolve(db);
+    return new Promise((resolve,reject)=>{
+      const req=indexedDB.open(DB_NAME,DB_VERSION);
+      req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(STORE)){const s=d.createObjectStore(STORE,{keyPath:'id'});s.createIndex('time','time');s.createIndex('goal','goal')}};
+      req.onsuccess=()=>{db=req.result;resolve(db)};req.onerror=()=>reject(req.error);
+    });
+  }
+  async function store(mode='readonly'){const d=await openDB();return d.transaction(STORE,mode).objectStore(STORE)}
+  async function put(value){const s=await store('readwrite');return new Promise((res,rej)=>{const r=s.put(value);r.onsuccess=()=>res(value);r.onerror=()=>rej(r.error)})}
+  async function remove(id){const s=await store('readwrite');return new Promise((res,rej)=>{const r=s.delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+  async function clear(){const s=await store('readwrite');return new Promise((res,rej)=>{const r=s.clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+  async function all(){const s=await store();return new Promise((res,rej)=>{const r=s.getAll();r.onsuccess=()=>res((r.result||[]).sort((a,b)=>(b.time||0)-(a.time||0)));r.onerror=()=>rej(r.error)})}
 
-  const host=$('#reviewResults')||review;
-  const panel=document.createElement('section');panel.className='history-panel';panel.innerHTML=`<div class="history-head"><div><span class="tag">PHOTO HISTORY</span><h4>See whether your shooting is improving</h4><p>Stored only on this device. Your photos are not uploaded.</p></div><span class="history-free">FREE • LOCAL</span></div><div class="history-summary"><div class="history-stat"><small>REVIEWED</small><b id="histCount">0</b></div><div class="history-stat"><small>AVERAGE</small><b id="histAvg">—</b></div><div class="history-stat"><small>BEST</small><b id="histBest">—</b></div><div class="history-stat"><small>RECENT TREND</small><b id="histTrend">—</b></div></div><div class="history-toolbar"><select id="histFilter"><option value="all">All photos</option><option value="portrait">Portraits</option><option value="product">Products</option><option value="landscape">Landscapes</option><option value="action">Action</option><option value="indoor">Indoor</option><option value="night">Night</option><option value="general">General</option></select><button id="histClear" class="button">Clear history</button></div><div class="history-chart" id="histChart"></div><div class="history-insight" id="histInsight">Review a few photos to start seeing trends.</div><div class="history-list" id="histList"></div>`;host.appendChild(panel);
+  function metricStatus(value){return value>=78?'Strong':value>=62?'Developing':'Practice'}
+  function trend(items,key){
+    const vals=items.filter(x=>Number.isFinite(Number(x[key]))).slice(0,6);if(vals.length<2)return{label:'Need more',delta:0};
+    const recent=vals.slice(0,Math.min(3,vals.length)),older=vals.slice(3,6);
+    if(!older.length){const d=Math.round(Number(recent[0][key])-Number(recent[recent.length-1][key]));return{label:d>3?'Improving':d<-3?'Down':'Stable',delta:d}}
+    const avg=a=>a.reduce((s,x)=>s+Number(x[key]||0),0)/a.length,d=Math.round(avg(recent)-avg(older));return{label:d>3?'Improving':d<-3?'Down':'Stable',delta:d};
+  }
+  function stats(items){
+    const avg=key=>items.length?Math.round(items.reduce((s,x)=>s+Number(x[key]||0),0)/items.length):0;
+    return{count:items.length,detail:avg('detail'),exposure:avg('exposure'),contrast:avg('contrast'),clipping:avg('clipping'),detailTrend:trend(items,'detail'),exposureTrend:trend(items,'exposure')};
+  }
+  async function broadcast(){const items=await all(),summary=stats(items);window.dispatchEvent(new CustomEvent('t7-history-updated',{detail:{items,stats:summary}}));return{items,stats:summary}}
 
-  function trendInfo(items){if(items.length<2)return{label:'Need more',cls:'trend-flat',delta:0,text:'Review at least two photos to measure improvement.'};const recent=items.slice(0,3),older=items.slice(3,6);if(!older.length){const d=recent[0].score-recent[recent.length-1].score;return{label:d>2?'Improving':d<-2?'Down':'Stable',cls:d>2?'trend-up':d<-2?'trend-down':'trend-flat',delta:d,text:d>2?'Your newest review is stronger than your earlier one.':d<-2?'Your latest review dipped technically. Compare settings and change one variable next time.':'Your recent technical scores are close. Focus on one skill at a time.'}}const avg=a=>a.reduce((s,x)=>s+x.score,0)/a.length,d=avg(recent)-avg(older);return{label:d>3?'Improving':d<-3?'Down':'Stable',cls:d>3?'trend-up':d<-3?'trend-down':'trend-flat',delta:Math.round(d),text:d>3?'Recent photos are trending upward technically. Keep the changes that are working.':d<-3?'Recent photos are trending lower technically. Use the Reshoot loop to isolate the cause.':'Recent scores are fairly stable. Pick one skill—focus, exposure, or lighting—and work it deliberately.'}}
-  function chart(items){const data=[...items].reverse().slice(-10);if(!data.length)return'<div class="history-empty">Your trend chart will appear after the first reviewed photo.</div>';const W=620,H=170,pad=22,min=0,max=100;const x=i=>pad+(W-pad*2)*(data.length===1?.5:i/(data.length-1));const y=v=>H-pad-(H-pad*2)*(Math.max(min,Math.min(max,v))/100);const path=key=>data.map((d,i)=>(i?'L':'M')+x(i)+','+y(d[key])).join(' ');return`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Technical score history"><line x1="${pad}" y1="${y(50)}" x2="${W-pad}" y2="${y(50)}" stroke="#2c394d"/><line x1="${pad}" y1="${y(75)}" x2="${W-pad}" y2="${y(75)}" stroke="#2c394d"/><path d="${path('score')}" fill="none" stroke="#ff5965" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="${path('detail')}" fill="none" stroke="#71b9ff" stroke-width="2.5" opacity=".85"/><path d="${path('exposure')}" fill="none" stroke="#6fe3a6" stroke-width="2.5" opacity=".8"/>${data.map((d,i)=>`<circle cx="${x(i)}" cy="${y(d.score)}" r="4" fill="#ff5965"/>`).join('')}<text x="${pad}" y="15" fill="#ff8e96" font-size="11">Overall</text><text x="82" y="15" fill="#8dc9ff" font-size="11">Detail</text><text x="130" y="15" fill="#8be8b7" font-size="11">Exposure</text></svg>`}
-  function homeSummary(items){const home=document.querySelector('.continue-card,.continueCard,.home-dashboard-card');if(!home)return;let strip=$('.home-history-strip');if(!strip){strip=document.createElement('div');strip.className='home-history-strip';home.appendChild(strip)}const t=trendInfo(items);const avg=items.length?Math.round(items.reduce((s,x)=>s+x.score,0)/items.length):0;strip.innerHTML=`<div><small>Reviewed</small><b>${items.length}</b></div><div><small>Avg tech</small><b>${items.length?avg:'—'}</b></div><div><small>Trend</small><b class="${t.cls}">${t.label}</b></div>`}
-  function render(items){const filtered=filter==='all'?items:items.filter(x=>x.goal===filter);$('#histCount').textContent=filtered.length;$('#histAvg').textContent=filtered.length?Math.round(filtered.reduce((s,x)=>s+x.score,0)/filtered.length)+'/100':'—';$('#histBest').textContent=filtered.length?Math.max(...filtered.map(x=>x.score))+'/100':'—';const t=trendInfo(filtered);$('#histTrend').textContent=t.label;$('#histTrend').className=t.cls;$('#histInsight').textContent=t.text;$('#histChart').innerHTML=chart(filtered);$('#histList').innerHTML=filtered.length?filtered.slice(0,12).map(x=>`<div class="history-row" data-id="${x.id}">${x.thumb?`<img src="${x.thumb}" alt="${x.goal} photo thumbnail">`:'<div></div>'}<div class="meta"><b>${x.goal[0].toUpperCase()+x.goal.slice(1)} • ${new Date(x.time).toLocaleDateString([], {month:'short',day:'numeric'})}</b><small>${x.settings||[x.exif?.focal,x.exif?.aperture,x.exif?.shutter,x.exif?.iso].filter(Boolean).join(' • ')||'Settings unavailable'}</small><small>Exposure ${x.exposure} • Detail ${x.detail} • Contrast ${x.contrast}</small></div><div><div class="history-score">${x.score}</div><button class="history-delete" data-delete="${x.id}" aria-label="Delete history item">×</button></div></div>`).join(''):'<div class="history-empty">No reviewed photos in this category yet.</div>';document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=async()=>{await remove(Number(b.dataset.delete));refresh()});homeSummary(items)}
-  async function refresh(){try{render(await all())}catch(e){console.warn('History unavailable',e)}}
-  async function saveCurrent(){if(saving)return;const score=num('#reviewScore');if(!score)return;const r=recent();if(!r?.time||r.time===lastSeen)return;saving=true;lastSeen=r.time;setTimeout(async()=>{try{await put(snapshot());await refresh();window.dispatchEvent(new CustomEvent('t7-history-updated'))}catch(e){console.warn('Could not save history',e)}finally{saving=false}},260)}
-  const obs=new MutationObserver(saveCurrent);obs.observe(scoreEl,{childList:true,characterData:true,subtree:true});
-  $('#histFilter').onchange=e=>{filter=e.target.value;refresh()};$('#histClear').onclick=async()=>{if(confirm('Clear all locally saved photo history on this device?')){await clear();refresh()}};
-  openDB().then(()=>refresh()).catch(()=>{panel.querySelector('#histInsight').textContent='Photo history is not available in this browser mode.'});
+  function snapshot(analysis){
+    const photo=window.T7PhotoSession?.current?.()||window.T7Store?.getSession('photo')||{},m=analysis.metrics||{},d=analysis.diagnosis||{},l=analysis.labels||{},setup=analysis.nextSetup||{};
+    const time=Number(photo.createdAt||analysis.time||Date.now());
+    return{
+      id:time,time,sessionId:photo.id||'',goal:analysis.goal||window.T7Store?.get('reviewGoal','general')||'general',thumb:analysis.thumb||photo.thumb||'',
+      settings:[setup.mode,setup.lens,setup.settings||setup.exposure].filter(Boolean).join(' • '),score:Number(m.overall||0),exposure:Number(m.exposure||0),detail:Number(m.detail||0),contrast:Number(m.contrast||0),clipping:Number(m.clipping||0),detailConfidence:Number(m.detailConfidence||0),
+      status:d.short||'Reviewed',diagnosis:d.title||'Technical review',confidence:d.confidenceLabel||'',labels:{exposure:l.exposure||'',detail:l.detail||'',contrast:l.contrast||'',clipping:l.clipping||''},
+      exif:photo.exif||{},version:analysis.version||'2.0.0'
+    };
+  }
+  async function saveAnalysis(analysis){
+    if(!analysis?.metrics?.overall)return null;const record=snapshot(analysis);if(record.id===lastSavedId)return record;lastSavedId=record.id;
+    await put(record);await broadcast();return record;
+  }
+
+  window.T7History={open:openDB,all,put,remove:async id=>{await remove(id);return broadcast()},clear:async()=>{await clear();return broadcast()},stats,trend,metricStatus,saveAnalysis,version:'2.0.0'};
+  window.addEventListener('t7-review-updated',e=>saveAnalysis(e.detail).catch(err=>console.warn('Could not save photo history',err)));
+  openDB().then(broadcast).catch(err=>console.warn('Photo history unavailable',err));
+  window.dispatchEvent(new CustomEvent('t7-history-ready',{detail:window.T7History}));
 })();
