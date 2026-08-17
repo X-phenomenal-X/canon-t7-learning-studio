@@ -26,7 +26,7 @@
 
   bootNow();
   simplifyNavigation();
-  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');
+  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');style('./qa-polish.css');
   script('./store.js')
     .then(()=>script('./photo-session.js'))
     .then(()=>script('./t7-engine.js'))
@@ -60,6 +60,7 @@
     .then(()=>script('./motion-v1.js'))
     .then(()=>script('./premium-shell.js'))
     .then(()=>script('./onboarding.js'))
+    .then(()=>script('./qa-polish.js'))
     .catch(showLoadError);
 
   if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
