@@ -2,6 +2,7 @@
   const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const home=$('#home');if(!home)return;
   if(!document.querySelector('link[data-home-coach]')){const l=document.createElement('link');l.rel='stylesheet';l.href='./home-coach.css';l.dataset.homeCoach='1';document.head.appendChild(l)}
+  if(!document.querySelector('link[data-photo-visual]')){const l=document.createElement('link');l.rel='stylesheet';l.href='./photo-visual.css';l.dataset.photoVisual='1';document.head.appendChild(l)}
   const hour=new Date().getHours();
   const hello=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
   const cameraEssentials=['modeDial','shutter','mainDial','q','iso','af','afPoint','avComp'];
@@ -23,6 +24,12 @@
   function actualSettings(item){const x=item?.exif||{},parts=[];if(finite(x.focal))parts.push(`${Math.round(Number(x.focal))}mm`);if(finite(x.aperture))parts.push(`f/${Math.round(Number(x.aperture)*10)/10}`);if(finite(x.exposure))parts.push(shutter(x.exposure));if(finite(x.iso))parts.push(`ISO ${Math.round(Number(x.iso))}`);return parts.join(' · ')}
   function goalName(item){return item?.sceneName||String(item?.goal||'Photo').replace(/^./,x=>x.toUpperCase())}
   function setShootContext(item){const g=item?.goal==='general'?'portrait':item?.goal;if(g)window.T7Store?.set('shootSubject',g);window.T7Store?.set('shootScene',item?.scene||null)}
+  function syncHero(item){
+    const hero=$('#homeShootHero');if(!hero)return;
+    const thumb=item?.thumb;if(!thumb){hero.style.removeProperty('background');return}
+    const safe=String(thumb).replace(/"/g,'%22');
+    hero.style.setProperty('background',`linear-gradient(100deg,rgba(7,10,14,.96) 0%,rgba(7,10,14,.80) 43%,rgba(7,10,14,.22) 76%,rgba(7,10,14,.04) 100%),url("${safe}") center/cover no-repeat`,'important');
+  }
 
   function restoreLearning(){
     const controls=readJson('canonSeenControls',{}),presets=readJson('canonSeenPresets',{}),practice=readJson('canonPracticeV5',[]),learned=readJson('canonLearnDone',{});
@@ -38,6 +45,7 @@
   function renderLatest(item=null){
     const box=$('.native-latest .recent-photo-empty, .native-latest .recent-photo-card-live');if(!box)return;
     const recent=window.T7Store?.get('recentPhoto',null)||readJson('canonRecentPhoto',null),source=item||recent;
+    syncHero(source);
     if(!source)return;
     const date=new Date(source.time||Date.now()).toLocaleDateString([], {month:'short',day:'numeric'}),actual=item?actualSettings(item):'',settings=actual?`Actual: ${actual}`:(source.settings||'Canon T7 review'),status=source.status||source.diagnosis||source.score||'Reviewed';
     box.className='recent-photo-card-live';
