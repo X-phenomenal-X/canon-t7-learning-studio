@@ -30,13 +30,13 @@
   async function broadcast(){const items=await all(),summary=stats(items);window.dispatchEvent(new CustomEvent('t7-history-updated',{detail:{items,stats:summary}}));return{items,stats:summary}}
 
   function snapshot(analysis){
-    const photo=window.T7PhotoSession?.current?.()||window.T7Store?.getSession('photo')||{},m=analysis.metrics||{},d=analysis.diagnosis||{},l=analysis.labels||{},setup=analysis.nextSetup||{};
-    const time=Number(photo.createdAt||analysis.time||Date.now());
+    const photo=window.T7PhotoSession?.current?.()||window.T7Store?.getSession('photo')||{},m=analysis.metrics||{},d=analysis.diagnosis||{},l=analysis.labels||{},setup=analysis.nextSetup||{},scene=analysis.scene||null;
+    const time=Number(photo.createdAt||analysis.time||Date.now()),sceneName=scene&&window.T7Engine?.scenes?.[scene]?.name||'';
     return{
-      id:time,time,sessionId:photo.id||'',goal:analysis.goal||window.T7Store?.get('reviewGoal','general')||'general',thumb:analysis.thumb||photo.thumb||'',
+      id:time,time,sessionId:photo.id||'',goal:analysis.goal||window.T7Store?.get('reviewGoal','general')||'general',scene,sceneName,thumb:analysis.thumb||photo.thumb||'',
       settings:[setup.mode,setup.lens,setup.settings||setup.exposure].filter(Boolean).join(' • '),score:Number(m.overall||0),exposure:Number(m.exposure||0),detail:Number(m.detail||0),contrast:Number(m.contrast||0),clipping:Number(m.clipping||0),detailConfidence:Number(m.detailConfidence||0),
       status:d.short||'Reviewed',diagnosis:d.title||'Technical review',confidence:d.confidenceLabel||'',labels:{exposure:l.exposure||'',detail:l.detail||'',contrast:l.contrast||'',clipping:l.clipping||''},
-      exif:photo.exif||{},version:analysis.version||'2.0.0'
+      exif:photo.exif||{},version:analysis.version||'2.1.0'
     };
   }
   async function saveAnalysis(analysis){
@@ -44,7 +44,7 @@
     await put(record);await broadcast();return record;
   }
 
-  window.T7History={open:openDB,all,put,remove:async id=>{await remove(id);return broadcast()},clear:async()=>{await clear();return broadcast()},stats,trend,metricStatus,saveAnalysis,version:'2.0.0'};
+  window.T7History={open:openDB,all,put,remove:async id=>{await remove(id);return broadcast()},clear:async()=>{await clear();return broadcast()},stats,trend,metricStatus,saveAnalysis,version:'2.1.0'};
   window.addEventListener('t7-review-updated',e=>saveAnalysis(e.detail).catch(err=>console.warn('Could not save photo history',err)));
   openDB().then(broadcast).catch(err=>console.warn('Photo history unavailable',err));
   window.dispatchEvent(new CustomEvent('t7-history-ready',{detail:window.T7History}));
