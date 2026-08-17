@@ -26,7 +26,7 @@
 
   bootNow();
   simplifyNavigation();
-  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');style('./qa-polish.css');style('./icon-system.css');style('./photo-viewer.css');style('./portfolio.css');style('./mobile-shell-fix.css');style('./photography-guide.css');style('./photography-course.css');style('./adaptive-learning.css');
+  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');style('./qa-polish.css');style('./icon-system.css');style('./photo-viewer.css');style('./portfolio.css');style('./mobile-shell-fix.css');style('./photography-guide.css');style('./photography-course.css');style('./adaptive-learning.css');style('./practice-missions.css');
   script('./store.js')
     .then(()=>script('./photo-session.js'))
     .then(()=>script('./t7-engine.js'))
@@ -67,6 +67,7 @@
     .then(()=>script('./photography-guide.js'))
     .then(()=>script('./photography-course.js'))
     .then(()=>script('./adaptive-learning.js'))
+    .then(()=>script('./practice-missions.js'))
     .then(()=>script('./photo-viewer.js'))
     .then(()=>script('./portfolio.js'))
     .then(()=>script('./mobile-shell-fix.js'))
