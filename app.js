@@ -14,7 +14,7 @@
   function showUpdate(reg){if(document.getElementById('appUpdateBanner'))return;const bar=document.createElement('div');bar.id='appUpdateBanner';bar.style.cssText='position:fixed;left:12px;right:12px;bottom:72px;z-index:9998;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;background:#151c25;color:#fff;border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 30px rgba(0,0,0,.35);font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';bar.innerHTML='<span>New T7 Studio version available.</span><button style="border:0;border-radius:9px;padding:8px 10px;background:#eef3f7;color:#0b0e12;font-weight:800">Refresh</button>';bar.querySelector('button').onclick=()=>{reg.waiting?.postMessage({type:'SKIP_WAITING'});setTimeout(()=>location.reload(),300)};document.body.appendChild(bar)}
 
   simplifyNavigation();
-  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');
+  style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');
   script('./store.js')
     .then(()=>script('./photo-session.js'))
     .then(()=>script('./t7-engine.js'))
@@ -35,6 +35,7 @@
     .then(()=>script('./library-insights.js'))
     .then(()=>script('./native-ui.js'))
     .then(()=>script('./learn-v2.js'))
+    .then(()=>script('./practice-coach.js'))
     .then(()=>script('./conditions-v2.js'))
     .then(()=>script('./review-v2.js'))
     .then(()=>script('./editor-v2.js'))
