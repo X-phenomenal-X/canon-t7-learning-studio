@@ -1,0 +1,60 @@
+/* V50 — visual, progressive Guided Shoot subject picker */
+body[data-route="shoot"] .shoot-screen[data-screen="1"]{--subject-accent:#ff806b}
+body[data-route="shoot"] .shoot-screen[data-screen="1"] .shoot-v2-screen-title{margin-bottom:12px}
+body[data-route="shoot"] .shoot-screen[data-screen="1"] .shoot-v2-screen-title>span{background:linear-gradient(145deg,#2b211e,#17191d)!important;color:#ffad90!important;border-color:rgba(255,128,107,.18)!important}
+body[data-route="shoot"] .shoot-screen[data-screen="1"] .shoot-v2-screen-title h3{font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:31px;letter-spacing:-.045em}
+body[data-route="shoot"] .shoot-screen[data-screen="1"] .shoot-v2-screen-title p{max-width:540px}
+
+/* Subject cards are visual choices, not form fields */
+.subject-grid-v2{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+.subject-card-v2{isolation:isolate;min-height:160px!important;padding:0!important;border-radius:23px!important;background:#0e1217!important;display:block!important;text-align:left!important;box-shadow:0 13px 34px rgba(0,0,0,.12);transform:translateZ(0)}
+.subject-card-v2:before{z-index:2;background:linear-gradient(180deg,rgba(3,5,7,.01) 20%,rgba(3,5,7,.08) 45%,rgba(3,5,7,.94) 100%)!important}
+.subject-card-v2:after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.92;transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .22s ease}
+.subject-card-v2:hover:after{transform:scale(1.025)}
+.subject-card-v2 .subject-photo{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.subject-card-v2 .subject-index{z-index:4;left:11px!important;top:10px!important;padding:5px 7px;border-radius:999px;background:rgba(5,7,9,.53);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(8px);color:#d7dde4!important;font-size:7px!important;letter-spacing:.11em!important}
+.subject-card-v2 .subject-copy{position:absolute!important;z-index:4!important;left:12px;right:12px;bottom:12px}
+.subject-card-v2 strong{display:block;font-family:Georgia,'Times New Roman',serif;font-weight:500!important;font-size:20px!important;letter-spacing:-.025em;margin:0 0 3px!important;color:#fff}
+.subject-card-v2 .subject-copy span{font-size:9px!important;color:#aeb7c1!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.subject-card-v2 .subject-arrow{display:none!important}
+.subject-card-v2.selected,.subject-card-v2.subject-active-context{border-color:#ff856f!important;background:#12171d!important;box-shadow:inset 0 0 0 1px rgba(255,128,107,.46),0 10px 30px rgba(255,111,97,.09)!important}
+.subject-card-v2.selected .subject-index,.subject-card-v2.subject-active-context .subject-index{background:#ff806b!important;border-color:#ff9d87!important;color:#fff!important}
+
+/* CSS photographic mini-scenes */
+.subject-portrait:after{background:radial-gradient(circle at 54% 31%,#e9a77f 0 10%,transparent 10.5%),radial-gradient(ellipse at 54% 64%,#6d4e44 0 22%,transparent 22.5%),radial-gradient(circle at 20% 24%,rgba(222,179,113,.78) 0 9%,transparent 10%),radial-gradient(circle at 80% 18%,rgba(103,135,92,.82) 0 12%,transparent 13%),linear-gradient(145deg,#4d645b,#1f2a2b 58%,#11161b)}
+.subject-product:after{background:linear-gradient(120deg,transparent 34%,rgba(255,255,255,.12) 35% 36%,transparent 37%),linear-gradient(155deg,transparent 32%,#57616a 33% 63%,transparent 64%),radial-gradient(ellipse at 53% 72%,rgba(0,0,0,.5) 0 28%,transparent 29%),linear-gradient(145deg,#30353b,#13181e)}
+.subject-landscape:after{background:radial-gradient(circle at 77% 21%,rgba(255,188,112,.72) 0 7%,transparent 8%),linear-gradient(155deg,transparent 0 45%,#52675b 46% 56%,transparent 57%),linear-gradient(205deg,transparent 0 44%,#344f46 45% 57%,transparent 58%),linear-gradient(180deg,#5b7785 0 50%,#283a32 51% 100%)}
+.subject-action:after{background:linear-gradient(98deg,transparent 0 18%,rgba(255,255,255,.13) 19% 20%,transparent 21% 34%,rgba(255,118,91,.22) 35% 39%,transparent 40%),radial-gradient(ellipse at 61% 56%,#a85042 0 12%,transparent 13%),radial-gradient(circle at 54% 69%,#171a1e 0 7%,transparent 7.5%),radial-gradient(circle at 70% 69%,#171a1e 0 7%,transparent 7.5%),linear-gradient(145deg,#4b5158,#161b21)}
+.subject-indoor:after{background:linear-gradient(90deg,transparent 0 12%,rgba(240,192,122,.8) 13% 34%,transparent 35%),linear-gradient(180deg,transparent 0 14%,rgba(255,255,255,.12) 15% 16%,transparent 17%),radial-gradient(ellipse at 66% 62%,#624e45 0 18%,transparent 19%),linear-gradient(145deg,#34312e,#15181d)}
+.subject-night:after{background:radial-gradient(circle at 72% 20%,#f7c97b 0 3%,transparent 3.8%),radial-gradient(circle at 27% 32%,#f39b6b 0 2%,transparent 2.8%),linear-gradient(90deg,transparent 0 12%,rgba(83,114,168,.35) 13% 14%,transparent 15% 34%,rgba(255,166,93,.25) 35% 36%,transparent 37%),linear-gradient(180deg,#131b31 0 47%,#080c14 48% 100%)}
+
+/* Progressive scene refinement */
+.scene-assist-card{margin-top:13px!important;padding:0!important;border:0!important;background:transparent!important;border-radius:0!important;animation:subjectRefineIn .24s cubic-bezier(.2,.8,.2,1) both}
+.scene-assist-card[hidden]{display:none!important}
+.scene-assist-head{align-items:center!important;padding:2px 1px 7px}
+.scene-assist-head small{color:#ffad90!important;font-size:8px!important;letter-spacing:.1em!important}
+.scene-assist-head b{font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:17px!important;margin-top:2px!important}
+.scene-assist-head p{display:none!important}.scene-assist-head>span{display:none!important}
+.scene-assist-grid{display:flex!important;gap:7px!important;margin:0!important;overflow-x:auto;scrollbar-width:none;padding:1px 1px 3px!important;scroll-snap-type:x proximity}
+.scene-assist-grid::-webkit-scrollbar{display:none}
+.scene-assist-option{flex:0 0 auto!important;min-height:42px!important;border-radius:999px!important;padding:8px 11px!important;background:#11171e!important;border-color:rgba(255,255,255,.08)!important;display:flex!important;align-items:center;gap:7px;scroll-snap-align:start;white-space:nowrap}
+.scene-assist-option[hidden]{display:none!important}
+.scene-assist-option b{font-size:10px!important;line-height:1!important}.scene-assist-option small{margin:0!important;font-size:7px!important;color:#697684!important}
+.scene-assist-option.selected{background:linear-gradient(135deg,#33211d,#20191a)!important;border-color:#ff806b!important;box-shadow:inset 0 0 0 1px rgba(255,128,107,.17)!important}
+.scene-assist-option.selected b{color:#fff}.scene-assist-option.selected small{color:#ffb49c!important}
+.scene-assist-clear{display:inline-flex;align-items:center;margin:7px 0 0!important;min-height:32px;padding:0 9px!important;border:1px solid rgba(255,255,255,.08)!important;background:#0e1319!important;border-radius:999px!important;color:#8f9aa6!important;font-size:9px!important}
+.scene-assist-clear[hidden]{display:none!important}
+@keyframes subjectRefineIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* Bottom action becomes quieter once a clear photo choice is made */
+.shoot-screen[data-screen="1"] .shoot-v2-bottom{margin-top:13px!important}.shoot-screen[data-screen="1"] #subjectHint{max-width:58%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shoot-screen[data-screen="1"] #shootNext1:not(:disabled){background:linear-gradient(135deg,#ff6f61,#ff9b72)!important;color:#fff!important;border-color:#ff806b!important}
+
+@media(max-width:640px){
+ .subject-grid-v2{grid-template-columns:1fr 1fr!important;gap:8px!important}
+ .subject-card-v2{min-height:137px!important;border-radius:20px!important}
+ .subject-card-v2 strong{font-size:18px!important}.subject-card-v2 .subject-copy span{display:none!important}
+ body[data-route="shoot"] .shoot-screen[data-screen="1"] .shoot-v2-screen-title h3{font-size:27px}
+}
+@media(max-width:380px){.subject-card-v2{min-height:124px!important}.subject-card-v2 strong{font-size:17px!important}.subject-card-v2 .subject-index{font-size:6px!important}}
+@media(prefers-reduced-motion:reduce){.scene-assist-card{animation:none!important}.subject-card-v2:after{transition:none!important}}
