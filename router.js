@@ -5,7 +5,8 @@
     shoot:{title:'Guided Shoot',tab:'shoot',target:'shoot'},
     review:{title:'Photo Review',tab:'review',target:'review'},
     learn:{title:'Learn',tab:'learn',target:'learn'},
-    edit:{title:'Editor',tab:'edit',target:'edit'},
+    library:{title:'Library',tab:'library',target:'library'},
+    edit:{title:'Editor',tab:'review',target:'edit'},
     conditions:{title:'Photo Conditions',tab:'shoot',target:'conditions'},
     camera:{title:'Camera Controls',tab:'learn',target:'camera'},
     simulator:{title:'Exposure Simulator',tab:'learn',target:'simulator'},
@@ -39,7 +40,6 @@
     window.dispatchEvent(new CustomEvent('t7-route-changed',{detail:{route:key,config:cfg}}));
   }
 
-  // Transitional workflow bridge: Capture should enter Review, not Editor.
   document.addEventListener('click',e=>{
     const reviewButton=e.target.closest?.('#reviewShot');
     if(!reviewButton)return;
