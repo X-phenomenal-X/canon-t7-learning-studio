@@ -42,5 +42,57 @@
   if(file)file.addEventListener('change',()=>{const result=review?.querySelector('.rv2-result');if(result)delete result.dataset.motionSeen});
   if(review)new MutationObserver(reviewArrive).observe(review,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
 
-  window.T7Motion={refresh(){registerReveal();updateRanges();capturePulse();reviewArrive()}};
+  /* ---- Hero parallax -------------------------------------------------
+     The first-run hero is a lens built from layers at different translateZ.
+     Tilting the assembly toward the pointer (or the phone) is what turns a
+     stack of circles into something that reads as an object with depth.
+     Transform-only and rAF-throttled so it stays off the layout path, and
+     skipped entirely when the visitor asks for reduced motion. */
+  const calm=matchMedia('(prefers-reduced-motion:reduce)');
+  let lens=null,tilting=false,tx=0,ty=0;
+  function heroLens(){
+    if(lens&&lens.isConnected)return lens;
+    lens=document.querySelector('.hero-lens');return lens;
+  }
+  function applyTilt(){
+    tilting=false;
+    const el=heroLens();if(!el)return;
+    el.style.setProperty('--tiltX',tx.toFixed(2)+'deg');
+    el.style.setProperty('--tiltY',ty.toFixed(2)+'deg');
+    const spec=el.querySelector('.hero-spec');
+    /* The highlight slides against the tilt, the way a real reflection does. */
+    if(spec)spec.style.transform=`translateZ(24px) translate(${(-ty*1.6).toFixed(1)}px,${(tx*1.6).toFixed(1)}px)`;
+  }
+  function queueTilt(){if(tilting||calm.matches)return;tilting=true;requestAnimationFrame(applyTilt)}
+  function fromPointer(e){
+    const el=heroLens();if(!el)return;
+    const hero=el.closest('.home-v2-hero');if(!hero)return;
+    const r=hero.getBoundingClientRect();
+    if(!r.width||!r.height)return;
+    const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+    tx=Math.max(-7,Math.min(7,-py*11));
+    ty=Math.max(-7,Math.min(7,px*13));
+    queueTilt();
+  }
+  function resetTilt(){tx=0;ty=0;queueTilt()}
+  if(matchMedia('(pointer:fine)').matches){
+    window.addEventListener('pointermove',e=>{
+      if(document.body.dataset.route!=='home')return;
+      fromPointer(e);
+    },{passive:true});
+    window.addEventListener('pointerleave',resetTilt,{passive:true});
+  }else if('DeviceOrientationEvent'in window){
+    /* No permission prompt: only listen if the platform grants it freely, which
+       is every Android browser and iOS once the user has allowed motion. */
+    window.addEventListener('deviceorientation',e=>{
+      if(document.body.dataset.route!=='home'||e.beta==null||e.gamma==null)return;
+      tx=Math.max(-6,Math.min(6,(e.beta-45)/6));
+      ty=Math.max(-6,Math.min(6,e.gamma/6));
+      queueTilt();
+    },{passive:true});
+  }
+  calm.addEventListener?.('change',()=>{if(calm.matches){tx=0;ty=0;applyTilt()}});
+  window.addEventListener('t7-route-changed',resetTilt);
+
+  window.T7Motion={refresh(){registerReveal();updateRanges();capturePulse();reviewArrive()},tiltHero:queueTilt};
 })();

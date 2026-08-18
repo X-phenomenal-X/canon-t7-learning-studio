@@ -50,56 +50,107 @@
 }
 @media(prefers-reduced-motion:reduce){.home-v2-mini{transition:none!important}}
 
-/* ---- First-run hero art: a cinematic lens iris instead of 500px of nothing ----
-   Echoes the brand icon's lens motif at large scale. Pure CSS; hidden the moment
-   a real photograph takes over the hero (V73). */
+/* ---- First-run hero: a lens rendered in real 3D space ------------------
+   Concentric barrel rings sit at different translateZ, so the assembly has
+   genuine depth ordering and parallax rather than a painted highlight. It
+   tilts toward the pointer (or the phone's tilt) via --tiltX/--tiltY, which
+   motion-v1.js drives. Built in CSS rather than WebGL: a 3D library would
+   cost more bytes than the entire app's JavaScript and reintroduce a build
+   step. Hidden the moment a real photograph takes over the hero. (V78) */
 .home-v2-hero-art{position:absolute;inset:0;z-index:0;overflow:hidden;border-radius:inherit;pointer-events:none}
 .home-v2-hero.has-photo .home-v2-hero-art{display:none}
 .home-v2-hero-art i{position:absolute;display:block}
-.home-v2-hero-art .hero-lens{
-  right:-8%;top:50%;width:min(62vh,540px);aspect-ratio:1;transform:translateY(-50%);
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 38% 32%,rgba(255,158,120,.16),transparent 26%),
-    radial-gradient(circle at 50% 50%,#05070a 0 26%,#11161d 27% 33%,#05070a 34% 45%,#181f27 46% 49%,#0a0e13 50% 62%,#232b34 63% 65.5%,#0b0f14 66% 78%,#2c343d 79% 80.5%,#0d1117 81% 100%);
-  box-shadow:
-    inset 0 2px 18px rgba(255,255,255,.05),
-    inset 0 -22px 48px rgba(0,0,0,.55),
-    0 0 0 1px rgba(255,255,255,.05),
-    0 34px 90px rgba(0,0,0,.5),
-    -28px 0 90px rgba(255,111,80,.07);
+
+.hero-stage{
+  position:absolute;right:-8%;top:50%;width:min(62vh,540px);aspect-ratio:1;
+  transform:translateY(-50%);
+  perspective:1200px;perspective-origin:50% 50%;
 }
-.home-v2-hero-art .hero-lens b{
-  position:absolute;inset:19%;border-radius:50%;
+.hero-lens{
+  position:absolute;inset:0;border-radius:50%;
+  transform-style:preserve-3d;
+  transform:rotateX(var(--tiltX,0deg)) rotateY(var(--tiltY,0deg));
+  transition:transform .28s cubic-bezier(.22,.75,.3,1);
+  will-change:transform;
+}
+.hero-lens>span{position:absolute;border-radius:50%;display:block}
+
+/* Barrel rings, each stepped back into the frame. */
+/* The barrel is one radial gradient with hard stops - that is where the crisp
+   concentric machining comes from - masked into an annulus so the elements
+   seated behind it show through. Ring 2 and 3 add parallax at depth. */
+.hero-ring{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 34px 90px rgba(0,0,0,.5)}
+.hero-ring-1{
+  inset:0;transform:translateZ(0px);
+  background:radial-gradient(circle at 50% 50%,
+    #05070a 0 26%,#11161d 27% 33%,#05070a 34% 45%,#181f27 46% 49%,
+    #0a0e13 50% 62%,#232b34 63% 65.5%,#0b0f14 66% 78%,#2c343d 79% 80.5%,#0d1117 81% 100%);
+  -webkit-mask:radial-gradient(circle,transparent 0 25%,#000 27%);
+  mask:radial-gradient(circle,transparent 0 25%,#000 27%);
+}
+.hero-ring-2{
+  inset:24%;transform:translateZ(-30px);
+  background:radial-gradient(circle at 50% 50%,#05070a 0 52%,#1a212a 54% 60%,#080b10 62% 84%,#232b34 86% 92%,#07090d 94% 100%);
+  -webkit-mask:radial-gradient(circle,transparent 0 46%,#000 49%);
+  mask:radial-gradient(circle,transparent 0 46%,#000 49%);
+}
+.hero-ring-3{
+  inset:34%;transform:translateZ(-58px);
+  background:radial-gradient(circle at 46% 38%,rgba(255,150,112,.10),transparent 46%),
+    radial-gradient(circle at 50% 50%,#04060a 0 60%,#151c25 62% 72%,#05070a 74% 100%);
+  -webkit-mask:radial-gradient(circle,transparent 0 52%,#000 55%);
+  mask:radial-gradient(circle,transparent 0 52%,#000 55%);
+}
+/* The front glass element. */
+.hero-glass{
+  inset:41%;transform:translateZ(-76px);
   background:
-    radial-gradient(circle at 36% 30%,rgba(255,170,132,.22),transparent 32%),
-    radial-gradient(circle at 68% 74%,rgba(120,170,220,.07),transparent 36%),
+    radial-gradient(circle at 34% 28%,rgba(255,178,140,.20),transparent 34%),
+    radial-gradient(circle at 70% 76%,rgba(120,170,220,.10),transparent 38%),
     conic-gradient(from 25deg,#07090d 0 52deg,#0d1218 55deg 118deg,#07090d 121deg 172deg,#0c1117 175deg 238deg,#07090d 241deg 295deg,#0c1116 298deg 355deg,#07090d 358deg);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),inset 0 14px 40px rgba(0,0,0,.6);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),inset 0 16px 44px rgba(0,0,0,.6);
 }
-.home-v2-hero-art .hero-lens b:before{
-  content:'';position:absolute;inset:34%;border-radius:50%;
+/* Aperture blades, deeper still. */
+.hero-blades{
+  inset:44%;transform:translateZ(-88px);
+  background:conic-gradient(from 8deg,
+    rgba(255,255,255,.07) 0 44deg,transparent 44deg 60deg,
+    rgba(255,255,255,.05) 60deg 104deg,transparent 104deg 120deg,
+    rgba(255,255,255,.07) 120deg 164deg,transparent 164deg 180deg,
+    rgba(255,255,255,.05) 180deg 224deg,transparent 224deg 240deg,
+    rgba(255,255,255,.07) 240deg 284deg,transparent 284deg 300deg,
+    rgba(255,255,255,.05) 300deg 344deg,transparent 344deg 360deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 30%,#000 34%);
+  mask:radial-gradient(circle,transparent 0 30%,#000 34%);
+}
+.hero-pupil{
+  inset:52%;transform:translateZ(-104px);
   background:radial-gradient(circle at 40% 34%,#3a2a24 0 18%,#12100f 40%,#050607 78%);
-  box-shadow:0 0 34px rgba(255,120,88,.14),inset 0 0 0 1px rgba(255,255,255,.05);
+  box-shadow:0 0 40px rgba(255,120,88,.16),inset 0 0 0 1px rgba(255,255,255,.05);
 }
-.home-v2-hero-art .hero-lens b:after{
-  content:'';position:absolute;left:30%;top:24%;width:13%;height:13%;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,214,190,.5),rgba(255,214,190,0) 70%);
-  filter:blur(1px);
+/* Specular highlight, floating in front of the glass and countering the tilt. */
+.hero-spec{
+  left:33%;top:29%;width:9%;height:9%;transform:translateZ(24px);
+  background:radial-gradient(circle,rgba(255,228,210,.5),rgba(255,214,190,0) 68%);
+  filter:blur(.5px);
 }
+
 .home-v2-hero-art .hero-beam{
   left:-10%;top:-40%;width:75%;height:180%;transform:rotate(24deg);
   background:linear-gradient(105deg,transparent 30%,rgba(255,134,99,.05) 46%,rgba(255,178,140,.09) 52%,rgba(255,134,99,.04) 58%,transparent 72%);
   filter:blur(6px);mix-blend-mode:screen;
 }
 .home-v2-hero-art .hero-grain{inset:0;background:var(--t7-grain);background-size:140px 140px;opacity:.05;mix-blend-mode:overlay}
-/* keep the copy above the art */
 .home-v2-hero-copy{position:relative;z-index:2}
+
 @media(max-width:720px){
-  .home-v2-hero-art .hero-lens{right:-34%;top:6%;width:88vw;transform:none;opacity:.85}
+  .hero-stage{right:-34%;top:6%;width:88vw;transform:none;opacity:.9}
   .home-v2-hero-art .hero-beam{left:-24%;width:110%}
 }
 @media(prefers-reduced-motion:no-preference){
   .home-v2-hero-art .hero-beam{animation:t7-beam-drift 14s ease-in-out infinite alternate}
   @keyframes t7-beam-drift{from{transform:rotate(24deg) translateX(-2%)}to{transform:rotate(26deg) translateX(3%)}}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-lens{transition:none!important;transform:none!important}
 }

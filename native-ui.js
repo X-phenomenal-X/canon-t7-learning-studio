@@ -8,7 +8,7 @@
   home.className='dashboard-home native-home home-v2';
   home.innerHTML=`
     <div class="native-greeting"><div><small>${hello}</small><h1>Go make a frame.</h1></div><span class="native-camera">EOS Rebel T7 · 18–55mm</span></div>
-    <a class="home-v2-hero" id="homeShootHero" href="#shoot"><span class="home-v2-hero-art" aria-hidden="true"><i class="hero-lens"><b></b></i><i class="hero-beam"></i><i class="hero-grain"></i></span>
+    <a class="home-v2-hero" id="homeShootHero" href="#shoot"><span class="home-v2-hero-art" aria-hidden="true"><span class="hero-stage"><span class="hero-lens"><span class="hero-ring hero-ring-1"></span><span class="hero-ring hero-ring-2"></span><span class="hero-ring hero-ring-3"></span><span class="hero-glass"></span><span class="hero-blades"></span><span class="hero-pupil"></span><span class="hero-spec"></span></span></span><i class="hero-beam"></i><i class="hero-grain"></i></span>
       <div class="home-v2-hero-copy"><span class="home-v2-kicker" id="homeHeroKicker">READY TO SHOOT</span><h2 id="homeHeroTitle">Your next photo starts here.</h2><p id="homeHeroText">Pick the scene. T7 Studio will give you one clear setup, framing direction, and a controlled three-shot plan.</p><span class="home-v2-hero-cta">Start Guided Shoot <b>→</b></span></div>
       <div class="home-v2-hero-side"><div class="home-v2-hero-session"><small>RECENT SESSION</small><b id="homeHeroSessionTitle">No reviewed frame yet</b><span id="homeHeroSessionMeta">Your first Canon JPEG will appear here after Review.</span></div></div>
     </a>
