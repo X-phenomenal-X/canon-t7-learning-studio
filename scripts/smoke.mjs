@@ -88,10 +88,21 @@ for (const vp of VIEWPORTS) {
         paintedHidden: [...document.querySelectorAll('[hidden]')].filter(visible)
           .map(el => el.id || el.className.toString().slice(0, 40)).slice(0, 5),
         overflowPx: Math.round(document.documentElement.scrollWidth - document.documentElement.clientWidth),
+        home: Object.fromEntries(['.home-v2-hero', '#homeRing', '.home-v2-strip']
+          .map(sel => [sel, !!document.querySelector(sel) && visible(document.querySelector(sel))])),
       };
     });
 
     if (!state.screenPainted) note(`${vp.name}/${route}`, `no visible screen for the route (active section: ${state.screen})`);
+    if (route === 'home') {
+      /* Home is composed by native-ui and then touched by several later modules.
+       * One of them used to write textContent onto the learning tile, erasing its
+       * progress ring and labels. Assert the composition survives a full load. */
+      for (const [sel, what] of [['.home-v2-hero', 'hero'], ['#homeRing', 'learning progress ring'],
+                                 ['.home-v2-strip', 'context strip']]) {
+        if (!state.home[sel]) note(`${vp.name}/home`, `${what} (${sel}) is missing or not painted`);
+      }
+    }
     if (state.paintedHidden.length) note(`${vp.name}/${route}`, `element(s) with [hidden] still painting: ${state.paintedHidden.join(', ')}`);
     if (state.overflowPx > 1) note(`${vp.name}/${route}`, `page scrolls sideways by ${state.overflowPx}px`);
     if (route === 'library') {

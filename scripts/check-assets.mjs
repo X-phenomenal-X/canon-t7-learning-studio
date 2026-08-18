@@ -30,9 +30,17 @@ const swJs = read('sw.js');
 const refsIn = (src, re) => new Set([...src.matchAll(re)].map(m => m[1]));
 
 const htmlRefs = refsIn(indexHtml, /(?:src|href)="\.\/([A-Za-z0-9._-]+\.(?:css|js))"/g);
+/* Modules are declared in named lists (SHELL, ROUTES_A, ...) and executed via
+ * chain(); stylesheets are still injected one call at a time. */
+const moduleLists = Object.fromEntries(
+  [...appJs.matchAll(/const\s+([A-Z_0-9]+)\s*=\s*\[([^\]]*)\]/g)]
+    .map(([, name, body]) => [name, [...body.matchAll(/'\.\/([^']+\.js)'/g)].map(m => m[1])])
+    .filter(([, mods]) => mods.length)
+);
 const appRefs = new Set([
   ...refsIn(appJs, /style\('\.\/([^']+)'\)/g),
   ...refsIn(appJs, /script\('\.\/([^']+)'\)/g),
+  ...Object.values(moduleLists).flat(),
 ]);
 const coreRefs = refsIn(swJs, /'\.\/([A-Za-z0-9._-]+\.(?:css|js))'/g);
 const loaded = new Set([...htmlRefs, ...appRefs, ...ENTRIES]);
@@ -63,12 +71,26 @@ for (const file of coreRefs) {
   }
 }
 
-/* 5. The preload list must cover the module chain, or the parallel warm-up silently
- *    stops covering new modules. */
-const chain = [...appJs.matchAll(/script\('(\.\/[^']+\.js)'\)/g)].map(m => m[1]);
-const warmed = new Set([...(appJs.match(/warm\(\[([^\]]*)\]\)/)?.[1] ?? '').matchAll(/'([^']+)'/g)].map(m => m[1]));
-for (const mod of new Set(chain)) {
-  if (!warmed.has(mod)) fail('not-preloaded', `${mod} is in the module chain but not in warm(), so it costs a serial round trip`);
+/* 5. Every module list must be preloaded, or its modules each cost a serial round
+ *    trip - the exact cost the two-phase warm-up exists to remove. */
+const warmedLists = new Set(
+  [...appJs.matchAll(/warm\(([^)]*)\)/g)].flatMap(([, args]) => args.match(/[A-Z_0-9]{2,}/g) ?? [])
+);
+for (const [name, mods] of Object.entries(moduleLists)) {
+  if (!warmedLists.has(name)) {
+    fail('not-preloaded', `module list ${name} (${mods.length} modules) is never passed to warm()`);
+  }
+}
+/* Any module still loaded by a bare script() call outside a list is invisible to
+ * the warm-up. */
+for (const mod of refsIn(appJs, /script\('\.\/([^']+\.js)'\)/g)) {
+  fail('unlisted-module', `${mod} is loaded by a direct script() call, so it is never preloaded - put it in a module list`);
+}
+/* Lists must be executed, not just declared. */
+for (const name of Object.keys(moduleLists)) {
+  if (!new RegExp(`chain\\(\\s*(\\.\\.\\.)?${name}\\b|\\.\\.\\.${name}\\b`).test(appJs)) {
+    fail('unused-module-list', `module list ${name} is declared but never chained`);
+  }
 }
 
 /* 6. A shipped asset change with no cache version bump serves stale files forever. */

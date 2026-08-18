@@ -40,53 +40,46 @@
   bootNow();
   simplifyNavigation();
   style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');style('./qa-polish.css');style('./icon-system.css');style('./photo-viewer.css');style('./portfolio.css');style('./mobile-shell-fix.css');style('./photography-guide.css');style('./photography-course.css');style('./adaptive-learning.css');style('./practice-missions.css');style('./learning-evidence.css');style('./reference-shot.css');style('./type-scale.css');style('./desktop-workspace.css');
-  warm(['./store.js','./photo-session.js','./t7-engine.js','./review-engine.js','./core.js','./camera-v2.js','./shoot-flow.js','./shoot-subject.js','./shoot-focus.js','./shoot-finish.js','./learn.js','./review-flow.js','./review-scene-sync.js','./reshoot.js','./smart-coach.js','./history.js','./library.js','./library-insights.js','./native-ui.js','./learn-v2.js','./practice-coach.js','./conditions-v2.js','./review-v2.js','./editor-v2.js','./camera-steps.js','./router.js','./polish-v2.js','./motion-v1.js','./premium-shell.js','./onboarding.js','./qa-polish.js','./workflow-qa.js','./icon-system.js','./reference-shot.js','./photography-guide.js','./photography-course.js','./adaptive-learning.js','./practice-missions.js','./learning-evidence.js','./photo-viewer.js','./portfolio.js','./mobile-shell-fix.js']);
-  script('./store.js')
-    .then(()=>script('./photo-session.js'))
-    .then(()=>script('./t7-engine.js'))
-    .then(()=>script('./review-engine.js'))
-    .then(()=>script('./core.js'))
-    .then(()=>script('./camera-v2.js'))
-    .then(()=>script('./shoot-flow.js'))
-    .then(()=>script('./shoot-subject.js'))
-    .then(()=>script('./shoot-focus.js'))
-    .then(()=>script('./shoot-finish.js'))
-    .then(()=>script('./learn.js'))
-    .then(()=>script('./review-flow.js'))
-    .then(()=>script('./review-scene-sync.js'))
+  /* The shell set is everything needed to paint Home and navigate: state, the
+     recommendation engines, history, Home itself, the router, and the visual
+     shell. Route modules build their own sections and are pulled in straight
+     afterwards, so the boot screen no longer waits behind ~145KB of Shoot,
+     Review, Library, Editor and Camera code that Home never uses.
+     polish-v2, motion-v1, qa-polish and icon-system all watch the DOM, so
+     sections that arrive later are still decorated. */
+  const SHELL=['./store.js','./photo-session.js','./t7-engine.js','./review-engine.js','./core.js',
+    './history.js','./native-ui.js','./router.js','./polish-v2.js','./motion-v1.js','./premium-shell.js',
+    './icon-system.js','./onboarding.js','./mobile-shell-fix.js','./qa-polish.js'];
+  const ROUTES_A=['./camera-v2.js','./shoot-flow.js','./shoot-subject.js','./shoot-focus.js','./shoot-finish.js',
+    './learn.js','./review-flow.js','./review-scene-sync.js'];
+  const ROUTES_B=['./reshoot.js','./smart-coach.js','./library.js','./library-insights.js','./learn-v2.js',
+    './practice-coach.js','./conditions-v2.js','./review-v2.js','./editor-v2.js','./camera-steps.js',
+    './workflow-qa.js','./reference-shot.js','./photography-guide.js','./photography-course.js',
+    './adaptive-learning.js','./practice-missions.js','./learning-evidence.js','./photo-viewer.js','./portfolio.js'];
+
+  function chain(list){return list.reduce((p,src)=>p.then(()=>script(src)),Promise.resolve())}
+
+  /* Home renders before the Library and course modules exist, and a tab tapped
+     during loading resolves against sections that have not been built yet. Once
+     everything has run, re-resolve the route and re-broadcast history so Home
+     picks up whatever it could not see the first time. */
+  function settle(){
+    try{window.T7Router?.route?.()}catch{}
+    try{
+      window.T7History?.all?.().then(items=>window.dispatchEvent(new CustomEvent('t7-history-updated',
+        {detail:{items,stats:window.T7History?.stats?.(items)||{}}}))).catch(()=>{});
+    }catch{}
+  }
+
+  warm(SHELL);
+  chain(SHELL)
+    .then(()=>{warm([...ROUTES_A,...ROUTES_B]);return chain(ROUTES_A)})
     .then(()=>{
       const review=document.querySelector('.review-flow'),edit=document.getElementById('edit');
       if(review&&edit?.parentNode){review.id='review';review.classList.add('section');edit.parentNode.insertBefore(review,edit)}
-      return script('./reshoot.js');
+      return chain(ROUTES_B);
     })
-    .then(()=>script('./smart-coach.js'))
-    .then(()=>script('./history.js'))
-    .then(()=>script('./library.js'))
-    .then(()=>script('./library-insights.js'))
-    .then(()=>script('./native-ui.js'))
-    .then(()=>script('./learn-v2.js'))
-    .then(()=>script('./practice-coach.js'))
-    .then(()=>script('./conditions-v2.js'))
-    .then(()=>script('./review-v2.js'))
-    .then(()=>script('./editor-v2.js'))
-    .then(()=>script('./camera-steps.js'))
-    .then(()=>script('./router.js'))
-    .then(()=>script('./polish-v2.js'))
-    .then(()=>script('./motion-v1.js'))
-    .then(()=>script('./premium-shell.js'))
-    .then(()=>script('./onboarding.js'))
-    .then(()=>script('./qa-polish.js'))
-    .then(()=>script('./workflow-qa.js'))
-    .then(()=>script('./icon-system.js'))
-    .then(()=>script('./reference-shot.js'))
-    .then(()=>script('./photography-guide.js'))
-    .then(()=>script('./photography-course.js'))
-    .then(()=>script('./adaptive-learning.js'))
-    .then(()=>script('./practice-missions.js'))
-    .then(()=>script('./learning-evidence.js'))
-    .then(()=>script('./photo-viewer.js'))
-    .then(()=>script('./portfolio.js'))
-    .then(()=>script('./mobile-shell-fix.js'))
+    .then(settle)
     .catch(showLoadError);
 
   if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
