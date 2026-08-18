@@ -37,7 +37,7 @@
   .desktop-nav a{
     width:auto!important;min-height:36px!important;padding:0 13px!important;
     display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
-    border-radius:10px!important;color:#838e99!important;font-size:10.5px!important;
+    border-radius:10px!important;color:#838e99!important;font-size:11px!important;
     transition:color .16s ease,background .16s ease!important;
   }
   .desktop-nav a:hover{background:rgba(255,255,255,.045)!important;color:#eef2f5!important}
@@ -105,7 +105,7 @@
   .pm-title{font-size:30px!important}
   .pm-brief{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 32px!important;margin-top:18px!important}
   .pm-brief>div{border:0!important;background:transparent!important;padding:2px 0 2px 15px!important;border-left:1px solid var(--dw-hairline)!important;border-radius:0!important}
-  .pm-brief small{font-size:8.5px!important;margin-bottom:6px!important}
+  .pm-brief small{font-size:9.5px!important;margin-bottom:6px!important}
   .pm-brief b{font-size:11.5px!important;line-height:1.55!important}
 
   /* ================= GUIDE — editorial learning page ================= */
@@ -129,7 +129,7 @@
     border:0!important;background:var(--dw-quiet)!important;border-radius:20px!important;
   }
   .pg-topic-icon{margin:0 0 12px!important}
-  .pg-topic small{font-size:8.5px!important;margin-bottom:6px!important}
+  .pg-topic small{font-size:9.5px!important;margin-bottom:6px!important}
   .pg-topic b{font-size:17px!important;line-height:1.15!important;margin-bottom:7px!important}
   .pg-topic p{font-size:11px!important;line-height:1.5!important;margin:0!important}
   .pg-topic-arrow{position:absolute!important;right:18px!important;top:18px!important;margin:0!important}
@@ -141,7 +141,7 @@
   .pg-problem{border:0!important;background:var(--dw-quiet)!important;min-height:82px!important;padding:16px 18px!important;gap:14px!important}
   .pg-problem:hover{background:var(--dw-quiet-2)!important}
   .pg-problem b{font-size:13px!important}
-  .pg-problem span{font-size:10.5px!important;line-height:1.5!important}
+  .pg-problem span{font-size:11px!important;line-height:1.5!important}
   .pg-cheats{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
   .pg-cheat{border:0!important;background:var(--dw-quiet)!important;padding:18px!important}
 
@@ -155,7 +155,7 @@
   .pc-chapter.open{grid-column:auto!important;background:var(--dw-quiet-2)!important}
   .pc-chapter-head{padding:18px 20px!important}
   .pc-chapter-copy b{font-size:17px!important}
-  .pc-chapter-copy small,.pc-chapter-copy span{font-size:10.5px!important}
+  .pc-chapter-copy small,.pc-chapter-copy span{font-size:11px!important}
   .pc-chapter.open .pc-steps{grid-template-columns:1fr!important;padding:0 12px 12px!important;gap:8px!important}
   .pc-step{border:0!important;background:rgba(255,255,255,.028)!important}
   .pc-step.open{grid-column:auto!important}
@@ -164,7 +164,7 @@
   .pc-step-copy small{font-size:10px!important}
   .pc-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
   .pc-detail-card{min-height:0!important;border:0!important;background:rgba(255,255,255,.03)!important;padding:16px!important}
-  .pc-detail-label{font-size:8.5px!important}
+  .pc-detail-label{font-size:9.5px!important}
   .pc-detail-card p,.pc-detail-card b{font-size:11.5px!important;line-height:1.55!important}
 
   /* Foundations sit under the course as a quiet appendix, not a rival syllabus. */

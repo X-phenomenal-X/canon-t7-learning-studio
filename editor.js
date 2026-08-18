@@ -7,7 +7,7 @@
   const PREVIEW_MAX=900;
 
   const controls=$('#editorControls');
-  controls.innerHTML=ids.map(id=>`<div class="editor-control"><label><span>${id[0].toUpperCase()+id.slice(1)}</span><b id="v-${id}">0</b></label><input id="${id}" type="range" min="${id==='sharpness'?0:-100}" max="100" value="0"></div>`).join('');
+  controls.innerHTML=ids.map(id=>`<div class="editor-control"><label for="${id}"><span>${id[0].toUpperCase()+id.slice(1)}</span><b id="v-${id}">0</b></label><input id="${id}" type="range" min="${id==='sharpness'?0:-100}" max="100" value="0"></div>`).join('');
 
   function vals(){const o={};ids.forEach(id=>o[id]=Number($('#'+id).value));return o}
   function labels(){ids.forEach(id=>$('#v-'+id).textContent=$('#'+id).value)}
