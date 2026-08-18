@@ -24,6 +24,27 @@ it, the browser discovers module N+1 only after N finishes, which cost roughly
 If you add a module, it must be in three places or the checks fail:
 `app.js` (the chain), `app.js` (the `warm()` list), and `sw.js` (the CORE cache).
 
+## Proving a CSS change is safe
+
+`scripts/fingerprint.mjs` renders every route at three widths and hashes the
+computed styles of every rendered element, so you can prove an edit changed
+nothing:
+
+```
+node scripts/fingerprint.mjs --save /tmp/base.json    # before
+node scripts/fingerprint.mjs --compare /tmp/base.json # after; exit 1 = something moved
+```
+
+It is deterministic (frozen clock, seeded history, finished animations, forced
+icon decoration, order-independent hashing, stable re-reads) and sensitive: a
+single 1px change to one desktop rule is reported on exactly the two desktop
+views it affects. Use it before touching the cascade. It takes a couple of
+minutes, so it is not in CI.
+
+Early evidence says most `!important` here is load-bearing — removing the four
+in `router.css` changes 30 of 33 views, because load order plus `!important` *is*
+how screens are shown and hidden. Do not strip flags in bulk; measure each file.
+
 ## The cascade
 
 42 stylesheets layer on top of each other, resolved by load order in `app.js` and by
