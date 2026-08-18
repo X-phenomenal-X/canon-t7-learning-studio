@@ -76,6 +76,11 @@ coral capture accent, green/blue/amber reserved for semantic state only.
 - Mobile is heavily optimised and is the reference implementation. Desktop rules
   belong inside `@media (min-width:1000px)` so mobile cannot regress.
 - No emoji. Icons come from the `icon-system.js` SVG set, one icon per element.
+- The teaching graphics — the exposure simulator's scene and the two Visual Guides
+  diagrams — share one human silhouette, the `t7-figure` symbol in `index.html`.
+  Draw subjects with it rather than adding another figure. The simulator's scene is
+  CSS, and `#simScene`, `#simBg`, `#motionGhost` and `#noise` are the hooks `core.js`
+  drives for exposure, aperture blur, motion and grain; keep all four.
 - The 62 icons are duotone: a soft filled mass (`F`), sometimes a stronger plate
   (`S`), and the 1.8px stroke line on top. Those constants carry
   `fill="currentColor" stroke="none"`, which beats the `fill:none` a child
