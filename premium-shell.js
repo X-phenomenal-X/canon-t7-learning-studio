@@ -5,7 +5,7 @@
   function ensureIcon(){
     if(!document.querySelector('link[rel="icon"]')){const l=document.createElement('link');l.rel='icon';l.type='image/svg+xml';l.href='./app-icon.svg';document.head.appendChild(l)}
     let theme=document.querySelector('meta[name="theme-color"]');if(theme)theme.content='#07090d';
-    document.title=(document.body.dataset.route&&document.body.dataset.route!=='home')?document.title:'T7 Studio · Canon Rebel T7 Companion';
+    /* router.js owns document.title now; it runs on every route change. */
   }
 
   function addStatus(){

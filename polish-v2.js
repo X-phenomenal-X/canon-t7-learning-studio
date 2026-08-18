@@ -10,7 +10,6 @@
   };
   const labels={home:'Home',shoot:'Shoot',review:'Review',learn:'Learn',library:'Library'};
   const routeTab={home:'home',shoot:'shoot',conditions:'shoot',review:'review',edit:'review',learn:'learn',camera:'learn',simulator:'learn',visuals:'learn',practice:'learn',library:'library'};
-  const routeTitle={home:'Canon T7 Studio',shoot:'Guided Shoot',conditions:'Photo Conditions',review:'Photo Review',edit:'Editor',learn:'Learn',camera:'Camera Controls',simulator:'Exposure Simulator',visuals:'Visual Guides',practice:'Practice',library:'Library'};
 
   function rebuildDock(){
     const dock=$('.mobile-dock');if(!dock)return;
@@ -29,7 +28,7 @@
     const tab=routeTab[route]||'home';
     $$('.mobile-dock a').forEach(a=>a.classList.toggle('active',(a.getAttribute('href')||'').slice(1)===tab));
     const back=$('.polish-back');if(back)back.hidden=route==='home';
-    document.title=route==='home'?'Canon T7 Studio':`${routeTitle[route]||'Canon T7 Studio'} · Canon T7 Studio`;
+    /* document.title belongs to router.js, which runs on every route change. */
   }
 
   rebuildDock();addBack();syncChrome();

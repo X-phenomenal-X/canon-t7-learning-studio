@@ -4,7 +4,7 @@
     home:{title:'T7 Studio',tab:'home',target:'home'},
     shoot:{title:'Guided Shoot',tab:'shoot',target:'shoot'},
     review:{title:'Photo Review',tab:'review',target:'review'},
-    learn:{title:'Learn',tab:'learn',target:'learn'},
+    learn:{title:'Guide',tab:'learn',target:'learn'},
     library:{title:'Library',tab:'library',target:'library'},
     edit:{title:'Editor',tab:'review',target:'edit'},
     conditions:{title:'Photo Conditions',tab:'shoot',target:'conditions'},
@@ -31,6 +31,9 @@
     target?.classList.add('app-screen-active');
     document.body.dataset.route=key;
 
+    /* The tab title tracks the route: a browser with several tabs open, and the
+       browser history, both read this. */
+    document.title=key==='home'?'T7 Studio — Canon Rebel T7 photography guide':`${cfg.title} · T7 Studio`;
     const brandTitle=$('.brand b');if(brandTitle)brandTitle.textContent=cfg.title;
     const brandSub=$('.brand small');if(brandSub)brandSub.textContent=key==='home'?'Photography companion':'EOS Rebel T7';
     $$('.mobile-dock a,.desktop-nav a').forEach(a=>a.classList.remove('active'));

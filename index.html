@@ -6,11 +6,38 @@
   <meta name="theme-color" content="#090d13">
   <meta name="description" content="Interactive Canon EOS Rebel T7 photography learning studio with camera controls, exposure simulator, live photo conditions, shooting guides, practice tracking, and photo editing.">
   <link rel="manifest" href="./manifest.webmanifest">
+
+  <!-- Browser identity: without these the tab shows a generic globe and the URL
+       pastes into a chat or a post as bare text with no preview at all. -->
+  <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./app-icon.svg">
+  <link rel="canonical" href="https://x-phenomenal-x.github.io/canon-t7-learning-studio/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="T7 Studio">
+  <meta property="og:title" content="T7 Studio — Canon Rebel T7 photography guide">
+  <meta property="og:description" content="Learn photography by making photographs. Guided shoots, on-device photo review and a practical course for the Canon EOS Rebel T7 — private, offline and free.">
+  <meta property="og:url" content="https://x-phenomenal-x.github.io/canon-t7-learning-studio/">
+  <meta property="og:image" content="https://x-phenomenal-x.github.io/canon-t7-learning-studio/share-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="T7 Studio — learn photography by making photographs">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="T7 Studio — Canon Rebel T7 photography guide">
+  <meta name="twitter:description" content="Guided shoots, on-device photo review and a practical course for the Canon EOS Rebel T7 — private, offline and free.">
+  <meta name="twitter:image" content="https://x-phenomenal-x.github.io/canon-t7-learning-studio/share-card.jpg">
+
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./dashboard.css">
-  <title>Canon T7 Learning Studio</title>
+  <title>T7 Studio — Canon Rebel T7 photography guide</title>
 </head>
 <body>
+  <noscript>
+    <div style="max-width:640px;margin:14vh auto;padding:0 24px;color:#e9eef2;font:400 15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center">
+      <h1 style="font-family:Georgia,serif;font-weight:500;font-size:34px;letter-spacing:-.03em;margin:0 0 12px">T7 Studio needs JavaScript</h1>
+      <p style="color:#95a0ab;margin:0">Everything here runs on your own device — the photo review, the course and your history never leave the browser — so the app is built entirely in JavaScript. Enable it for this page to continue.</p>
+    </div>
+  </noscript>
   <div class="app">
     <header class="topbar">
       <a class="brand" href="#home" aria-label="Canon T7 Studio home"><span class="brand-icon">T7</span><span><b>Canon T7 Studio</b><small>Photography trainer</small></span></a>

@@ -53,8 +53,7 @@
 
   function navigationQA(){
     const route=()=>{
-      const key=document.body.dataset.route||'home',cfg=window.T7Router?.routes?.[key],label=cfg?.title||'T7 Studio';
-      document.title=key==='home'?'T7 Studio · Canon Rebel T7 Companion':`${label} · T7 Studio`;
+      /* document.title belongs to router.js. */
       $$('.mobile-dock a,.desktop-nav a').forEach(a=>{
         if(a.classList.contains('active'))a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
       });
