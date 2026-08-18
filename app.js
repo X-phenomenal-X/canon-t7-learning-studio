@@ -11,6 +11,19 @@
   }
   function style(href){if(loaded.has(href)||document.querySelector(`link[href="${href}"]`))return;loaded.add(href);const l=document.createElement('link');l.rel='stylesheet';l.href=href;head.appendChild(l)}
   function script(src){return new Promise((resolve,reject)=>{if(document.querySelector(`script[src="${src}"]`)){resolve();return}const s=document.createElement('script');s.src=src;s.async=false;s.onload=resolve;s.onerror=()=>reject(new Error('Failed to load '+src));document.body.appendChild(s)})}
+  /* The module chain below runs strictly in order because each module depends on
+     globals the previous one defines. Without this, the browser only discovers
+     module N+1 after N has finished, so 45 files cost 45 sequential round trips.
+     Preloading warms every request in parallel; the chain then executes in order
+     against the preload cache. */
+  function warm(list){
+    const rel=document.createElement('link').relList;
+    if(!rel?.supports?.('preload'))return;
+    for(const src of list){
+      if(document.querySelector(`link[rel="preload"][href="${src}"]`))continue;
+      const l=document.createElement('link');l.rel='preload';l.as='script';l.href=src;head.appendChild(l);
+    }
+  }
   function simplifyNavigation(){
     const desktop=document.querySelector('.desktop-nav');
     if(desktop)desktop.innerHTML='<a href="#home">Home</a><a href="#shoot">Shoot</a><a href="#review">Review</a><a href="#learn">Guide</a><a href="#library">Library</a>';
@@ -27,6 +40,7 @@
   bootNow();
   simplifyNavigation();
   style('./router.css');style('./shoot-flow.css');style('./scene-assist.css');style('./learn.css');style('./review-flow.css');style('./reshoot.css');style('./smart-coach.css');style('./library.css');style('./library-insights.css');style('./native-ui.css');style('./shoot-v2.css');style('./shoot-subject.css');style('./review-v2.css');style('./review-diagnostic.css');style('./editor-v2.css');style('./conditions-v2.css');style('./learn-v2.css');style('./practice-coach.css');style('./camera-v2.css');style('./camera-steps.css');style('./polish-v2.css');style('./studio-finishing.css');style('./motion-v1.css');style('./shoot-focus.css');style('./shoot-finish.css');style('./premium-shell.css');style('./onboarding.css');style('./home-v2.css');style('./qa-polish.css');style('./icon-system.css');style('./photo-viewer.css');style('./portfolio.css');style('./mobile-shell-fix.css');style('./photography-guide.css');style('./photography-course.css');style('./adaptive-learning.css');style('./practice-missions.css');style('./learning-evidence.css');style('./reference-shot.css');style('./desktop-workspace.css');
+  warm(['./store.js','./photo-session.js','./t7-engine.js','./review-engine.js','./core.js','./camera-v2.js','./shoot-flow.js','./shoot-subject.js','./shoot-focus.js','./shoot-finish.js','./learn.js','./review-flow.js','./review-scene-sync.js','./reshoot.js','./smart-coach.js','./history.js','./library.js','./library-insights.js','./native-ui.js','./learn-v2.js','./practice-coach.js','./conditions-v2.js','./review-v2.js','./editor-v2.js','./camera-steps.js','./router.js','./polish-v2.js','./motion-v1.js','./premium-shell.js','./onboarding.js','./qa-polish.js','./workflow-qa.js','./icon-system.js','./reference-shot.js','./photography-guide.js','./photography-course.js','./adaptive-learning.js','./practice-missions.js','./learning-evidence.js','./photo-viewer.js','./portfolio.js','./mobile-shell-fix.js']);
   script('./store.js')
     .then(()=>script('./photo-session.js'))
     .then(()=>script('./t7-engine.js'))

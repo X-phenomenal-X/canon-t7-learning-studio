@@ -1,0 +1,14 @@
+{
+  "name": "canon-t7-learning-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Development checks for T7 Studio. The app itself ships as static files with no build step.",
+  "scripts": {
+    "check": "node scripts/check-assets.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "test": "npm run check && npm run smoke"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
