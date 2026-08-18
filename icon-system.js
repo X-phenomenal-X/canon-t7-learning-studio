@@ -83,6 +83,11 @@
   function cleanText(el){return String(el?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase()}
   function add(el,name,where='prepend',cls=''){
     if(!el||!symbols[name]||el.dataset.t7Iconized==='1')return;
+    /* Some components place their own glyph (the photo viewer's actions, the
+       phone-reference card). Without this the auto-decorator prepends a second
+       one and the button shows two icons, which breaks the one-icon-per-element
+       rule. Only guards the leading slot; a deliberate trailing icon still works. */
+    if(where!=='append'&&el.querySelector(':scope > svg,:scope > [class*="-icon"]')){el.dataset.t7Iconized='1';el.classList.add('t7-has-icon');return}
     const i=icon(name,cls);where==='append'?el.appendChild(i):el.prepend(i);el.dataset.t7Iconized='1';el.classList.add('t7-has-icon');return i;
   }
   function addHeading(host,name){

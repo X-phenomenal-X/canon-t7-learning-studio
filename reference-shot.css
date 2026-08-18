@@ -6,6 +6,5 @@
 @media(max-width:720px){.rs-overlay{padding:0;align-items:end}.rs-sheet{border-radius:24px 24px 0 0;max-height:94dvh;border-left:0;border-right:0;border-bottom:0}.rs-body{padding:13px 13px calc(20px + env(safe-area-inset-bottom))}.rs-head{padding:15px 13px 12px}.rs-capture{grid-template-columns:1fr}.rs-drop{min-height:230px}.rs-inputs{display:grid;grid-template-columns:1fr 1fr}.rs-inputs .rs-note{grid-column:1/-1;margin-top:0}.rs-subjects{grid-template-columns:repeat(3,1fr)}.rs-analysis{grid-template-columns:1fr 1fr}.rs-settings{grid-template-columns:1fr 1fr}.rs-result-hero{grid-template-columns:82px 1fr}.rs-mode{min-height:82px}.rs-mode b{font-size:29px}.reference-shot-launch{grid-template-columns:42px minmax(0,1fr) 18px;padding:13px}.reference-shot-launch-icon{width:40px;height:40px}}
 @media(max-width:420px){.rs-subjects{grid-template-columns:repeat(3,1fr)}.rs-settings{grid-template-columns:1fr 1fr}.rs-actions{flex-direction:column}.rs-action{width:100%}}
 
-/* One icon per element: the card already carries its own camera mark, so the
-   auto-injected glyph is a duplicate (V70). */
-.reference-shot-launch>.t7-icon{display:none!important}
+/* The duplicate-glyph guard now lives in icon-system.js add(), which skips the
+   leading slot when a component placed its own icon. (V70 patch removed in V76.) */
