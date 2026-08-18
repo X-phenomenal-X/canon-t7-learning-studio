@@ -55,7 +55,7 @@
   const ROUTES_B=['./reshoot.js','./smart-coach.js','./library.js','./library-insights.js','./learn-v2.js',
     './practice-coach.js','./conditions-v2.js','./review-v2.js','./editor-v2.js','./camera-steps.js',
     './workflow-qa.js','./reference-shot.js','./photography-guide.js','./photography-course.js',
-    './adaptive-learning.js','./practice-missions.js','./learning-evidence.js','./photo-viewer.js','./portfolio.js'];
+    './adaptive-learning.js','./practice-missions.js','./learning-evidence.js','./photo-viewer.js','./portfolio.js','./mobile-features.js'];
 
   function chain(list){return list.reduce((p,src)=>p.then(()=>script(src)),Promise.resolve())}
 
