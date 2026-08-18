@@ -76,6 +76,12 @@ coral capture accent, green/blue/amber reserved for semantic state only.
 - Mobile is heavily optimised and is the reference implementation. Desktop rules
   belong inside `@media (min-width:1000px)` so mobile cannot regress.
 - No emoji. Icons come from the `icon-system.js` SVG set, one icon per element.
+- The 62 icons are duotone: a soft filled mass (`F`), sometimes a stronger plate
+  (`S`), and the 1.8px stroke line on top. Those constants carry
+  `fill="currentColor" stroke="none"`, which beats the `fill:none` a child
+  inherits from `.t7-icon` — so the fills need no CSS, and adding `fill` to
+  `.t7-icon` would flood every glyph. New symbols follow the same three layers
+  and keep their content inside 1..23 on the 24x24 grid.
 
 ## Product loop
 
