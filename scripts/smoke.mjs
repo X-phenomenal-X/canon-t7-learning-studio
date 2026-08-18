@@ -7,6 +7,9 @@
  *   - a component rendering unstyled because its stylesheet is not linked
  *   - an element with [hidden] still painting because a display rule outranks it
  *   - a layout wide enough to scroll the page sideways
+ * It then installs the service worker and reloads with the network cut, because
+ * "works offline" is the product's core promise and the CORE list only proves
+ * itself when the network is actually gone.
  *
  * Run: node scripts/smoke.mjs
  */
@@ -32,7 +35,11 @@ const server = createServer(async (req, res) => {
   } catch { res.writeHead(404).end('not found'); }
 });
 await new Promise(r => server.listen(0, '127.0.0.1', r));
+/* The route sweep runs against 127.0.0.1, which the app's service-worker gate
+ * rejects, so those sections stay SW-free. The offline section uses localhost,
+ * which resolves to the same server but passes the gate. */
 const base = `http://127.0.0.1:${server.address().port}/index.html`;
+const swBase = `http://localhost:${server.address().port}/index.html`;
 
 const ROUTES = ['home','shoot','review','learn','library','edit','camera','simulator','conditions','practice','visuals'];
 const VIEWPORTS = [
@@ -155,8 +162,62 @@ for (const vp of VIEWPORTS) {
   await ctx.close();
 }
 
+/* ---- Offline: install the service worker, cut the network, boot again ---- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 940 } });
+  await ctx.addInitScript(() => { try { localStorage.setItem('t7StudioOnboardedV1', '1'); } catch {} });
+  const page = await ctx.newPage();
+  await page.goto(`${swBase}#home`, { waitUntil: 'load' });
+  /* On first activation the app reloads itself (controllerchange handler in
+   * app.js), which destroys any in-page waiter mid-poll. Poll from outside the
+   * page instead, tolerating the reload, until the worker is active and the
+   * CORE cache is populated. */
+  let cached = 0;
+  const deadline = Date.now() + 45000;
+  while (Date.now() < deadline) {
+    cached = await page.evaluate(async () => {
+      if (!('serviceWorker' in navigator)) return -1;
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg?.active) return 0;
+      const name = (await caches.keys()).find(n => n.startsWith('canon-t7-studio-'));
+      if (!name) return 0;
+      return (await (await caches.open(name)).keys()).length;
+    }).catch(() => 0); // evaluate throws while the self-reload is in flight
+    if (cached === -1) break;
+    if (cached >= 80) break;
+    await page.waitForTimeout(500);
+  }
+  if (cached < 80) note('offline', `service worker never activated with a populated cache (last count: ${cached})`);
+  if (cached >= 80) {
+    /* Playwright's setOffline does not apply to service-worker-initiated fetches
+     * in Chromium, so the SW would keep reaching the server and the cache path
+     * would never run. Stopping the server itself cuts the network for real.
+     * This section is last, so nothing after it needs the server. */
+    server.close();
+    server.closeAllConnections?.();
+    const offErrs = [];
+    page.on('pageerror', e => offErrs.push(e.message));
+    await page.reload({ waitUntil: 'load' }).catch(e => note('offline', `reload failed with network cut: ${e.message}`));
+    const booted = await page.waitForFunction(
+      () => !!window.T7History && !!document.querySelector('#library'),
+      null, { timeout: 30000 }).then(() => true).catch(() => false);
+    if (!booted) note('offline', 'app did not boot from the service-worker cache');
+    if (offErrs.length) note('offline', `errors while offline: ${[...new Set(offErrs)].slice(0, 3).join(' | ')}`);
+    const offline = await page.evaluate(() => {
+      const visible = el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
+      location.hash = '#library';
+      return new Promise(res => setTimeout(() => res({
+        hero: !!document.querySelector('.home-v2-hero'),
+        libraryPainted: (() => { const el = document.querySelector('#library'); return !!el && visible(el); })(),
+      }), 600));
+    });
+    if (!offline.libraryPainted) note('offline', 'Library route did not paint offline');
+  }
+  await ctx.close();
+}
+
 await browser.close();
-server.close();
+try { server.close(); } catch {}
 
 if (problems.length) {
   console.error(`\nSmoke test FAILED (${problems.length} problem${problems.length > 1 ? 's' : ''})\n`);
