@@ -13,3 +13,31 @@
 .photography-guide+.learn-v2-head{margin-top:14px!important}.photography-guide+.learn-v2-head .lv2-eyebrow{color:#7d8995!important}
 @media(max-width:760px){.photography-guide{padding-top:0}.pg-hero{padding:22px 17px;border-radius:24px}.pg-hero h1{font-size:39px}.pg-search{max-width:none}.pg-topic-grid{grid-template-columns:1fr 1fr}.pg-topic{min-height:156px;padding:13px}.pg-section{padding:14px;border-radius:20px}.pg-section-head{display:block}.pg-section-head p{text-align:left;margin-top:5px}.pg-problems{grid-template-columns:1fr}.pg-cheats{display:flex;overflow-x:auto;scrollbar-width:none}.pg-cheats::-webkit-scrollbar{display:none}.pg-cheat{flex:0 0 78%;min-width:230px}}
 @media(max-width:430px){.pg-hero h1{font-size:35px}.pg-topic-grid{grid-template-columns:1fr 1fr;gap:7px}.pg-topic{min-height:146px}.pg-topic b{font-size:12px}.pg-topic p{font-size:8px}.pg-problem{grid-template-columns:32px minmax(0,1fr) auto}.pg-problem-icon{width:32px;height:32px}.pg-cheat{flex-basis:86%}}
+
+/* ---- Guide hero: aperture blades, same optical family as the Home lens ----
+   Fills the dead right-hand third of the hero without competing with the
+   headline. Decorative only (V73). */
+.pg-hero{isolation:isolate}
+.pg-hero:before{
+  content:'';position:absolute;z-index:0;pointer-events:none;
+  right:-6%;top:50%;width:min(46vh,420px);aspect-ratio:1;transform:translateY(-50%);
+  border-radius:50%;
+  background:
+    conic-gradient(from 8deg,
+      rgba(255,255,255,.055) 0 44deg,transparent 44deg 60deg,
+      rgba(255,255,255,.038) 60deg 104deg,transparent 104deg 120deg,
+      rgba(255,255,255,.055) 120deg 164deg,transparent 164deg 180deg,
+      rgba(255,255,255,.038) 180deg 224deg,transparent 224deg 240deg,
+      rgba(255,255,255,.055) 240deg 284deg,transparent 284deg 300deg,
+      rgba(255,255,255,.038) 300deg 344deg,transparent 344deg 360deg),
+    radial-gradient(circle at 50% 50%,transparent 0 27%,rgba(255,126,94,.07) 28% 30%,transparent 31%);
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 26%,#000 30% 78%,transparent 84%);
+  mask:radial-gradient(circle at 50% 50%,transparent 0 26%,#000 30% 78%,transparent 84%);
+  opacity:.85;
+}
+.pg-hero:after{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+  background:var(--t7-grain);background-size:140px 140px;opacity:.04;mix-blend-mode:overlay;
+}
+.pg-hero>*{position:relative;z-index:1}
+@media(max-width:720px){.pg-hero:before{right:-30%;width:78vw;opacity:.5}}

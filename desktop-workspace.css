@@ -184,7 +184,11 @@
 
   /* ================= REVIEW — the photograph, then the one change ================= */
   .review-flow{max-width:var(--dw-measure)!important}
-  .rv2-empty{grid-template-columns:minmax(0,1fr) 320px!important;align-items:center!important;padding:40px!important;min-height:0!important}
+  /* An empty Review used to occupy the top third and leave a void beneath it.
+     Give it real presence and let the film frame breathe. */
+  .rv2-empty{grid-template-columns:minmax(0,1fr) 360px!important;align-items:center!important;
+    padding:64px 56px!important;min-height:min(58vh,520px)!important;border-radius:30px!important}
+  .rv2-empty-visual{width:186px!important;height:238px!important;margin-inline:auto!important}
   .rv2-empty h2{font-size:40px!important}
   .rv2-empty p{font-size:12.5px!important;max-width:520px!important}
   .rv2-result{grid-template-columns:minmax(0,1.32fr) minmax(320px,.68fr)!important;align-items:center!important}
@@ -302,6 +306,28 @@
   .editor-v2-stage{border-radius:28px!important;overflow:hidden!important;box-shadow:0 30px 90px rgba(0,0,0,.25)!important}
   .ev2-preset{min-height:78px!important;border-color:rgba(255,255,255,.045)!important;background:rgba(255,255,255,.018)!important}
   #camera .cv3-stage,.sim-layout .scene{border-radius:28px!important;box-shadow:0 26px 75px rgba(0,0,0,.18)!important}
+
+  /* Edge light: a single hairline highlight along the top of every major surface.
+     It is what makes a dark UI read as lit rather than flat. */
+  .home-v2-hero,.home-v2-next,.home-v2-mini,.practice-mission,.pg-hero,.pg-topic,.pg-cheat,
+  .photography-course,.pc-chapter,.library-card,.library-stat,.library-gallery-shot,
+  .rv2-empty,.rv2-result,.rv2-priority,.rv2-setup,.subject-card-v2,.editor-v2-stage,.card{
+    position:relative;
+  }
+  .home-v2-hero:after,.home-v2-next:after,.home-v2-mini:after,.pg-topic:after,.pg-cheat:after,
+  .photography-course:after,.library-card:after,.library-stat:after,
+  .rv2-empty:after,.rv2-result:after,.subject-card-v2:after{
+    content:'';position:absolute;left:12%;right:12%;top:0;height:1px;border-radius:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);
+    pointer-events:none;z-index:3;
+  }
+  /* The capture accent is the one place the interface is allowed to glow. */
+  .home-v2-hero-cta,.rv2-primary,.button.primary,.pm-start,.pc-continue{
+    box-shadow:0 14px 34px rgba(255,113,88,.26),inset 0 1px rgba(255,255,255,.22)!important;
+  }
+  .home-v2-hero-cta:hover,.rv2-primary:hover,.button.primary:hover{
+    box-shadow:0 18px 44px rgba(255,113,88,.34),inset 0 1px rgba(255,255,255,.26)!important;
+  }
 
   /* One hover language across the desktop app: a small lift, never a layout shift. */
   .button,.home-v2-mini,.home-v2-utility,.pg-topic,.subject-card-v2,.library-gallery-shot,

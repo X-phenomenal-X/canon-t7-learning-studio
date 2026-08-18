@@ -118,3 +118,13 @@ a[href="#shoot"]>.t7-icon{color:#ff9372}
 }
 
 @media(prefers-reduced-motion:reduce){.t7-icon{transition:none!important}}
+
+/* Navigation is chrome, not a semantic surface. The per-route tints above are
+   meant for in-content links ("Review photo", "Open Library"); applied to the
+   dock and the desktop nav they turned the primary navigation into four
+   different hues. In nav, icons inherit the tab's own state colour, so the
+   active tab reads coral and the rest stay quiet (V73). */
+.mobile-dock a>.t7-icon,.desktop-nav a>.t7-icon{color:currentColor!important}
+/* The active tab keeps the capture accent. */
+.mobile-dock a.active>.t7-icon,.mobile-dock a[aria-current="page"]>.t7-icon,
+.desktop-nav a.active>.t7-icon,.desktop-nav a[aria-current="page"]>.t7-icon{color:#ff9275!important}

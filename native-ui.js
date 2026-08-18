@@ -8,7 +8,7 @@
   home.className='dashboard-home native-home home-v2';
   home.innerHTML=`
     <div class="native-greeting"><div><small>${hello}</small><h1>Go make a frame.</h1></div><span class="native-camera">EOS Rebel T7 · 18–55mm</span></div>
-    <a class="home-v2-hero" id="homeShootHero" href="#shoot">
+    <a class="home-v2-hero" id="homeShootHero" href="#shoot"><span class="home-v2-hero-art" aria-hidden="true"><i class="hero-lens"><b></b></i><i class="hero-beam"></i><i class="hero-grain"></i></span>
       <div class="home-v2-hero-copy"><span class="home-v2-kicker" id="homeHeroKicker">READY TO SHOOT</span><h2 id="homeHeroTitle">Your next photo starts here.</h2><p id="homeHeroText">Pick the scene. T7 Studio will give you one clear setup, framing direction, and a controlled three-shot plan.</p><span class="home-v2-hero-cta">Start Guided Shoot <b>→</b></span></div>
       <div class="home-v2-hero-side"><div class="home-v2-hero-session"><small>RECENT SESSION</small><b id="homeHeroSessionTitle">No reviewed frame yet</b><span id="homeHeroSessionMeta">Your first Canon JPEG will appear here after Review.</span></div></div>
     </a>
@@ -32,8 +32,8 @@
   function syncHero(source){
     const hero=$('#homeShootHero');if(!hero)return;
     const thumb=source?.thumb;
-    if(thumb){const safe=String(thumb).replace(/"/g,'%22');hero.style.setProperty('background',`url("${safe}") center/cover no-repeat`,'important');$('#homeHeroKicker').textContent=`LAST FRAME · ${goalName(source).toUpperCase()}`;$('#homeHeroTitle').textContent='Make the next frame better.';$('#homeHeroText').textContent='Your latest Canon photo is already in the learning loop. Continue with one deliberate next shot or start a new scene.'}
-    else{hero.style.removeProperty('background');$('#homeHeroKicker').textContent='READY TO SHOOT';$('#homeHeroTitle').textContent='Your next photo starts here.';$('#homeHeroText').textContent='Pick the scene. T7 Studio will give you one clear setup, framing direction, and a controlled three-shot plan.'}
+    if(thumb){const safe=String(thumb).replace(/"/g,'%22');hero.classList.add('has-photo');hero.style.setProperty('background',`url("${safe}") center/cover no-repeat`,'important');$('#homeHeroKicker').textContent=`LAST FRAME · ${goalName(source).toUpperCase()}`;$('#homeHeroTitle').textContent='Make the next frame better.';$('#homeHeroText').textContent='Your latest Canon photo is already in the learning loop. Continue with one deliberate next shot or start a new scene.'}
+    else{hero.classList.remove('has-photo');hero.style.removeProperty('background');$('#homeHeroKicker').textContent='READY TO SHOOT';$('#homeHeroTitle').textContent='Your next photo starts here.';$('#homeHeroText').textContent='Pick the scene. T7 Studio will give you one clear setup, framing direction, and a controlled three-shot plan.'}
   }
 
   function renderSession(source){

@@ -7,3 +7,25 @@
 .rv2-details{border-top:1px solid var(--ui-line);padding-top:4px}.rv2-details summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 1px;cursor:pointer}.rv2-details summary::-webkit-details-marker{display:none}.rv2-details summary span{font-size:12px;font-weight:850}.rv2-details summary small{font-size:9px;color:var(--ui-muted)}.rv2-details-host{padding-top:4px}.rv2-original-results{display:grid!important;gap:12px!important}.rv2-original-results>.review-scoreline,.rv2-original-results>.review-next{display:none!important}.rv2-original-results>.smart-coach{border:0!important;background:transparent!important;padding:0!important;margin:0!important}.rv2-original-results>.smart-coach .smart-head,.rv2-original-results>.smart-coach .smart-priority,.rv2-original-results>.smart-coach .smart-grid,.rv2-original-results>.smart-coach .smart-context,.rv2-original-results>.smart-coach .smart-actions{display:none!important}.rv2-original-results>.smart-coach .smart-note{margin:0!important;font-size:9px!important;color:#65717f!important}.rv2-original-results>.reshoot-flow,.rv2-original-results>.history-shell{margin-top:8px!important}.review-metrics{grid-template-columns:repeat(4,1fr)!important;gap:7px!important}.review-metric{background:#10161e!important;border:0!important;border-radius:14px!important;padding:10px!important}.review-metric small{font-size:9px!important}.review-metric b{font-size:14px!important}.review-insights{grid-template-columns:1fr!important;gap:7px!important}.review-box{border:0!important;border-radius:14px!important;background:#10161e!important;padding:12px!important}.review-box h4{font-size:12px!important}.review-box ul{font-size:11px!important}.review-actions{display:none!important}
 @media(max-width:620px){.review-head{display:block!important}.review-badge{display:inline-flex;margin-top:3px}.review-head h3{font-size:25px!important}.review-head p{display:none}.review-goal{padding:8px 0 12px}.review-v2-overview{gap:13px;margin-top:13px}.rv2-empty{min-height:230px;padding:19px;grid-template-columns:1fr 96px;border-radius:23px}.rv2-empty h2{font-size:27px}.rv2-empty p{font-size:11px}.rv2-empty-visual{width:88px;height:122px;border-radius:19px}.rv2-empty-visual span{width:40px;height:40px;font-size:22px}.rv2-result{grid-template-columns:118px 1fr;gap:13px}.rv2-photo-wrap{border-radius:18px}.rv2-score{left:7px;bottom:7px;padding:5px 7px}.rv2-score b{font-size:14px}.rv2-result-copy h2{font-size:23px;margin:6px 0}.rv2-result-copy p{font-size:10px;line-height:1.4}.rv2-priority{grid-template-columns:31px 1fr;gap:10px;padding:14px 0}.rv2-priority-number{width:30px;height:30px}.rv2-priority h3{font-size:16px}.rv2-priority p{font-size:10px}.rv2-setup{padding:12px;border-radius:19px}.rv2-setting-row{grid-template-columns:1fr 1fr}.rv2-setting-row>div{padding:10px}.rv2-setting-row b{font-size:13px}.rv2-actions{display:grid;grid-template-columns:1fr}.rv2-primary,.rv2-secondary{min-height:40px}.rv2-details summary small{display:none}.review-metrics{grid-template-columns:1fr 1fr!important}}
 @media(max-width:390px){.rv2-empty{grid-template-columns:1fr}.rv2-empty-visual{display:none}.rv2-result{grid-template-columns:100px 1fr}.rv2-result-copy h2{font-size:21px}}
+
+/* ---- Review empty state: a film frame on a light table, not a dashed box ----
+   (V73) */
+.rv2-empty-visual{
+  position:relative;
+  border-style:solid!important;
+  border-color:rgba(255,255,255,.09)!important;
+  background:
+    radial-gradient(circle at 30% 22%,rgba(255,140,105,.10),transparent 46%),
+    linear-gradient(160deg,#161d27,#080c11)!important;
+  box-shadow:-24px 26px 60px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.05)!important;
+}
+/* sprocket holes down both edges — reads as 35mm film */
+.rv2-empty-visual:before,.rv2-empty-visual:after{
+  content:'';position:absolute;top:9px;bottom:9px;width:7px;border-radius:3px;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.10) 0 7px,transparent 7px 15px);
+}
+.rv2-empty-visual:before{left:6px}
+.rv2-empty-visual:after{right:6px}
+.rv2-empty-visual span{
+  box-shadow:0 10px 26px rgba(0,0,0,.4),0 0 0 6px rgba(255,255,255,.05)!important;
+}
