@@ -32,15 +32,24 @@ const refsIn = (src, re) => new Set([...src.matchAll(re)].map(m => m[1]));
 const htmlRefs = refsIn(indexHtml, /(?:src|href)="\.\/([A-Za-z0-9._-]+\.(?:css|js))"/g);
 /* Modules are declared in named lists (SHELL, ROUTES_A, ...) and executed via
  * chain(); stylesheets are still injected one call at a time. */
+const declaredLists = [...appJs.matchAll(/const\s+([A-Z_0-9]+)\s*=\s*\[([^\]]*)\]/g)];
 const moduleLists = Object.fromEntries(
-  [...appJs.matchAll(/const\s+([A-Z_0-9]+)\s*=\s*\[([^\]]*)\]/g)]
+  declaredLists
     .map(([, name, body]) => [name, [...body.matchAll(/'\.\/([^']+\.js)'/g)].map(m => m[1])])
     .filter(([, mods]) => mods.length)
+);
+/* Stylesheets are declared in lists too, so Home can paint without waiting for
+ * the sheets only other routes use. */
+const styleLists = Object.fromEntries(
+  declaredLists
+    .map(([, name, body]) => [name, [...body.matchAll(/'\.\/([^']+\.css)'/g)].map(m => m[1])])
+    .filter(([, sheets]) => sheets.length)
 );
 const appRefs = new Set([
   ...refsIn(appJs, /style\('\.\/([^']+)'\)/g),
   ...refsIn(appJs, /script\('\.\/([^']+)'\)/g),
   ...Object.values(moduleLists).flat(),
+  ...Object.values(styleLists).flat(),
 ]);
 const coreRefs = refsIn(swJs, /'\.\/([A-Za-z0-9._-]+\.(?:css|js))'/g);
 const loaded = new Set([...htmlRefs, ...appRefs, ...ENTRIES]);
@@ -86,6 +95,16 @@ for (const [name, mods] of Object.entries(moduleLists)) {
 for (const mod of refsIn(appJs, /script\('\.\/([^']+\.js)'\)/g)) {
   fail('unlisted-module', `${mod} is loaded by a direct script() call, so it is never preloaded - put it in a module list`);
 }
+/* A stylesheet list that is never applied means those sheets silently stop
+ * loading - the exact failure this checker exists to catch. */
+for (const [name, sheets] of Object.entries(styleLists)) {
+  /* Applied directly, or consulted while another ordered list is applied. */
+  const used = new RegExp(`${name}\\.forEach\\(|new Set\\(${name}\\)|\\.\\.\\.${name}\\b|${name}\\.includes\\(|${name}\\.has\\(`).test(appJs);
+  if (!used) {
+    fail('unused-style-list', `stylesheet list ${name} (${sheets.length} sheets) is declared but never applied`);
+  }
+}
+
 /* Lists must be executed, not just declared. */
 for (const name of Object.keys(moduleLists)) {
   if (!new RegExp(`chain\\(\\s*(\\.\\.\\.)?${name}\\b|\\.\\.\\.${name}\\b`).test(appJs)) {
