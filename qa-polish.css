@@ -128,3 +128,7 @@ body[data-route="edit"] #edit{max-width:1120px;margin-inline:auto!important}
 }
 
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+/* The hidden attribute must always win over a component's display rule (V70).
+   Replaces the per-component [hidden]{display:none!important} patches. */
+[hidden]{display:none!important}

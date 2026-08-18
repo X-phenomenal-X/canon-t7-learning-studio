@@ -41,7 +41,7 @@
   viewer.addEventListener('click',e=>{if(e.target===viewer)close()});
   window.addEventListener('keydown',e=>{if(!open)return;if(e.key==='Escape')close();else if(e.key==='ArrowLeft')step(-1);else if(e.key==='ArrowRight')step(1)});
 
-  document.addEventListener('click',e=>{const img=e.target.closest?.('#rv2Photo,.home-v2-session-thumb,#libList .library-item img,.library-gallery-shot img');if(!img)return;e.preventDefault();e.stopPropagation();openFromElement(img)},true);
+  document.addEventListener('click',e=>{const img=e.target.closest?.('#rv2Photo,.home-v2-session-thumb,#libList .library-item img,.library-gallery-shot');if(!img)return;e.preventDefault();e.stopPropagation();openFromElement(img)},true);
   const editor=$('#canvas');if(editor)editor.addEventListener('click',()=>{if(editor.width)openCurrent()});
   const observer=new MutationObserver(()=>{$$('#rv2Photo,.home-v2-session-thumb,#libList .library-item img,.library-gallery-shot img').forEach(el=>el.classList.add('t7-photo-clickable'));const c=$('#canvas');if(c?.width)c.classList.add('t7-photo-clickable')});observer.observe(document.body,{childList:true,subtree:true});
   window.addEventListener('t7-photo-ready',()=>setTimeout(()=>{$('#canvas')?.classList.add('t7-photo-clickable')},80));

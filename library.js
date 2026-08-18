@@ -32,7 +32,7 @@
   function goalName(x){return x?.sceneName||String(x?.goal||'Photo').replace(/^./,c=>c.toUpperCase())}
 
   function galleryHtml(list){
-    const photos=list.filter(x=>x?.thumb).slice(0,5);
+    const photos=list.filter(x=>x?.thumb).slice(0,12);
     if(!photos.length)return`<div class="library-gallery-empty"><div class="library-frame-mark"><span></span></div><div><small>YOUR PHOTOS WILL LIVE HERE</small><b>Review your first Canon JPEG.</b><p>Once you do, Library becomes a visual contact sheet instead of an empty dashboard.</p><a href="#review">Review a photo</a></div></div>`;
     return photos.map((x,i)=>{const date=new Date(x.time||Date.now()).toLocaleDateString([], {month:'short',day:'numeric'}),settings=actual(x)||'Canon T7';return`<a class="library-gallery-shot ${i===0?'featured':''}" href="#review" style="--gallery-photo:url('${esc(x.thumb)}')"><img src="${esc(x.thumb)}" alt="${esc(goalName(x))} reviewed photo"><span class="library-gallery-shade"></span><div class="library-gallery-copy"><small>${i===0?'LATEST FRAME':esc(date)}</small><b>${esc(goalName(x))}</b><em>${esc(settings)}</em></div></a>`}).join('');
   }
