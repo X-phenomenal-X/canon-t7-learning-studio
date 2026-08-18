@@ -132,3 +132,16 @@ body[data-route="edit"] #edit{max-width:1120px;margin-inline:auto!important}
 /* The hidden attribute must always win over a component's display rule (V70).
    Replaces the per-component [hidden]{display:none!important} patches. */
 [hidden]{display:none!important}
+
+/* Touch targets. Measured on an iPhone 13 viewport, several controls were too
+   small to hit reliably - the Library delete button was 16px wide, and the photo
+   viewer's navigation, favourite and close buttons were all around 30-38px.
+   Only applied to coarse pointers, so the desktop layout keeps its proportions. */
+@media (pointer:coarse){
+  .library-delete,.t7p-native-fav,.t7p-viewer-btn,.t7p-sheet-close,.t7pv-nav,
+  .t7pv-icon-btn,.polish-back,.t7pc-close,.t7-onboard-skip{
+    min-width:42px!important;min-height:42px!important;
+  }
+  .library-delete{display:inline-grid!important;place-items:center!important}
+  .home-v2-utility,.t7p-chip,.t7p-manage,.library-mini{min-height:42px!important}
+}
