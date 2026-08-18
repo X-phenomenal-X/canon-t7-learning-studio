@@ -179,6 +179,9 @@ for (const vp of VIEWPORTS) {
       if (!('serviceWorker' in navigator)) return -1;
       const reg = await navigator.serviceWorker.getRegistration();
       if (!reg?.active) return 0;
+      /* Active is not enough: the page must be *controlled* before the cache
+       * path can serve it. */
+      if (!navigator.serviceWorker.controller) return 0;
       const name = (await caches.keys()).find(n => n.startsWith('canon-t7-studio-'));
       if (!name) return 0;
       return (await (await caches.open(name)).keys()).length;
@@ -193,6 +196,15 @@ for (const vp of VIEWPORTS) {
      * in Chromium, so the SW would keep reaching the server and the cache path
      * would never run. Stopping the server itself cuts the network for real.
      * This section is last, so nothing after it needs the server. */
+    /* app.js reloads itself on controllerchange. That reload can still be in
+     * flight here, and it aborts the reload issued below — the page ends up
+     * loaded but page.reload() rejects with ERR_ABORTED. Mark the document,
+     * wait, and if the marker is gone the self-reload happened: let it land. */
+    await page.evaluate(() => { window.__preCut = 1; }).catch(() => {});
+    await page.waitForTimeout(1200);
+    const survived = await page.evaluate(() => window.__preCut === 1).catch(() => false);
+    if (!survived) await page.waitForLoadState('load').catch(() => {});
+
     server.close();
     server.closeAllConnections?.();
     const offErrs = [];
