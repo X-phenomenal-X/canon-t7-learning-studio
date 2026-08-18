@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="T7 Studio">
+  <defs>
+    <linearGradient id="lmAccent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff7a5f"/><stop offset="1" stop-color="#ffa87d"/></linearGradient>
+    <radialGradient id="lmGlass" cx=".38" cy=".32" r=".78"><stop stop-color="#243441"/><stop offset=".5" stop-color="#0d141b"/><stop offset="1" stop-color="#04070a"/></radialGradient>
+    <linearGradient id="lmRing" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#606b76"/><stop offset=".5" stop-color="#2b333c"/><stop offset="1" stop-color="#707b86"/></linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="58" fill="none" stroke="url(#lmRing)" stroke-width="7"/>
+  <circle cx="64" cy="64" r="47" fill="url(#lmGlass)"/>
+  <g transform="translate(64,64)" fill="none" stroke="#939ea9" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" opacity=".55"><path d="M 22.00 -12.70 L 22.00 12.70" transform="rotate(0)"/><path d="M 22.00 12.70 L 43.26 -12.40"/><path d="M 22.00 -12.70 L 22.00 12.70" transform="rotate(60)"/><path d="M 0.00 25.40 L 32.37 31.26"/><path d="M 22.00 -12.70 L 22.00 12.70" transform="rotate(120)"/><path d="M -22.00 12.70 L -10.89 43.66"/><path d="M 22.00 -12.70 L 22.00 12.70" transform="rotate(180)"/><path d="M -22.00 -12.70 L -43.26 12.40"/><path d="M 22.00 -12.70 L 22.00 12.70" transform="rotate(240)"/><path d="M -0.00 -25.40 L -32.37 -31.26"/><path d="M 22.00 -12.70 L 22.00 12.70" transform="rotate(300)"/><path d="M 22.00 -12.70 L 10.89 -43.66"/></g>
+  <circle cx="64" cy="64" r="21" fill="#05080b"/>
+  <circle cx="64" cy="64" r="21" fill="none" stroke="url(#lmAccent)" stroke-width="6.5"/>
+  <circle cx="64" cy="64" r="7" fill="url(#lmAccent)"/>
+  <circle cx="46" cy="45" r="8" fill="#fff" opacity=".10"/>
+</svg>

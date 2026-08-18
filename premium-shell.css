@@ -35,9 +35,9 @@ main{width:min(1180px,calc(100% - 34px));margin:0 auto!important;padding-top:18p
 .topbar{position:sticky!important;top:0;z-index:900!important;width:min(1180px,calc(100% - 24px));height:66px!important;min-height:66px!important;margin:10px auto 0!important;padding:0 12px!important;border:1px solid transparent;border-radius:20px;background:rgba(7,10,14,.62)!important;backdrop-filter:blur(24px) saturate(135%);-webkit-backdrop-filter:blur(24px) saturate(135%);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
 body.motion-scrolled .topbar{background:rgba(10,13,18,.86)!important;border-color:var(--p-line)!important;box-shadow:0 16px 48px rgba(0,0,0,.23)}
 .brand{display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;min-width:190px;color:#fff!important}
-.brand-icon{position:relative;width:38px!important;height:38px!important;flex:0 0 38px;border-radius:13px!important;font-size:0!important;background:radial-gradient(circle,#080b0f 0 23%,#39414a 24% 31%,#12171d 32% 54%,#4b535c 55% 59%,#0c1014 60%)!important;border:1px solid rgba(255,255,255,.13)!important;box-shadow:inset 0 1px rgba(255,255,255,.07),0 8px 20px rgba(0,0,0,.22)!important}
-.brand-icon:before{content:"";position:absolute;inset:12px;border:1.5px solid #ff836d;border-radius:50%;box-shadow:0 0 12px rgba(255,115,95,.18)}
-.brand-icon:after{content:"T7";position:absolute;inset:0;display:grid;place-items:center;color:#f4f6f7;font-size:7px;font-weight:950;letter-spacing:.03em}
+.brand-icon{position:relative;width:38px!important;height:38px!important;flex:0 0 38px;border-radius:13px!important;font-size:0!important;background:#0a0e13 url('./logo-mark.svg') center/86% no-repeat!important;border:1px solid rgba(255,255,255,.13)!important;box-shadow:inset 0 1px rgba(255,255,255,.07),0 8px 20px rgba(0,0,0,.22)!important}
+
+
 .brand b{font-size:13px!important;font-weight:820!important;letter-spacing:-.01em}.brand small{font-size:8px!important;color:#737e8a!important;font-weight:760!important;letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
 .desktop-nav{margin-left:auto;display:flex!important;align-items:center;gap:3px;padding:4px;border:1px solid rgba(255,255,255,.055);border-radius:14px;background:rgba(255,255,255,.025)}
 .desktop-nav a{position:relative;color:#7f8a96!important;font-size:10px!important;font-weight:800!important;min-height:34px!important;padding:0 11px!important;border-radius:10px!important;transition:color .18s ease,background .18s ease,transform .18s ease}

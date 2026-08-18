@@ -1,14 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="T7 Studio">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#121820"/><stop offset="1" stop-color="#07090d"/></linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff735f"/><stop offset="1" stop-color="#ff9d73"/></linearGradient>
-    <radialGradient id="glass"><stop stop-color="#1c2c39"/><stop offset=".48" stop-color="#0b1218"/><stop offset="1" stop-color="#030507"/></radialGradient>
+    <linearGradient id="aiBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#161d26"/><stop offset="1" stop-color="#06080c"/></linearGradient>
+    <linearGradient id="aiAccent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff7a5f"/><stop offset="1" stop-color="#ffa87d"/></linearGradient>
+    <radialGradient id="aiGlass" cx=".38" cy=".32" r=".78"><stop stop-color="#243441"/><stop offset=".5" stop-color="#0d141b"/><stop offset="1" stop-color="#04070a"/></radialGradient>
+    <linearGradient id="aiRing" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#606b76"/><stop offset=".5" stop-color="#2b333c"/><stop offset="1" stop-color="#707b86"/></linearGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <circle cx="256" cy="256" r="154" fill="#0b0f14" stroke="#3b444e" stroke-width="24"/>
-  <circle cx="256" cy="256" r="112" fill="url(#glass)" stroke="#59636d" stroke-width="10"/>
-  <circle cx="256" cy="256" r="72" fill="#070a0e" stroke="url(#accent)" stroke-width="12"/>
-  <circle cx="229" cy="220" r="20" fill="#fff" opacity=".08"/>
-  <text x="256" y="277" text-anchor="middle" fill="#f5f7f9" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="800" letter-spacing="3">T7</text>
-  <path d="M126 123h78" stroke="url(#accent)" stroke-width="12" stroke-linecap="round"/>
+  <rect width="512" height="512" rx="114" fill="url(#aiBg)"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#aiRing)" stroke-width="20"/>
+  <circle cx="256" cy="256" r="136" fill="url(#aiGlass)"/>
+  <g transform="translate(256,256)" fill="none" stroke="#939ea9" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity=".55"><path d="M 64.00 -36.95 L 64.00 36.95" transform="rotate(0)"/><path d="M 64.00 36.95 L 124.96 -35.83"/><path d="M 64.00 -36.95 L 64.00 36.95" transform="rotate(60)"/><path d="M 0.00 73.90 L 93.51 90.31"/><path d="M 64.00 -36.95 L 64.00 36.95" transform="rotate(120)"/><path d="M -64.00 36.95 L -31.45 126.14"/><path d="M 64.00 -36.95 L 64.00 36.95" transform="rotate(180)"/><path d="M -64.00 -36.95 L -124.96 35.83"/><path d="M 64.00 -36.95 L 64.00 36.95" transform="rotate(240)"/><path d="M -0.00 -73.90 L -93.51 -90.31"/><path d="M 64.00 -36.95 L 64.00 36.95" transform="rotate(300)"/><path d="M 64.00 -36.95 L 31.45 -126.14"/></g>
+  <circle cx="256" cy="256" r="61" fill="#05080b"/>
+  <circle cx="256" cy="256" r="61" fill="none" stroke="url(#aiAccent)" stroke-width="19"/>
+  <circle cx="256" cy="256" r="21" fill="url(#aiAccent)"/>
+  <circle cx="203" cy="199" r="24" fill="#fff" opacity=".10"/>
 </svg>
