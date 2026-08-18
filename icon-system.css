@@ -110,7 +110,7 @@ a[href="#shoot"]>.t7-icon{color:#ff9372}
 }
 
 @media(max-width:430px){
-  .mobile-dock a{font-size:8px!important}
+  .mobile-dock a{font-size:10px!important}
   .mobile-dock a .t7-icon{width:17px;height:17px}
   .mobile-dock .shoot-dock .t7-icon{width:20px;height:20px}
   .t7-heading-with-icon{padding-left:43px!important}

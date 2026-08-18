@@ -76,6 +76,11 @@ coral capture accent, green/blue/amber reserved for semantic state only.
 - Mobile is heavily optimised and is the reference implementation. Desktop rules
   belong inside `@media (min-width:1000px)` so mobile cannot regress.
 - No emoji. Icons come from the `icon-system.js` SVG set, one icon per element.
+- Nothing declares type below 10px. The small end used to hold twelve steps
+  between 6px and 12px, which is not a scale, and `type-scale.css` was a floor
+  that enumerated its way around them. The sizes are fixed at source now and
+  that file is only the desktop reading bump. Write 10px for a micro label,
+  11px for secondary copy, and do not reintroduce 8px.
 - The teaching graphics — the exposure simulator's scene and the two Visual Guides
   diagrams — share one human silhouette, the `t7-figure` symbol in `index.html`.
   Draw subjects with it rather than adding another figure. The simulator's scene is

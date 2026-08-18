@@ -27,7 +27,7 @@
   }
   .brand{width:auto!important;min-width:210px!important;padding:0!important;border:0!important}
   .brand-icon{width:40px!important;height:40px!important;flex-basis:40px!important;border-radius:14px!important}
-  .brand b{font-size:13px!important}.brand small{display:block!important;font-size:8px!important}
+  .brand b{font-size:13px!important}.brand small{display:block!important;font-size:10px!important}
   .desktop-nav{
     width:auto!important;margin:0 0 0 auto!important;padding:4px!important;
     display:flex!important;grid-template-columns:none!important;gap:3px!important;
@@ -54,7 +54,7 @@
   /* ---------- Shared desktop type scale: no tiny text, one rhythm ---------- */
   main{font-size:13px}
   main p{font-size:12px;line-height:1.55}
-  main small{font-size:9px}
+  main small{font-size:11px}
   .section-head{margin-bottom:20px!important}
   .section-head h2{font-size:36px!important;letter-spacing:-.04em!important}
   .section-head p{max-width:640px!important;font-size:12px!important}
@@ -105,7 +105,7 @@
   .pm-title{font-size:30px!important}
   .pm-brief{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 32px!important;margin-top:18px!important}
   .pm-brief>div{border:0!important;background:transparent!important;padding:2px 0 2px 15px!important;border-left:1px solid var(--dw-hairline)!important;border-radius:0!important}
-  .pm-brief small{font-size:9.5px!important;margin-bottom:6px!important}
+  .pm-brief small{font-size:11px!important;margin-bottom:6px!important}
   .pm-brief b{font-size:11.5px!important;line-height:1.55!important}
 
   /* ================= GUIDE — editorial learning page ================= */
@@ -129,7 +129,7 @@
     border:0!important;background:var(--dw-quiet)!important;border-radius:20px!important;
   }
   .pg-topic-icon{margin:0 0 12px!important}
-  .pg-topic small{font-size:9.5px!important;margin-bottom:6px!important}
+  .pg-topic small{font-size:11px!important;margin-bottom:6px!important}
   .pg-topic b{font-size:17px!important;line-height:1.15!important;margin-bottom:7px!important}
   .pg-topic p{font-size:11px!important;line-height:1.5!important;margin:0!important}
   .pg-topic-arrow{position:absolute!important;right:18px!important;top:18px!important;margin:0!important}
@@ -164,7 +164,7 @@
   .pc-step-copy small{font-size:10px!important}
   .pc-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
   .pc-detail-card{min-height:0!important;border:0!important;background:rgba(255,255,255,.03)!important;padding:16px!important}
-  .pc-detail-label{font-size:9.5px!important}
+  .pc-detail-label{font-size:11px!important}
   .pc-detail-card p,.pc-detail-card b{font-size:11.5px!important;line-height:1.55!important}
 
   /* Foundations sit under the course as a quiet appendix, not a rival syllabus. */
@@ -220,8 +220,8 @@
   .library-gallery-shot:nth-child(n+4){display:block!important}
   .library-gallery-shot:nth-child(n+10){display:none!important}
   .library-gallery-copy{left:18px!important;right:18px!important;bottom:16px!important}
-  .library-gallery-copy small{font-size:9px!important}
-  .library-gallery-copy em{font-size:9.5px!important}
+  .library-gallery-copy small{font-size:11px!important}
+  .library-gallery-copy em{font-size:11px!important}
   .library-gallery-shot.featured .library-gallery-copy b{font-size:30px!important}
   .library-gallery-empty{grid-template-columns:140px 1fr!important;min-height:240px!important;padding:30px!important}
   /* Analytics support the photographs; they never lead. */

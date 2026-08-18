@@ -31,7 +31,7 @@ img{max-width:100%}
 /* Review: one clear premium review surface, compact intent selector. */
 .review-flow{max-width:1000px;margin-inline:auto!important}
 .review-flow>.review-goal{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:9px!important;margin:0 0 10px!important;padding:0!important;border:0!important;background:transparent!important}
-.review-flow>.review-goal label{font-size:8px!important;font-weight:900!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#717c88!important}
+.review-flow>.review-goal label{font-size:10px!important;font-weight:900!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#717c88!important}
 .review-flow>.review-goal select{width:auto!important;min-width:150px!important;min-height:38px!important;border-radius:12px!important;font-size:10px!important}
 .rv2-empty,.rv2-result{overflow:hidden}
 .rv2-empty-copy p,.rv2-result-copy p{max-width:620px}
@@ -45,7 +45,7 @@ img{max-width:100%}
 #conditions .cv2-actions a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
 
 /* Camera: cleaner control trainer hierarchy. */
-#camera .cv3-camera-hint{font-size:8px!important;letter-spacing:.05em!important;text-transform:uppercase;color:#65717d!important}
+#camera .cv3-camera-hint{font-size:10px!important;letter-spacing:.05em!important;text-transform:uppercase;color:#65717d!important}
 #camera .cv3-control-chip,#camera .cv3-tab,#camera .cv3-detail-actions .button{min-height:44px}
 #camera .cv3-source{opacity:.62}
 #camera .cv3-tour-actions #cv3Reset{background:transparent!important;border-color:rgba(255,255,255,.05)!important;color:#6f7984!important;box-shadow:none!important}
@@ -59,7 +59,7 @@ img{max-width:100%}
 .library-filter{min-height:40px!important}
 .library-list-card{margin-top:10px!important}
 .library-danger{margin-top:12px!important;border-top:1px solid rgba(255,255,255,.055)!important;padding-top:8px!important}
-.library-danger summary{min-height:40px;display:flex;align-items:center;color:#6f7a86!important;font-size:9px!important;font-weight:850!important}
+.library-danger summary{min-height:40px;display:flex;align-items:center;color:#6f7a86!important;font-size:11px!important;font-weight:850!important}
 .library-item-copy,.library-item-status{min-width:0}
 .library-item-copy small,.library-item-status span{overflow:hidden;text-overflow:ellipsis}
 
@@ -94,7 +94,7 @@ body[data-route="edit"] #edit{max-width:1120px;margin-inline:auto!important}
  #learn .learn-list button{flex:0 0 auto!important;min-width:138px!important;min-height:52px!important}
  #learn .learn-finish,#learn .learn-tools{margin-top:8px!important}
  #learn .lesson-actions{position:relative!important;display:grid!important;grid-template-columns:1fr auto!important}
- #learn .lesson-nav{min-width:0!important}.lesson-nav .button{font-size:9px!important}
+ #learn .lesson-nav{min-width:0!important}.lesson-nav .button{font-size:11px!important}
  #learn .lesson-actions>#lessonComplete{grid-column:2;grid-row:1}
 
  .review-flow>.review-goal{justify-content:space-between!important}.review-flow>.review-goal select{min-width:145px!important;max-width:58vw!important}
@@ -121,7 +121,7 @@ body[data-route="edit"] #edit{max-width:1120px;margin-inline:auto!important}
  main{width:calc(100% - 18px)!important}
  .mobile-dock{left:8px!important;right:8px!important}
  .home-v2-hero{min-height:368px!important}
- .home-v2-next{grid-template-columns:36px minmax(0,1fr)!important}.home-v2-next>a{grid-column:2!important;justify-self:start!important;margin-top:4px!important}.home-v2-next-copy span{display:block!important;white-space:normal!important;overflow:visible!important;font-size:8px!important}
+ .home-v2-next{grid-template-columns:36px minmax(0,1fr)!important}.home-v2-next>a{grid-column:2!important;justify-self:start!important;margin-top:4px!important}.home-v2-next-copy span{display:block!important;white-space:normal!important;overflow:visible!important;font-size:10px!important}
  .rv2-diagnostics,.rv2-setting-row{grid-template-columns:1fr!important}
  .library-summary{grid-template-columns:1fr!important}.library-stat{min-height:92px!important}
  #learn .lesson-actions{grid-template-columns:1fr!important}.lesson-actions>#lessonComplete{grid-column:1!important;grid-row:2!important;width:100%}.lesson-nav{justify-content:space-between!important}

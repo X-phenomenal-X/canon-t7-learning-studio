@@ -45,7 +45,7 @@
        and keep the 50/75 skill thresholds as gridlines when they are in view. */
     const lo=Math.max(0,Math.min(45,Math.floor((Math.min(...vals)-8)/5)*5)),hi=100;
     const W=640,H=210,p=25,x=i=>p+(W-p*2)*(data.length===1?.5:i/(data.length-1)),y=v=>H-p-(H-p*2)*((Math.max(lo,Math.min(hi,Number(v||0)))-lo)/(hi-lo)),path=key=>data.map((d,i)=>(i?'L':'M')+x(i)+','+y(d[key])).join(' ');
-    const grid=[75,50].filter(g=>g>lo).map(g=>`<line x1="${p}" y1="${y(g)}" x2="${W-p}" y2="${y(g)}" stroke="#26313d"/><text x="${p}" y="${y(g)-6}" fill="#687788" font-size="9">${g}</text>`).join('');
+    const grid=[75,50].filter(g=>g>lo).map(g=>`<line x1="${p}" y1="${y(g)}" x2="${W-p}" y2="${y(g)}" stroke="#26313d"/><text x="${p}" y="${y(g)-6}" fill="#7c8b9c" font-size="10">${g}</text>`).join('');
     const fmt=t=>new Date(t||Date.now()).toLocaleDateString([], {month:'short',day:'numeric'});
     const pts=data.map((d,i)=>`<circle cx="${x(i)}" cy="${y(d.detail)}" r="4" fill="#e85f31" stroke="#0b1016" stroke-width="2"/><circle cx="${x(i)}" cy="${y(d.exposure)}" r="4" fill="#1f9d63" stroke="#0b1016" stroke-width="2"/><rect x="${x(i)-((W-p*2)/Math.max(1,data.length-1))/2}" y="0" width="${(W-p*2)/Math.max(1,data.length-1)}" height="${H}" fill="transparent"><title>${fmt(d.time)} — Focus ${Math.round(d.detail||0)}, Exposure ${Math.round(d.exposure||0)}</title></rect>`).join('');
     return`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Focus and exposure trend, last ${data.length} reviews">${grid}<path d="${path('detail')}" fill="none" stroke="#e85f31" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="${path('exposure')}" fill="none" stroke="#1f9d63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${pts}</svg>`;

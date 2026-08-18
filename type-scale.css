@@ -1,57 +1,20 @@
-/* T7 Studio — type floor.
+/* T7 Studio — reading size.
  *
- * The component sheets grew a habit of 7–8.5px labels. Measured across eight
- * routes there were 199 visible runs of text under 10px on a phone, 31 of them
- * at 7px. This sets a floor without touching 42 stylesheets: it only ever raises
- * a size, never lowers one, and it loads before desktop-workspace.css so the
- * desktop layer can still make deliberate choices on top.
+ * This file used to be a floor. The component sheets had grown 6–9.5px labels —
+ * twelve distinct steps crammed between 6px and 12px, which is not a scale — and
+ * this file enumerated its way around them, selector by selector, at 9px. It kept
+ * missing new ones, and 9px was still too small to call premium.
  *
- * Micro-labels stay small and letter-spaced — that is the design language — but
- * they stop being unreadable. */
+ * Those sizes are now fixed where they are written: nothing in the app declares
+ * type below 10px, so the enumeration is gone. Keeping it would be worse than
+ * useless, because every 9px rule in here would now drag a corrected size back
+ * down. What is left is the one thing the file was actually for — body copy that
+ * is comfortable to read, and a little larger on desktop where the measure is
+ * wider.
+ */
 
-main small,.topbar small,
-main .pg-eyebrow,main .rv2-eyebrow,main .shoot-v2-eyebrow,main .lv2-eyebrow,
-main .pm-eyebrow,main .pc-detail-label,main .home-v2-kicker{
-  font-size:9px!important;
-  letter-spacing:.085em!important;
-}
-main em{font-size:10px!important}
 main p,main li{font-size:11px!important;line-height:1.55!important}
 
-/* Numerals in step and chapter markers read as UI, not as fine print. */
-main .subject-index,main .learn-num,main .pc-chapter-num,main .rv2-priority-number{font-size:10px!important}
-
 @media (min-width:1000px){
-  main small,.topbar small,
-  main .pg-eyebrow,main .rv2-eyebrow,main .shoot-v2-eyebrow,main .lv2-eyebrow,
-  main .pm-eyebrow,main .pc-detail-label,main .home-v2-kicker{font-size:9.5px!important}
-  main em{font-size:10.5px!important}
   main p,main li{font-size:12px!important;line-height:1.6!important}
-}
-
-/* Component-specific runs the generic floor cannot reach without over-reaching. */
-main .pm-brief b,main .pc-step-copy span,main .pc-progress-copy span,main .pc-current span,
-main .pg-problem span,main .pg-quick button,main .home-v2-next-copy span,
-main .home-v2-light-location,main .native-progress-copy span,main .review-goal label,
-main .library-pattern-count,main .cv3-camera-hint,main .lv2-own-photo{font-size:9px!important}
-main .subject-index,main .learn-num,main .pc-chapter-num{font-size:9.5px!important}
-
-@media (min-width:1000px){
-  main .pm-brief b,main .pc-step-copy span,main .pc-progress-copy span,main .pc-current span,
-  main .pg-problem span,main .pg-quick button,main .home-v2-next-copy span,
-  main .home-v2-light-location,main .native-progress-copy span,main .review-goal label,
-  main .library-pattern-count,main .cv3-camera-hint,main .lv2-own-photo{font-size:10px!important}
-}
-
-/* A few component rules out-specify the generic floor; match their shape. */
-main .subject-card-v2 .subject-index{font-size:9.5px!important}
-main .pc-chapter-head .pc-chapter-status,main .pc-chapter-head .pc-chapter-status span,
-main .pc-step-main .pc-step-time,main .home-v2 .native-camera,
-main .native-progress-copy>span:not([hidden]),main .review-goal label{font-size:9px!important}
-
-@media (min-width:1000px){
-  main .subject-card-v2 .subject-index{font-size:10px!important}
-  main .pc-chapter-head .pc-chapter-status,main .pc-chapter-head .pc-chapter-status span,
-  main .pc-step-main .pc-step-time,main .home-v2 .native-camera,
-  main .native-progress-copy>span:not([hidden]),main .review-goal label{font-size:9.5px!important}
 }
