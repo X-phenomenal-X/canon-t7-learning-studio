@@ -112,6 +112,46 @@ for (const vp of VIEWPORTS) {
         note(`${vp.name}/library`, 'gallery frames are display:inline — unstyled');
     }
   }
+  /* The core product loop - bring a JPEG into Review and get a diagnosis - is the
+   * one flow a route sweep cannot cover. Drive it once per viewport with a real
+   * generated photo and assert the pipeline all the way into Library. */
+  await page.evaluate(h => { location.hash = '#' + h; }, 'review');
+  await page.waitForTimeout(400);
+  const before = await page.evaluate(() => window.T7History.all().then(x => x.length));
+  await page.evaluate(async () => {
+    const c = document.createElement('canvas'); c.width = 1200; c.height = 800;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0, 0, 1200, 800);
+    grad.addColorStop(0, '#6d5540'); grad.addColorStop(1, '#241c17');
+    g.fillStyle = grad; g.fillRect(0, 0, 1200, 800);
+    g.fillStyle = '#e6c4a4'; g.beginPath(); g.ellipse(600, 430, 180, 220, 0, 0, 7); g.fill();
+    const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .9));
+    const dt = new DataTransfer();
+    dt.items.add(new File([blob], 'IMG_0001.JPG', { type: 'image/jpeg' }));
+    const input = document.getElementById('fileInput');
+    input.files = dt.files;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.waitForFunction(() => {
+    const res = document.getElementById('rv2Result');
+    return res && !res.hidden && document.getElementById('rv2Photo')?.currentSrc;
+  }, null, { timeout: 20000 }).catch(() => note(`${vp.name}/review-flow`, 'result panel never appeared after choosing a photo'));
+  await page.waitForTimeout(800);
+  const flow = await page.evaluate(async () => ({
+    verdict: document.getElementById('rv2Verdict')?.textContent.trim() ?? '',
+    metricsFilled: [...document.querySelectorAll('.rv2-diagnostics b')]
+      .filter(b => b.textContent.trim() && b.textContent.trim() !== '\u2014').length,
+    historyCount: await window.T7History.all().then(x => x.length),
+  }));
+  if (!flow.verdict || /reviewed$/i.test(flow.verdict) === false && flow.verdict.length < 4)
+    note(`${vp.name}/review-flow`, `verdict text looks empty: "${flow.verdict}"`);
+  if (flow.metricsFilled < 3) note(`${vp.name}/review-flow`, `only ${flow.metricsFilled} diagnostic metrics filled`);
+  if (flow.historyCount <= before) note(`${vp.name}/review-flow`, 'review did not add a history record');
+  await page.evaluate(h => { location.hash = '#' + h; }, 'library');
+  await page.waitForTimeout(700);
+  const shot = await page.evaluate(() => !!document.querySelector('.library-gallery-shot img'));
+  if (!shot) note(`${vp.name}/review-flow`, 'reviewed photo never reached the Library contact sheet');
+
   await ctx.close();
 }
 

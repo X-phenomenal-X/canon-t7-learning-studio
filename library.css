@@ -38,3 +38,12 @@
   .library-gallery-empty{grid-template-columns:1fr}
   .library-frame-mark{display:none}
 }
+
+/* Chart legend: the swatch carries the series color, the text stays in muted ink.
+   Colors match the validated series pair in library.js chart(). The old coral
+   override lived in the unreferenced photo-content.css, so the legend had drifted
+   back to a blue that no line uses (V72). */
+.library-chart-legend span{color:var(--ui-muted)!important}
+.library-chart-legend span:before{background:currentColor}
+.library-chart-legend .focus:before{background:#e85f31}
+.library-chart-legend .exposure:before{background:#1f9d63}
