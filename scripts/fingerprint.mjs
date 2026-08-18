@@ -27,6 +27,8 @@
  *   - only rendered elements count; hidden sections hold elements whose async
  *     decoration races and which cannot be a visual regression anyway
  *   - each view is read repeatedly until two consecutive reads agree
+ *   - the origin is stripped from computed url() values, because this server
+ *     binds an ephemeral port and .brand-icon carries a background image
  *
  * Verified sensitive: a single 1px change to one desktop rule is detected, on
  * exactly the two desktop views it affects and no others.
@@ -146,7 +148,11 @@ for (const [w, h] of VIEWPORTS) {
             if(ps&&cs.getPropertyValue('content')==='none')continue;
             for(const p of PROPS)s+=cs.getPropertyValue(p)+';';
           }
-          return s;
+          /* url() in a computed style resolves to an absolute URL, and this
+             server binds an ephemeral port, so the port digits would land in
+             the hash and every run would disagree with the last. Drop the
+             origin; which file is referenced still counts. */
+          return s.split(location.origin).join('@');
         }).sort();
         let h1=0x811c9dc5;
         const mix=s=>{for(let i=0;i<s.length;i++){h1^=s.charCodeAt(i);h1=(h1*0x01000193)>>>0}};
