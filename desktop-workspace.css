@@ -262,6 +262,57 @@
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border:3px solid transparent;background-clip:padding-box;border-radius:999px}
   ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.17);border:3px solid transparent;background-clip:padding-box}
+
+  /* ---------- Premium surfaces (folded in from the desktop-polish attempt) ---------- */
+  body{background:
+    radial-gradient(circle at 78% 0%,rgba(255,116,91,.055),transparent 31%),
+    radial-gradient(circle at 16% 38%,rgba(83,125,167,.045),transparent 29%),
+    linear-gradient(180deg,#070a0e 0%,#080b0f 44%,#06080b 100%)!important}
+  body.motion-scrolled .topbar{background:rgba(9,12,16,.88)!important;box-shadow:0 20px 56px rgba(0,0,0,.28)!important}
+  .desktop-nav a .t7-icon{width:15px!important;height:15px!important;opacity:.82}
+  .desktop-nav a.active .t7-icon{opacity:1}
+  .desktop-nav a.active:after{height:1.5px!important;background:linear-gradient(90deg,#ff755f,#ff9a76)!important}
+  .premium-status{background:transparent!important;border-color:rgba(255,255,255,.045)!important;color:#727d87!important}
+  .section,.dashboard-home{margin-bottom:30px!important}
+  .card{border-color:var(--dw-hairline)!important;
+    background:linear-gradient(155deg,rgba(16,21,27,.78),rgba(10,14,18,.82))!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.015),0 18px 55px rgba(0,0,0,.09)!important}
+  .home-v2-hero{border-color:rgba(255,255,255,.09)!important;box-shadow:0 36px 100px rgba(0,0,0,.31)!important}
+  .home-v2-hero-cta{padding:12px 15px!important;border-radius:14px!important;box-shadow:0 12px 32px rgba(255,115,95,.22)!important}
+  .home-v2-next{border-color:var(--dw-hairline)!important;background:rgba(13,17,22,.72)!important;box-shadow:none!important}
+  .home-v2-mini{border-color:rgba(255,255,255,.05)!important;background:rgba(12,16,21,.72)!important;box-shadow:none!important}
+  .pg-hero{background:radial-gradient(circle at 88% 8%,rgba(255,119,91,.10),transparent 34%),linear-gradient(145deg,#11171d,#090d11 72%)!important;
+    border-color:rgba(255,255,255,.07)!important}
+  .pg-search{margin-top:22px!important;border-radius:16px!important;background:#0b1015!important;border-color:rgba(255,255,255,.07)!important}
+  .photography-course{background:linear-gradient(145deg,rgba(14,19,25,.86),rgba(8,11,15,.88))!important;
+    border-color:var(--dw-hairline)!important;box-shadow:0 26px 80px rgba(0,0,0,.12)!important}
+  .pc-current{border-color:rgba(255,146,111,.14)!important;
+    background:linear-gradient(90deg,rgba(255,122,94,.055),rgba(255,255,255,.018))!important}
+  .sf-priority{padding:20px!important;border-radius:24px!important;
+    background:linear-gradient(145deg,rgba(17,22,28,.86),rgba(10,14,18,.89))!important}
+  .shoot-finish-viewfinder{border-radius:30px!important;box-shadow:0 28px 80px rgba(0,0,0,.22)!important}
+  /* One cinematic block for the reviewed frame + its verdict. */
+  .rv2-result{border-radius:30px!important;overflow:hidden!important;border:1px solid rgba(255,255,255,.065)!important;
+    background:#070a0e!important;box-shadow:0 30px 90px rgba(0,0,0,.24)!important}
+  .rv2-diagnostics>div{padding:14px!important;border-radius:16px!important;
+    background:rgba(255,255,255,.018)!important;border:1px solid rgba(255,255,255,.045)!important}
+  .rv2-priority{margin-top:14px!important;padding:18px 20px!important;border-radius:22px!important;
+    border-color:rgba(255,145,111,.14)!important;background:linear-gradient(90deg,rgba(255,123,95,.05),rgba(255,255,255,.015))!important}
+  .rv2-setup{margin-top:12px!important;padding:20px!important;border-radius:22px!important;background:rgba(12,16,21,.67)!important}
+  .editor-v2-stage{border-radius:28px!important;overflow:hidden!important;box-shadow:0 30px 90px rgba(0,0,0,.25)!important}
+  .ev2-preset{min-height:78px!important;border-color:rgba(255,255,255,.045)!important;background:rgba(255,255,255,.018)!important}
+  #camera .cv3-stage,.sim-layout .scene{border-radius:28px!important;box-shadow:0 26px 75px rgba(0,0,0,.18)!important}
+
+  /* One hover language across the desktop app: a small lift, never a layout shift. */
+  .button,.home-v2-mini,.home-v2-utility,.pg-topic,.subject-card-v2,.library-gallery-shot,
+  .pc-step-actions button,.pc-step-actions a{
+    transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease!important}
+  .home-v2-mini:hover,.pg-topic:hover,.subject-card-v2:hover,.library-gallery-shot:hover{transform:translateY(-3px)!important}
+  .button:hover,.home-v2-utility:hover,.pc-step-actions button:hover,.pc-step-actions a:hover{transform:translateY(-1px)!important}
+  @media (prefers-reduced-motion:reduce){
+    .home-v2-mini:hover,.pg-topic:hover,.subject-card-v2:hover,.library-gallery-shot:hover,
+    .button:hover,.home-v2-utility:hover{transform:none!important}
+  }
 }
 
 /* Large monitors: more room, never more density. */
@@ -270,6 +321,7 @@
   .home-v2-hero{min-height:540px!important}
   .home-v2-hero h2{font-size:64px!important}
   .library-gallery{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-rows:220px!important}
+  .pg-topic-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .library-gallery-shot:nth-child(n+10){display:block!important}
   .library-gallery-shot:nth-child(n+13){display:none!important}
 }
